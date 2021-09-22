@@ -1,0 +1,33 @@
+{
+  "name": "pathe",
+  "version": "0.0.0",
+  "description": "Normalized paths for Node.js",
+  "repository": "unjs/pathe",
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "siroc build",
+    "lint": "eslint --ext .ts .",
+    "prepublishOnly": "yarn build",
+    "release": "yarn test && standard-version && git push --follow-tags && npm publish",
+    "test": "yarn lint"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config-typescript": "latest",
+    "@types/node": "^16.9.6",
+    "eslint": "latest",
+    "siroc": "latest",
+    "standard-version": "latest",
+    "typescript": "latest"
+  }
+}
