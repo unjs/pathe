@@ -12,6 +12,7 @@
     }
   },
   "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
