@@ -1,6 +1,6 @@
 {
   "name": "pathe",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Normalized paths for Node.js",
   "repository": "unjs/pathe",
   "license": "MIT",
