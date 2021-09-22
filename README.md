@@ -2,6 +2,10 @@
 
 > Normalized paths for Node.js
 
+[![version][npm-v-src]][npm-v-href]
+[![downloads][npm-d-src]][npm-d-href]
+[![size][size-src]][size-href]
+
 🧪 This package is still experimental and might not handle all cases. Please track issues.
 
 ## ❓ Why
@@ -38,5 +42,17 @@ const { resolve } = require('pathe')
 
 ## License
 
-[MIT](./LICENSE)
+MIT. Made with 💖
 
+<!-- Refs -->
+[npm-v-src]: https://img.shields.io/npm/v/pathe?style=flat-square
+[npm-v-href]: https://npmjs.com/package/pathe
+
+[npm-d-src]: https://img.shields.io/npm/dm/pathe?style=flat-square
+[npm-d-href]: https://npmjs.com/package/pathe
+
+[github-actions-src]: https://img.shields.io/github/workflow/status/unjs/pathe/ci/main?style=flat-square
+[github-actions-href]: https://github.com/unjs/pathe/actions?query=workflow%3Aci
+
+[size-src]: https://packagephobia.now.sh/badge?p=pathe
+[size-href]: https://packagephobia.now.sh/result?p=pathe
