@@ -35,9 +35,8 @@ export const dirname: typeof path.dirname = function (p) {
 }
 
 // resolve
-// TODO: Find a way to use path.posix for consistant behavior
 export const resolve: typeof path.resolve = function (...args) {
-  return path.resolve.apply(path.resolve, args.map(arg => normalizeWindowsPath(arg)))
+  return normalizeWindowsPath(path.win32.resolve(...args))
 }
 
 // format
@@ -52,12 +51,12 @@ export const basename: typeof path.basename = function (p, ext) {
 
 // parse
 export const parse: typeof path.parse = function (p) {
-  return path.posix.parse(normalizeWindowsPath(p))
+  return path.win32.parse(normalizeWindowsPath(p))
 }
 
 // toNamespacedPath
 export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
-  return p
+  return normalizeWindowsPath(p)
 }
 
 // isAbsolute
