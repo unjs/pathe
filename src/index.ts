@@ -21,7 +21,7 @@ export const normalize: typeof path.normalize = function (p) {
 
 // join
 export const join: typeof path.join = function (...args) {
-  return path.posix.join.apply(path.posix.join, args.map(arg => normalizeWindowsPath(arg)))
+  return normalizeWindowsPath(path.win32.join(...args))
 }
 
 // relative
