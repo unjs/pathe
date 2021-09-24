@@ -106,8 +106,21 @@ describe('format', () => {
 describe('join', () => {
   it('should join path segments on windows', () => {
     expect(join('C:\\foo', 'bar', 'baz\\asdf', 'quux', '..')).to.equal('C:/foo/bar/baz/asdf')
+    expect(join('some/nodejs\\windows', '../path')).to.equal('some/nodejs/path')
+    expect(join('some\\windows\\only', '..\\path')).to.equal('some/windows/path')
+
+    // TODO: Support UNC paths
+    // expect(join('\\\\server\\share\\file', '..\\path')).to.equal('//server/share/path')
+    // expect(join('\\\\.\\c:\\temp\\file', '..\\path')).to.equal('//./c:/temp/path')
+    // expect(join('//server/share/file', '../path')).to.equal('//server/share/path')
+    // expect(join('//./c:/temp/file', '../path')).to.equal('//./c:/temp/path')
   })
   it('should join path segments on posix', () => {
+    expect(join('some/nodejs/deep', '../path')).to.equal('some/nodejs/path')
+    expect(join('./some/local/unix/', '../path')).to.equal('some/local/path')
+    expect(join('./some\\current\\mixed', '..\\path')).to.equal('some/current/path')
+    expect(join('../some/relative/destination', '..\\path')).to.equal('../some/relative/path')
+    expect(join('some/nodejs/deep', '../path')).to.equal('some/nodejs/path')
     expect(join('/foo', 'bar', 'baz/asdf', 'quux', '..')).to.equal('/foo/bar/baz/asdf')
   })
 })
@@ -115,8 +128,22 @@ describe('normalize', () => {
   it('should normalise paths on windows', () => {
     expect(normalize('C:\\temp\\\\foo\\bar\\..\\')).to.equal('C:/temp/foo/')
     expect(normalize('C:////temp\\\\/\\/\\/foo/bar')).to.equal('C:/temp/foo/bar')
+    expect(normalize('c:/windows/nodejs/path')).to.equal('c:/windows/nodejs/path')
+    expect(normalize('c:/windows/../nodejs/path')).to.equal('c:/nodejs/path')
+
+    expect(normalize('c:\\windows\\nodejs\\path')).to.equal('c:/windows/nodejs/path')
+    expect(normalize('c:\\windows\\..\\nodejs\\path')).to.equal('c:/nodejs/path')
+
+    expect(normalize('/windows\\unix/mixed')).to.equal('/windows/unix/mixed')
+    expect(normalize('\\windows//unix/mixed')).to.equal('/windows/unix/mixed')
+    expect(normalize('\\windows\\..\\unix/mixed/')).to.equal('/unix/mixed/')
+    expect(normalize('.//windows\\unix/mixed/')).to.equal('windows/unix/mixed/')
   })
   it('should normalise paths on posix', () => {
+    expect(normalize('./')).to.equal('./')
+    expect(normalize('./../')).to.equal('../')
+    expect(normalize('./../dep/')).to.equal('../dep/')
+    expect(normalize('path//dep\\')).to.equal('path/dep/')
     expect(normalize('/foo/bar//baz/asdf/quux/..')).to.equal('/foo/bar/baz/asdf')
   })
 })
@@ -155,6 +182,11 @@ describe('resolve', () => {
 
     expect(resolve('\\foo\\bar', '\\tmp\\file\\')).to.equal('/tmp/file')
     expect(resolve('wwwroot', 'static_files\\png\\', '..\\gif\\image.gif')).to.equal(`${process.cwd()}/wwwroot/static_files/gif/image.gif`)
+    expect(resolve('C:\\Windows\\path\\only', '../../reports')).to.equal(
+      'C:/Windows/reports')
+
+    expect(resolve('C:\\Windows\\long\\path\\mixed/with/unix', '../..', '..\\../reports')).to.equal(
+      'C:/Windows/long/reports')
   })
   it('should resolve paths on posix', () => {
     expect(resolve('/foo/bar', './baz')).to.equal('/foo/bar/baz')
