@@ -109,11 +109,10 @@ describe('join', () => {
     expect(join('some/nodejs\\windows', '../path')).to.equal('some/nodejs/path')
     expect(join('some\\windows\\only', '..\\path')).to.equal('some/windows/path')
 
-    // TODO: Support UNC paths
-    // expect(join('\\\\server\\share\\file', '..\\path')).to.equal('//server/share/path')
-    // expect(join('\\\\.\\c:\\temp\\file', '..\\path')).to.equal('//./c:/temp/path')
-    // expect(join('//server/share/file', '../path')).to.equal('//server/share/path')
-    // expect(join('//./c:/temp/file', '../path')).to.equal('//./c:/temp/path')
+    expect(join('\\\\server\\share\\file', '..\\path')).to.equal('//server/share/path')
+    expect(join('\\\\.\\c:\\temp\\file', '..\\path')).to.equal('//./c:/temp/path')
+    expect(join('//server/share/file', '../path')).to.equal('//server/share/path')
+    expect(join('//./c:/temp/file', '../path')).to.equal('//./c:/temp/path')
   })
   it('should join path segments on posix', () => {
     expect(join('some/nodejs/deep', '../path')).to.equal('some/nodejs/path')
