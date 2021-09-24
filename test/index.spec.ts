@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { basename, delimiter, dirname, extname, format, isAbsolute, join, normalize, normalizeWindowsPath, parse, posix, relative, resolve, sep, toNamespacedPath, win32 } from '../src'
+import { basename, delimiter, dirname, extname, format, isAbsolute, join, normalize, normalizeWindowsPath, parse, relative, resolve, sep, toNamespacedPath } from '../src'
 
 describe('normalizeWindowsPath', () => {
   it('handles no input', () => {
