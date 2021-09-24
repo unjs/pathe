@@ -35,8 +35,9 @@ export const dirname: typeof path.dirname = function (p) {
 }
 
 // resolve
+// TODO: Find a way to use path.posix for consistant behavior
 export const resolve: typeof path.resolve = function (...args) {
-  return path.posix.resolve.apply(path.posix.resolve, args.map(arg => normalizeWindowsPath(arg)))
+  return path.resolve.apply(path.resolve, args.map(arg => normalizeWindowsPath(arg)))
 }
 
 // format
