@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/unjs/pathe/compare/v0.0.2...v0.0.3) (2021-09-24)
+
+
+### Bug Fixes
+
+* add hotfix for resolve ([a221d34](https://github.com/unjs/pathe/commit/a221d3468c81802da03823bd606de70a524a7b55))
+
 ### [0.0.2](https://github.com/unjs/pathe/compare/v0.0.1...v0.0.2) (2021-09-22)
 
 
