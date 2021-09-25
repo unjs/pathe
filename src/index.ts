@@ -58,8 +58,10 @@ export const parse: typeof path.parse = function (p) {
 }
 
 // toNamespacedPath
+// TODO
 export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
-  return normalizeWindowsPath(p)
+  return p
+  // return normalizeWindowsPath(p)
 }
 
 // isAbsolute
