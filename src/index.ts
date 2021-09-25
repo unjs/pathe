@@ -20,9 +20,8 @@ export const normalize: typeof path.normalize = function (p) {
 }
 
 // join
-// TODO
 export const join: typeof path.join = function (...args) {
-  return normalizeWindowsPath(path.join(...args))
+  return path.posix.join.apply(path.posix.join, args.map(arg => normalizeWindowsPath(arg)))
 }
 
 // relative
@@ -36,9 +35,9 @@ export const dirname: typeof path.dirname = function (p) {
 }
 
 // resolve
-// TODO
+// TODO: Find a way to use path.posix for consistant behavior
 export const resolve: typeof path.resolve = function (...args) {
-  return normalizeWindowsPath(path.resolve(...args))
+  return path.resolve.apply(path.resolve, args.map(arg => normalizeWindowsPath(arg)))
 }
 
 // format
@@ -52,16 +51,13 @@ export const basename: typeof path.basename = function (p, ext) {
 }
 
 // parse
-// TODO
 export const parse: typeof path.parse = function (p) {
-  return path.parse(normalizeWindowsPath(p))
+  return path.posix.parse(normalizeWindowsPath(p))
 }
 
 // toNamespacedPath
-// TODO
 export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
   return p
-  // return normalizeWindowsPath(p)
 }
 
 // isAbsolute
