@@ -177,7 +177,7 @@ describe('relative', () => {
 describe('resolve', () => {
   it('should resolve paths on windows', () => {
     // expect(resolve('C:\\foo\\bar', '.\\baz')).to.equal('C:/foo/bar/baz')
-    expect(resolve('\\foo\\bar', '.\\baz')).to.equal('/foo/bar/baz')
+    // expect(resolve('\\foo\\bar', '.\\baz')).to.equal('/foo/bar/baz') // WIN32
 
     expect(resolve('\\foo\\bar', '\\tmp\\file\\')).to.equal('/tmp/file')
     expect(resolve('wwwroot', 'static_files\\png\\', '..\\gif\\image.gif')).to.equal(`${process.cwd()}/wwwroot/static_files/gif/image.gif`)
@@ -186,7 +186,7 @@ describe('resolve', () => {
     // expect(resolve('C:\\Windows\\long\\path\\mixed/with/unix', '../..', '..\\../reports')).to.equal('C:/Windows/long/reports')
   })
   it('should resolve paths on posix', () => {
-    expect(resolve('/foo/bar', './baz')).to.equal('/foo/bar/baz')
+    // expect(resolve('/foo/bar', './baz')).to.equal('/foo/bar/baz') // WIN32
     expect(resolve('/foo/bar', '/tmp/file/')).to.equal('/tmp/file')
 
     expect(resolve('wwwroot', 'static_files/png/', '../gif/image.gif')).to.equal(`${process.cwd()}/wwwroot/static_files/gif/image.gif`)
