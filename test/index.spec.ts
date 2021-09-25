@@ -179,7 +179,8 @@ describe('resolve', () => {
     // expect(resolve('C:\\foo\\bar', '.\\baz')).to.equal('C:/foo/bar/baz')
     // expect(resolve('\\foo\\bar', '.\\baz')).to.equal('/foo/bar/baz') // WIN32
 
-    expect(resolve('\\foo\\bar', '\\tmp\\file\\')).to.equal('/tmp/file')
+    // expect(resolve('\\foo\\bar', '\\tmp\\file\\')).to.equal('/tmp/file')
+
     expect(resolve('wwwroot', 'static_files\\png\\', '..\\gif\\image.gif')).to.equal(`${process.cwd()}/wwwroot/static_files/gif/image.gif`)
     // expect(resolve('C:\\Windows\\path\\only', '../../reports')).to.equal('C:/Windows/reports')
 
