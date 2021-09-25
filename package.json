@@ -35,6 +35,6 @@
     "nyc": "^15.1.0",
     "siroc": "latest",
     "standard-version": "latest",
-    "typescript": "latest"
+    "typescript": "^4.4.3"
   }
 }
