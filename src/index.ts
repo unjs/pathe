@@ -20,8 +20,9 @@ export const normalize: typeof path.normalize = function (p) {
 }
 
 // join
+// TODO
 export const join: typeof path.join = function (...args) {
-  return normalizeWindowsPath(path.win32.join(...args))
+  return normalizeWindowsPath(path.join(...args))
 }
 
 // relative
@@ -35,8 +36,9 @@ export const dirname: typeof path.dirname = function (p) {
 }
 
 // resolve
+// TODO
 export const resolve: typeof path.resolve = function (...args) {
-  return normalizeWindowsPath(path.win32.resolve(...args))
+  return normalizeWindowsPath(path.resolve(...args))
 }
 
 // format
@@ -50,8 +52,9 @@ export const basename: typeof path.basename = function (p, ext) {
 }
 
 // parse
+// TODO
 export const parse: typeof path.parse = function (p) {
-  return path.win32.parse(normalizeWindowsPath(p))
+  return path.parse(normalizeWindowsPath(p))
 }
 
 // toNamespacedPath
