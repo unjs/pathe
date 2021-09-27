@@ -1,8 +1,10 @@
 import { expect } from 'chai'
 
-import { basename, delimiter, dirname, extname, format, isAbsolute, join, normalize, normalizeWindowsPath, parse, relative, resolve, sep, toNamespacedPath } from '../src'
+import { basename, dirname, extname, format, parse, relative, delimiter, isAbsolute, join, normalize, resolve, sep, toNamespacedPath } from '../src'
 
-runTest(normalizeWindowsPath, {
+import { normalizeWindowsPath } from '../src/utils'
+
+runTest('normalizeWindowsPath', normalizeWindowsPath, {
   // POSIX
   '/foo/bar': '/foo/bar',
 
@@ -12,7 +14,7 @@ runTest(normalizeWindowsPath, {
   '.\\foo\\bar': './foo/bar'
 })
 
-runTest(isAbsolute, {
+runTest('isAbsolute', isAbsolute, {
   // POSIX
   '/foo/bar': true,
   '/baz/..': true,
@@ -27,7 +29,7 @@ runTest(isAbsolute, {
   'bar/baz': false
 })
 
-runTest(basename, {
+runTest('basename', basename, {
   // POSIX
   'C:\\temp\\myfile.html': 'myfile.html',
   '\\temp\\myfile.html': 'myfile.html',
@@ -38,7 +40,7 @@ runTest(basename, {
   './myfile.html': 'myfile.html'
 })
 
-runTest(dirname, {
+runTest('dirname', dirname, {
   // POSIX
   '/temp/myfile.html': '/temp',
   './myfile.html': '.',
@@ -49,7 +51,7 @@ runTest(dirname, {
   '.\\myfile.html': '.'
 })
 
-runTest(extname, {
+runTest('extname', extname, {
   // POSIX
   '/temp/myfile.html': '.html',
   './myfile.html': '.html',
@@ -60,7 +62,7 @@ runTest(extname, {
   '.\\myfile.html': '.html'
 })
 
-runTest(format, [
+runTest('format', format, [
   // POSIX
   [{ root: '/ignored', dir: '/home/user/dir', base: 'file.txt' }, '/home/user/dir/file.txt'],
   [{ root: '/', base: 'file.txt', ext: 'ignored' }, '/file.txt'],
@@ -70,7 +72,7 @@ runTest(format, [
   [{ dir: 'C:\\path\\dir', base: 'file.txt' }, 'C:/path/dir/file.txt']
 ])
 
-runTest(join, [
+runTest('join', join, [
   ['some/nodejs/deep', '../path', 'some/nodejs/path'],
   ['./some/local/unix/', '../path', 'some/local/path'],
   ['./some\\current\\mixed', '..\\path', 'some/current/path'],
@@ -81,13 +83,13 @@ runTest(join, [
   ['C:\\foo', 'bar', 'baz\\asdf', 'quux', '..', 'C:/foo/bar/baz/asdf'],
   ['some/nodejs\\windows', '../path', 'some/nodejs/path'],
   ['some\\windows\\only', '..\\path', 'some/windows/path'],
-  ['\\server\\share\\file', '..\\path', '//server/share/path'],
-  ['\\.\\c:\\temp\\file', '..\\path', '//./c:/temp/path'],
-  ['erver/share/file', '../path', '//server/share/path'],
-  ['/c:/temp/file', '../path', '//./c:/temp/path']
+  // UNC paths
+  ['\\\\server\\share\\file', '..\\path', '//server/share/path'],
+  ['\\\\.\\c:\\temp\\file', '..\\path', '//./c:/temp/path'],
+  ['\\\\server/share/file', '../path', '//server/share/path']
 ])
 
-runTest(normalize, {
+runTest('normalize', normalize, {
   // POSIX
   './': './',
   './../': '../',
@@ -107,7 +109,12 @@ runTest(normalize, {
   '/windows\\unix/mixed': '/windows/unix/mixed',
   '\\windows//unix/mixed': '/windows/unix/mixed',
   '\\windows\\..\\unix/mixed/': '/unix/mixed/',
-  './/windows\\unix/mixed/': 'windows/unix/mixed/'
+  './/windows\\unix/mixed/': 'windows/unix/mixed/',
+
+  // UNC
+  '\\\\server\\share\\file\\..\\path': '//server/share/path',
+  '\\\\.\\c:\\temp\\file\\..\\path': '//./c:/temp/path',
+  '\\\\server/share/file/../path': '//server/share/path'
 })
 
 it('parse', () => {
@@ -130,7 +137,7 @@ it('parse', () => {
   })
 })
 
-runTest(relative, [
+runTest('relative', relative, [
   // POSIX
   ['/data/orandea/test/aaa', '/data/orandea/impl/bbb', '../../impl/bbb'],
 
@@ -138,7 +145,7 @@ runTest(relative, [
   ['C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb', '../../impl/bbb']
 ])
 
-runTest(resolve, [
+runTest('resolve', resolve, [
   // POSIX
   ['/foo/bar', './baz', '/foo/bar/baz'],
   ['/foo/bar', '/tmp/file/', '/tmp/file'],
@@ -153,7 +160,7 @@ runTest(resolve, [
   ['C:\\Windows\\long\\path\\mixed/with/unix', '../..', '..\\../reports', 'C:/Windows/long/reports']
 ])
 
-runTest(toNamespacedPath, {
+runTest('toNamespacedPath', toNamespacedPath, {
   // POSIX
   '/foo/bar': '/foo/bar',
 
@@ -176,8 +183,7 @@ function _s (item) {
   return JSON.stringify(item).replace(/"/g, '\'')
 }
 
-export function runTest (fn, items) {
-  const name = fn.name
+export function runTest (name, fn, items) {
   if (!Array.isArray(items)) {
     items = Object.entries(items).map(e => e.flat())
   }

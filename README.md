@@ -45,6 +45,8 @@ Read more about path utils from [Node.js documentation](https://nodejs.org/api/p
 
 MIT. Made with 💖
 
+Some code used form Node.js project. See [LICENSE](./LICENSE).
+
 <!-- Refs -->
 [npm-v-src]: https://img.shields.io/npm/v/pathe?style=flat-square
 [npm-v-href]: https://npmjs.com/package/pathe
