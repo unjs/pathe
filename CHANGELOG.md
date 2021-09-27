@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/unjs/pathe/compare/v0.1.0...v0.2.0) (2021-09-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* improved implementation with tests (#3)
+
+### Features
+
+* improved implementation with tests ([#3](https://github.com/unjs/pathe/issues/3)) ([d8d0cb5](https://github.com/unjs/pathe/commit/d8d0cb51dbca7295248c36f93510738057f2828d))
+
 ## [0.1.0](https://github.com/unjs/pathe/compare/v0.0.3...v0.1.0) (2021-09-24)
 
 ### [0.0.3](https://github.com/unjs/pathe/compare/v0.0.2...v0.0.3) (2021-09-24)
