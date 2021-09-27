@@ -2,24 +2,6 @@ import { expect } from 'chai'
 
 import { basename, delimiter, dirname, extname, format, isAbsolute, join, normalize, normalizeWindowsPath, parse, relative, resolve, sep, toNamespacedPath } from '../src'
 
-const _s = item => JSON.stringify(item).replace(/"/g, '\'')
-
-function runTest (fn, items) {
-  const name = fn.name
-  if (!Array.isArray(items)) {
-    items = Object.entries(items).map(e => e.flat())
-  }
-  describe(`${name}`, () => {
-    for (const item of items) {
-      const expected = item.pop()
-      const args = item
-      it(`${name}(${args.map(_s).join(',')}) should be ${_s(expected)}`, () => {
-        expect(fn(...args)).to.equal(expected)
-      })
-    }
-  })
-}
-
 runTest(normalizeWindowsPath, {
   // POSIX
   '/foo/bar': '/foo/bar',
@@ -45,58 +27,48 @@ runTest(isAbsolute, {
   'bar/baz': false
 })
 
-it('basename', () => {
+runTest(basename, {
   // POSIX
-  expect(basename('C:\\temp\\myfile.html')).to.equal('myfile.html')
-  expect(basename('\\temp\\myfile.html')).to.equal('myfile.html')
-  expect(basename('.\\myfile.html')).to.equal('myfile.html')
+  'C:\\temp\\myfile.html': 'myfile.html',
+  '\\temp\\myfile.html': 'myfile.html',
+  '.\\myfile.html': 'myfile.html',
 
   // Windows
-  expect(basename('/temp/myfile.html')).to.equal('myfile.html')
-  expect(basename('./myfile.html')).to.equal('myfile.html')
+  '/temp/myfile.html': 'myfile.html',
+  './myfile.html': 'myfile.html'
 })
 
-describe('contatants', () => {
-  it('delimiter should equal :', () => {
-    expect(delimiter).to.equal(':')
-  })
-
-  it('sep should equal /', () => {
-    expect(sep).to.equal('/')
-  })
-})
-
-it('dirname', () => {
+runTest(dirname, {
   // POSIX
-  expect(dirname('/temp/myfile.html')).to.equal('/temp')
-  expect(dirname('./myfile.html')).to.equal('.')
+  '/temp/myfile.html': '/temp',
+  './myfile.html': '.',
 
   // Windows
-  expect(dirname('C:\\temp\\myfile.html')).to.equal('C:/temp')
-  expect(dirname('\\temp\\myfile.html')).to.equal('/temp')
-  expect(dirname('.\\myfile.html')).to.equal('.')
+  'C:\\temp\\myfile.html': 'C:/temp',
+  '\\temp\\myfile.html': '/temp',
+  '.\\myfile.html': '.'
 })
 
-it('extname', () => {
+runTest(extname, {
   // POSIX
-  expect(extname('/temp/myfile.html')).to.equal('.html')
-  expect(extname('./myfile.html')).to.equal('.html')
+  '/temp/myfile.html': '.html',
+  './myfile.html': '.html',
 
   // Windows
-  expect(extname('C:\\temp\\myfile.html')).to.equal('.html')
-  expect(extname('\\temp\\myfile.html')).to.equal('.html')
-  expect(extname('.\\myfile.html')).to.equal('.html')
+  'C:\\temp\\myfile.html': '.html',
+  '\\temp\\myfile.html': '.html',
+  '.\\myfile.html': '.html'
 })
 
-it('format', () => {
+runTest(format, [
   // POSIX
-  expect(format({ root: '/ignored', dir: '/home/user/dir', base: 'file.txt' })).to.equal('/home/user/dir/file.txt')
-  expect(format({ root: '/', base: 'file.txt', ext: 'ignored' })).to.equal('/file.txt')
-  expect(format({ root: '/', name: 'file', ext: '.txt' })).to.equal('/file.txt')
+  [{ root: '/ignored', dir: '/home/user/dir', base: 'file.txt' }, '/home/user/dir/file.txt'],
+  [{ root: '/', base: 'file.txt', ext: 'ignored' }, '/file.txt'],
+  [{ root: '/', name: 'file', ext: '.txt' }, '/file.txt'],
 
   // Windows
-  expect(format({ dir: 'C:\\path\\dir', base: 'file.txt' })).to.equal('C:/path/dir/file.txt')
-})
+  [{ dir: 'C:\\path\\dir', base: 'file.txt' }, 'C:/path/dir/file.txt']
+])
 
 runTest(join, [
   ['some/nodejs/deep', '../path', 'some/nodejs/path'],
@@ -108,34 +80,34 @@ runTest(join, [
 
   ['C:\\foo', 'bar', 'baz\\asdf', 'quux', '..', 'C:/foo/bar/baz/asdf'],
   ['some/nodejs\\windows', '../path', 'some/nodejs/path'],
-  ['some\\windows\\only', '..\\path', 'some/windows/path']
-  // expect(join('\\\\server\\share\\file', '..\\path')).to.equal('//server/share/path')
-  // expect(join('\\\\.\\c:\\temp\\file', '..\\path')).to.equal('//./c:/temp/path')
-  // expect(join('//server/share/file', '../path')).to.equal('//server/share/path')
-  // expect(join('//./c:/temp/file', '../path')).to.equal('//./c:/temp/path')
+  ['some\\windows\\only', '..\\path', 'some/windows/path'],
+  ['\\server\\share\\file', '..\\path', '//server/share/path'],
+  ['\\.\\c:\\temp\\file', '..\\path', '//./c:/temp/path'],
+  ['erver/share/file', '../path', '//server/share/path'],
+  ['/c:/temp/file', '../path', '//./c:/temp/path']
 ])
 
-it('normalize', () => {
+runTest(normalize, {
   // POSIX
-  expect(normalize('./')).to.equal('./')
-  expect(normalize('./../')).to.equal('../')
-  expect(normalize('./../dep/')).to.equal('../dep/')
-  expect(normalize('path//dep\\')).to.equal('path/dep/')
-  expect(normalize('/foo/bar//baz/asdf/quux/..')).to.equal('/foo/bar/baz/asdf')
+  './': './',
+  './../': '../',
+  './../dep/': '../dep/',
+  'path//dep\\': 'path/dep/',
+  '/foo/bar//baz/asdf/quux/..': '/foo/bar/baz/asdf',
 
   // Windows
-  expect(normalize('C:\\temp\\\\foo\\bar\\..\\')).to.equal('C:/temp/foo/')
-  expect(normalize('C:////temp\\\\/\\/\\/foo/bar')).to.equal('C:/temp/foo/bar')
-  expect(normalize('c:/windows/nodejs/path')).to.equal('c:/windows/nodejs/path')
-  expect(normalize('c:/windows/../nodejs/path')).to.equal('c:/nodejs/path')
+  'C:\\temp\\\\foo\\bar\\..\\': 'C:/temp/foo/',
+  'C:////temp\\\\/\\/\\/foo/bar': 'C:/temp/foo/bar',
+  'c:/windows/nodejs/path': 'c:/windows/nodejs/path',
+  'c:/windows/../nodejs/path': 'c:/nodejs/path',
 
-  expect(normalize('c:\\windows\\nodejs\\path')).to.equal('c:/windows/nodejs/path')
-  expect(normalize('c:\\windows\\..\\nodejs\\path')).to.equal('c:/nodejs/path')
+  'c:\\windows\\nodejs\\path': 'c:/windows/nodejs/path',
+  'c:\\windows\\..\\nodejs\\path': 'c:/nodejs/path',
 
-  expect(normalize('/windows\\unix/mixed')).to.equal('/windows/unix/mixed')
-  expect(normalize('\\windows//unix/mixed')).to.equal('/windows/unix/mixed')
-  expect(normalize('\\windows\\..\\unix/mixed/')).to.equal('/unix/mixed/')
-  expect(normalize('.//windows\\unix/mixed/')).to.equal('windows/unix/mixed/')
+  '/windows\\unix/mixed': '/windows/unix/mixed',
+  '\\windows//unix/mixed': '/windows/unix/mixed',
+  '\\windows\\..\\unix/mixed/': '/unix/mixed/',
+  './/windows\\unix/mixed/': 'windows/unix/mixed/'
 })
 
 it('parse', () => {
@@ -158,34 +130,64 @@ it('parse', () => {
   })
 })
 
-it('relative', () => {
+runTest(relative, [
   // POSIX
-  expect(relative('/data/orandea/test/aaa', '/data/orandea/impl/bbb')).to.equal('../../impl/bbb')
+  ['/data/orandea/test/aaa', '/data/orandea/impl/bbb', '../../impl/bbb'],
 
   // Windows
-  expect(relative('C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb')).to.equal('../../impl/bbb')
-})
+  ['C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb', '../../impl/bbb']
+])
 
-it('resolve', () => {
+runTest(resolve, [
   // POSIX
-  // expect(resolve('/foo/bar', './baz')).to.equal('/foo/bar/baz') // WIN32
-  expect(resolve('/foo/bar', '/tmp/file/')).to.equal('/tmp/file')
-  expect(resolve('wwwroot', 'static_files/png/', '../gif/image.gif')).to.equal(`${process.cwd()}/wwwroot/static_files/gif/image.gif`)
+  ['/foo/bar', './baz', '/foo/bar/baz'],
+  ['/foo/bar', '/tmp/file/', '/tmp/file'],
+  ['wwwroot', 'static_files/png/', '../gif/image.gif', `${process.cwd()}/wwwroot/static_files/gif/image.gif`],
 
   // Windows
-  // expect(resolve('C:\\foo\\bar', '.\\baz')).to.equal('C:/foo/bar/baz')
-  // expect(resolve('\\foo\\bar', '.\\baz')).to.equal('/foo/bar/baz') // WIN32
-  // expect(resolve('\\foo\\bar', '\\tmp\\file\\')).to.equal('/tmp/file')
-  expect(resolve('wwwroot', 'static_files\\png\\', '..\\gif\\image.gif')).to.equal(`${process.cwd()}/wwwroot/static_files/gif/image.gif`)
-  // expect(resolve('C:\\Windows\\path\\only', '../../reports')).to.equal('C:/Windows/reports')
-  // expect(resolve('C:\\Windows\\long\\path\\mixed/with/unix', '../..', '..\\../reports')).to.equal('C:/Windows/long/reports')
-})
+  ['C:\\foo\\bar', '.\\baz', 'C:/foo/bar/baz'],
+  ['\\foo\\bar', '.\\baz', '/foo/bar/baz'],
+  ['\\foo\\bar', '\\tmp\\file\\', '/tmp/file'],
+  ['wwwroot', 'static_files\\png\\', '..\\gif\\image.gif', `${process.cwd()}/wwwroot/static_files/gif/image.gif`],
+  ['C:\\Windows\\path\\only', '../../reports', 'C:/Windows/reports'],
+  ['C:\\Windows\\long\\path\\mixed/with/unix', '../..', '..\\../reports', 'C:/Windows/long/reports']
+])
 
-it('toNamespacedPath', () => {
+runTest(toNamespacedPath, {
   // POSIX
-  expect(toNamespacedPath('/foo/bar')).to.equal('/foo/bar')
+  '/foo/bar': '/foo/bar',
 
   // Windows
-  // expect(toNamespacedPath('\\foo\\bar')).to.equal('/foo/bar')
-  // expect(toNamespacedPath('C:\\foo\\bar')).to.equal('C:/foo/bar')
+  '\\foo\\bar': '/foo/bar',
+  'C:\\foo\\bar': 'C:/foo/bar'
 })
+
+describe('contatants', () => {
+  it('delimiter should equal :', () => {
+    expect(delimiter).to.equal(':')
+  })
+
+  it('sep should equal /', () => {
+    expect(sep).to.equal('/')
+  })
+})
+
+function _s (item) {
+  return JSON.stringify(item).replace(/"/g, '\'')
+}
+
+export function runTest (fn, items) {
+  const name = fn.name
+  if (!Array.isArray(items)) {
+    items = Object.entries(items).map(e => e.flat())
+  }
+  describe(`${name}`, () => {
+    for (const item of items) {
+      const expected = item.pop()
+      const args = item
+      it(`${name}(${args.map(_s).join(',')}) should be ${_s(expected)}`, () => {
+        expect(fn(...args)).to.equal(expected)
+      })
+    }
+  })
+}
