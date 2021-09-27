@@ -11,7 +11,11 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v2
@@ -21,3 +25,4 @@ jobs:
           cache: yarn
       - run: yarn install
       - run: yarn lint
+      - run: yarn test
