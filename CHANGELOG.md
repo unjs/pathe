@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/unjs/pathe/compare/v0.2.0...v0.3.0) (2022-05-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* `import pathe from 'pathe` should be changes to `import * as pathe from 'pathe'`
+* implement rest of `path` minimally  (#10)
+
+### Features
+
+* implement rest of `path` minimally  ([#10](https://github.com/unjs/pathe/issues/10)) ([6136b3c](https://github.com/unjs/pathe/commit/6136b3ca9c1c26ec2a0002b24f08f8dcf28a78af))
+
+
+### Bug Fixes
+
+* avoid mixed named and default exports ([89e35ad](https://github.com/unjs/pathe/commit/89e35adbdc6921b362cad6b67bbff30fb58ce73e))
+
 ## [0.2.0](https://github.com/unjs/pathe/compare/v0.1.0...v0.2.0) (2021-09-27)
 
 
