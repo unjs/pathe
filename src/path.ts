@@ -6,8 +6,7 @@ Check LICENSE file
 
 */
 
-// TODO: Progressively remove path dependency
-import path from 'path'
+import type path from 'path'
 
 import { normalizeWindowsPath } from './utils'
 
@@ -184,30 +183,48 @@ export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
 
 // extname
 export const extname: typeof path.extname = function (p) {
-  return path.posix.extname(normalizeWindowsPath(p))
+  const segments = normalizeWindowsPath(p).split('/').pop().split('.')
+  return segments.length > 1 ? `.${segments.pop()}` : ''
 }
 
 // relative
 export const relative: typeof path.relative = function (from, to) {
-  return path.posix.relative(normalizeWindowsPath(from), normalizeWindowsPath(to))
+  const _from = resolve(from).split('/')
+  const _to = resolve(to).split('/')
+  for (const segment of [..._from]) {
+    if (_to[0] !== segment) { break }
+    _from.shift()
+    _to.shift()
+  }
+  return [..._from.map(() => '..'), ..._to].join('/')
 }
 
 // dirname
 export const dirname: typeof path.dirname = function (p) {
-  return path.posix.dirname(normalizeWindowsPath(p))
+  return normalizeWindowsPath(p).replace(/\/$/, '').split('/').slice(0, -1).join('/') || '/'
 }
 
 // format
 export const format: typeof path.format = function (p) {
-  return normalizeWindowsPath(path.posix.format(p))
+  return normalizeWindowsPath(resolve(p.root, p.dir, p.base ?? (p.name + p.ext)))
 }
 
 // basename
 export const basename: typeof path.basename = function (p, ext) {
-  return path.posix.basename(normalizeWindowsPath(p), ext)
+  const lastSegment = normalizeWindowsPath(p).split('/').pop()
+  return lastSegment.endsWith(ext) ? lastSegment.slice(0, -ext.length) : lastSegment
 }
 
 // parse
 export const parse: typeof path.parse = function (p) {
-  return path.posix.parse(normalizeWindowsPath(p))
+  const root = normalizeWindowsPath(p).split('/').shift() || '/'
+  const base = basename(p)
+  const ext = extname(base)
+  return {
+    root,
+    dir: dirname(p),
+    base,
+    ext,
+    name: base.slice(0, base.length - ext.length)
+  }
 }

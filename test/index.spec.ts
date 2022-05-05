@@ -29,23 +29,27 @@ runTest('isAbsolute', isAbsolute, {
   'bar/baz': false
 })
 
-runTest('basename', basename, {
+runTest('basename', basename, [
   // POSIX
-  'C:\\temp\\myfile.html': 'myfile.html',
-  '\\temp\\myfile.html': 'myfile.html',
-  '.\\myfile.html': 'myfile.html',
+  ['C:\\temp\\myfile.html', 'myfile.html'],
+  ['\\temp\\myfile.html', 'myfile.html'],
+  ['.\\myfile.html', 'myfile.html'],
+  ['.\\myfile.html', '.html', 'myfile'],
 
   // Windows
-  '/temp/myfile.html': 'myfile.html',
-  './myfile.html': 'myfile.html'
-})
+  ['/temp/myfile.html', 'myfile.html'],
+  ['./myfile.html', 'myfile.html'],
+  ['./myfile.html', '.html', 'myfile']
+])
 
 runTest('dirname', dirname, {
   // POSIX
+  '/temp/': '/',
   '/temp/myfile.html': '/temp',
   './myfile.html': '.',
 
   // Windows
+  'C:\\temp\\': 'C:',
   'C:\\temp\\myfile.html': 'C:/temp',
   '\\temp\\myfile.html': '/temp',
   '.\\myfile.html': '.'
@@ -126,13 +130,27 @@ it('parse', () => {
     ext: '.txt',
     name: 'file'
   })
+  expect(parse('./dir/file')).to.deep.equal({
+    root: '.',
+    dir: './dir',
+    base: 'file',
+    ext: '',
+    name: 'file'
+  })
 
   // Windows
   expect(parse('C:\\path\\dir\\file.txt')).to.deep.equal({
-    root: '', // 'C:/',
+    root: 'C:',
     dir: 'C:/path/dir',
     base: 'file.txt',
     ext: '.txt',
+    name: 'file'
+  })
+  expect(parse('.\\dir\\file')).to.deep.equal({
+    root: '.',
+    dir: './dir',
+    base: 'file',
+    ext: '',
     name: 'file'
   })
 })
@@ -169,7 +187,7 @@ runTest('toNamespacedPath', toNamespacedPath, {
   'C:\\foo\\bar': 'C:/foo/bar'
 })
 
-describe('contatants', () => {
+describe('constants', () => {
   it('delimiter should equal :', () => {
     expect(delimiter).to.equal(':')
   })
