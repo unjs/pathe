@@ -17,11 +17,12 @@
     "dist"
   ],
   "scripts": {
-    "build": "siroc build",
+    "build": "unbuild",
+    "dev": "vitest",
     "lint": "eslint --ext .ts .",
-    "prepublishOnly": "yarn build",
-    "release": "yarn vitest run && standard-version && git push --follow-tags && npm publish",
-    "test": "vitest"
+    "prepublishOnly": "pnpm build",
+    "release": "pnpm vitest run && standard-version && git push --follow-tags && pnpm publish",
+    "test": "pnpm lint && vitest run --coverage"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
@@ -29,9 +30,9 @@
     "c8": "^7.11.2",
     "eslint": "latest",
     "jiti": "^1.13.0",
-    "siroc": "latest",
     "standard-version": "latest",
     "typescript": "^4.6.4",
     "vitest": "^0.10.4"
-  }
+  },
+  "packageManager": "pnpm@7.0.0"
 }

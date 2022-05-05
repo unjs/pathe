@@ -1,12 +1,10 @@
 # pathe
 
-> Normalized paths for Node.js
+> Universal `path` module
 
 [![version][npm-v-src]][npm-v-href]
 [![downloads][npm-d-src]][npm-d-href]
 [![size][size-src]][size-href]
-
-🧪 This package is still experimental and might not handle all cases. Please track issues.
 
 ## ❓ Why
 
@@ -15,18 +13,23 @@ For [historical reasons](https://docs.microsoft.com/en-us/archive/blogs/larryost
 
 [Node.js's built in `path` module](https://nodejs.org/api/path.html) in the default operation of the path module varies based on the operating system on which a Node.js application is running. Specifically, when running on a Windows operating system, the path module will assume that Windows-style paths are being used. **This makes inconsistent code behavior between Windows and POSIX.**
 
-This package is a drop-in replacement of the Node.js's `path` module and ensures paths are normalized with slash `/`.
+This package is a drop-in replacement of the Node.js's `path` module and ensures paths are normalized with slash `/` and work in environments without Node.js as well!
 
-Compared to popular [upath](https://github.com/anodynos/upath), pathe is providing **identical exports** of Node.js with normalization on **all operations** and written in modern **ESM/Typescript**.
+Compared to popular [upath](https://github.com/anodynos/upath), pathe is providing **identical exports** of Node.js with normalization on **all operations** and written in modern **ESM/Typescript** and has **no dependency on Node.js**!
 
 ## 💿 Install
 
 Install using npm or yarn:
 
 ```bash
+# npm
 npm i pathe
-# or
+
+# yarn
 yarn add pathe
+
+# pnpm
+pnpm i pathe
 ```
 
 Import:

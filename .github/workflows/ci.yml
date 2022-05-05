@@ -1,4 +1,3 @@
-
 name: ci
 
 on:
@@ -11,18 +10,16 @@ on:
 
 jobs:
   ci:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: corepack enable
       - uses: actions/setup-node@v3
         with:
-          node-version: '14'
-          cache: yarn
-      - run: yarn install
-      - run: yarn lint
-      - run: yarn test --coverage
+          node-version: 16
+          cache: "pnpm"
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm vitest --coverage
+      - uses: codecov/codecov-action@v3
