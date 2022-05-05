@@ -25,13 +25,13 @@
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@types/node": "^16.9.6",
+    "@types/node": "^16.11.33",
     "c8": "^7.11.2",
     "eslint": "latest",
-    "jiti": "^1.12.3",
+    "jiti": "^1.13.0",
     "siroc": "latest",
     "standard-version": "latest",
-    "typescript": "^4.4.3",
+    "typescript": "^4.6.4",
     "vitest": "^0.10.2"
   }
 }
