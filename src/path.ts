@@ -206,7 +206,8 @@ export const dirname: typeof path.dirname = function (p) {
 
 // format
 export const format: typeof path.format = function (p) {
-  return normalizeWindowsPath(resolve(p.root, p.dir, p.base ?? (p.name + p.ext)))
+  const segments = [p.root, p.dir, p.base ?? (p.name + p.ext)].filter(Boolean)
+  return normalizeWindowsPath(p.root ? resolve(...segments) : segments.join('/'))
 }
 
 // basename

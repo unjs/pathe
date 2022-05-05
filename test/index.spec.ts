@@ -71,8 +71,10 @@ runTest('format', format, [
   [{ root: '/ignored', dir: '/home/user/dir', base: 'file.txt' }, '/home/user/dir/file.txt'],
   [{ root: '/', base: 'file.txt', ext: 'ignored' }, '/file.txt'],
   [{ root: '/', name: 'file', ext: '.txt' }, '/file.txt'],
+  [{ name: 'file', ext: '.txt' }, 'file.txt'],
 
   // Windows
+  [{ name: 'file', base: 'file.txt' }, 'file.txt'],
   [{ dir: 'C:\\path\\dir', base: 'file.txt' }, 'C:/path/dir/file.txt']
 ])
 
