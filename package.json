@@ -32,6 +32,6 @@
     "siroc": "latest",
     "standard-version": "latest",
     "typescript": "^4.6.4",
-    "vitest": "^0.10.2"
+    "vitest": "^0.10.4"
   }
 }
