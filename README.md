@@ -1,6 +1,6 @@
 # pathe
 
-> Universal `path` module
+> Universal `path` utils
 
 [![version][npm-v-src]][npm-v-href]
 [![downloads][npm-d-src]][npm-d-href]

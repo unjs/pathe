@@ -1,7 +1,7 @@
 {
   "name": "pathe",
   "version": "0.2.0",
-  "description": "Normalized paths for Node.js",
+  "description": "Universal path utils",
   "repository": "unjs/pathe",
   "license": "MIT",
   "sideEffects": false,
