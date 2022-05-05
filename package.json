@@ -32,6 +32,7 @@
     "jiti": "^1.13.0",
     "standard-version": "latest",
     "typescript": "^4.6.4",
+    "unbuild": "^0.7.4",
     "vitest": "^0.10.4"
   },
   "packageManager": "pnpm@7.0.0"
