@@ -20,21 +20,18 @@
     "build": "siroc build",
     "lint": "eslint --ext .ts .",
     "prepublishOnly": "yarn build",
-    "release": "yarn test && standard-version && git push --follow-tags && npm publish",
-    "test": "nyc mocha -r jiti/register test/*"
+    "release": "yarn vitest run && standard-version && git push --follow-tags && npm publish",
+    "test": "vitest"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@types/chai": "^4.2.22",
-    "@types/mocha": "^9.0.0",
     "@types/node": "^16.9.6",
-    "chai": "^4.3.4",
+    "c8": "^7.11.2",
     "eslint": "latest",
     "jiti": "^1.12.3",
-    "mocha": "^9.1.1",
-    "nyc": "^15.1.0",
     "siroc": "latest",
     "standard-version": "latest",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "vitest": "^0.10.2"
   }
 }

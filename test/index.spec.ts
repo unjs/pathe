@@ -1,4 +1,4 @@
-import { expect } from 'chai'
+import { describe, expect, it } from 'vitest'
 
 import { basename, dirname, extname, format, parse, relative, delimiter, isAbsolute, join, normalize, resolve, sep, toNamespacedPath } from '../src'
 
@@ -29,23 +29,27 @@ runTest('isAbsolute', isAbsolute, {
   'bar/baz': false
 })
 
-runTest('basename', basename, {
+runTest('basename', basename, [
   // POSIX
-  'C:\\temp\\myfile.html': 'myfile.html',
-  '\\temp\\myfile.html': 'myfile.html',
-  '.\\myfile.html': 'myfile.html',
+  ['C:\\temp\\myfile.html', 'myfile.html'],
+  ['\\temp\\myfile.html', 'myfile.html'],
+  ['.\\myfile.html', 'myfile.html'],
+  ['.\\myfile.html', '.html', 'myfile'],
 
   // Windows
-  '/temp/myfile.html': 'myfile.html',
-  './myfile.html': 'myfile.html'
-})
+  ['/temp/myfile.html', 'myfile.html'],
+  ['./myfile.html', 'myfile.html'],
+  ['./myfile.html', '.html', 'myfile']
+])
 
 runTest('dirname', dirname, {
   // POSIX
+  '/temp/': '/',
   '/temp/myfile.html': '/temp',
   './myfile.html': '.',
 
   // Windows
+  'C:\\temp\\': 'C:',
   'C:\\temp\\myfile.html': 'C:/temp',
   '\\temp\\myfile.html': '/temp',
   '.\\myfile.html': '.'
@@ -67,8 +71,10 @@ runTest('format', format, [
   [{ root: '/ignored', dir: '/home/user/dir', base: 'file.txt' }, '/home/user/dir/file.txt'],
   [{ root: '/', base: 'file.txt', ext: 'ignored' }, '/file.txt'],
   [{ root: '/', name: 'file', ext: '.txt' }, '/file.txt'],
+  [{ name: 'file', ext: '.txt' }, 'file.txt'],
 
   // Windows
+  [{ name: 'file', base: 'file.txt' }, 'file.txt'],
   [{ dir: 'C:\\path\\dir', base: 'file.txt' }, 'C:/path/dir/file.txt']
 ])
 
@@ -126,13 +132,27 @@ it('parse', () => {
     ext: '.txt',
     name: 'file'
   })
+  expect(parse('./dir/file')).to.deep.equal({
+    root: '.',
+    dir: './dir',
+    base: 'file',
+    ext: '',
+    name: 'file'
+  })
 
   // Windows
   expect(parse('C:\\path\\dir\\file.txt')).to.deep.equal({
-    root: '', // 'C:/',
+    root: 'C:',
     dir: 'C:/path/dir',
     base: 'file.txt',
     ext: '.txt',
+    name: 'file'
+  })
+  expect(parse('.\\dir\\file')).to.deep.equal({
+    root: '.',
+    dir: './dir',
+    base: 'file',
+    ext: '',
     name: 'file'
   })
 })
@@ -169,7 +189,7 @@ runTest('toNamespacedPath', toNamespacedPath, {
   'C:\\foo\\bar': 'C:/foo/bar'
 })
 
-describe('contatants', () => {
+describe('constants', () => {
   it('delimiter should equal :', () => {
     expect(delimiter).to.equal(':')
   })
