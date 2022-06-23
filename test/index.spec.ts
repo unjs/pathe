@@ -79,6 +79,8 @@ runTest('format', format, [
 ])
 
 runTest('join', join, [
+  ['/', '/path', '/path'],
+  ['/test//', '//path', '/test/path'],
   ['some/nodejs/deep', '../path', 'some/nodejs/path'],
   ['./some/local/unix/', '../path', 'some/local/path'],
   ['./some\\current\\mixed', '..\\path', 'some/current/path'],
@@ -167,6 +169,7 @@ runTest('relative', relative, [
 
 runTest('resolve', resolve, [
   // POSIX
+  ['/', '/path', '/path'],
   ['/foo/bar', './baz', '/foo/bar/baz'],
   ['/foo/bar', '/tmp/file/', '/tmp/file'],
   ['wwwroot', 'static_files/png/', '../gif/image.gif', `${process.cwd()}/wwwroot/static_files/gif/image.gif`],
