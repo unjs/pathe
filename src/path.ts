@@ -70,7 +70,7 @@ export const join: typeof path.join = function (...args) {
     return '.'
   }
 
-  return normalize(joined)
+  return normalize(joined.replace(/\/\/+/g, '/'))
 }
 
 // resolve
