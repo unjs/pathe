@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/unjs/pathe/compare/v0.3.0...v0.3.1) (2022-06-27)
+
+
+### Bug Fixes
+
+* replace double-slashes in `join` calls ([#17](https://github.com/unjs/pathe/issues/17)) ([fd57079](https://github.com/unjs/pathe/commit/fd57079ac8ac597b31c4e5f3dd56a2d39eae20a6))
+* return `.` as dirname fallback for non-absolute paths ([#19](https://github.com/unjs/pathe/issues/19)) ([e15d5da](https://github.com/unjs/pathe/commit/e15d5da0efba221209190deb2f3f98466f135d78))
+
 ## [0.3.0](https://github.com/unjs/pathe/compare/v0.2.0...v0.3.0) (2022-05-05)
 
 
