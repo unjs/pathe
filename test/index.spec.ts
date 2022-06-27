@@ -44,6 +44,7 @@ runTest('basename', basename, [
 
 runTest('dirname', dirname, {
   // POSIX
+  'test.html': '.',
   '/temp/': '/',
   '/temp/myfile.html': '/temp',
   './myfile.html': '.',
