@@ -201,7 +201,7 @@ export const relative: typeof path.relative = function (from, to) {
 
 // dirname
 export const dirname: typeof path.dirname = function (p) {
-  return normalizeWindowsPath(p).replace(/\/$/, '').split('/').slice(0, -1).join('/') || '/'
+  return normalizeWindowsPath(p).replace(/\/$/, '').split('/').slice(0, -1).join('/') || (isAbsolute(p) ? '/' : '.')
 }
 
 // format
