@@ -182,9 +182,10 @@ export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
 }
 
 // extname
+const _EXTNAME_RE = /(?<!^)\.[^/.]+$/
 export const extname: typeof path.extname = function (p) {
-  const segments = normalizeWindowsPath(p).split('/').pop().split('.')
-  return segments.length > 1 ? `.${segments.pop()}` : ''
+  const match = _EXTNAME_RE.exec(normalizeWindowsPath(p))
+  return (match && match[0]) || ''
 }
 
 // relative

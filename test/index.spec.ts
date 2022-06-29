@@ -61,6 +61,14 @@ runTest('extname', extname, {
   '/temp/myfile.html': '.html',
   './myfile.html': '.html',
 
+  '.foo': '',
+  '..foo': '.foo',
+  'foo.123': '.123',
+  '..': '',
+  '.': '',
+  './': '',
+  // '...': '.', // TODO: Edge case behavior of Node?
+
   // Windows
   'C:\\temp\\myfile.html': '.html',
   '\\temp\\myfile.html': '.html',
