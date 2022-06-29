@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@nuxtjs/eslint-config-typescript': latest
-  '@types/node': ^16.11.41
+  '@types/node': ^16.11.42
   c8: ^7.11.3
   eslint: latest
   jiti: ^1.14.0
@@ -13,7 +13,7 @@ specifiers:
 
 devDependencies:
   '@nuxtjs/eslint-config-typescript': 10.0.0_b5e7v2qnwxfo6hmiq56u52mz3e
-  '@types/node': 16.11.41
+  '@types/node': 16.11.42
   c8: 7.11.3
   eslint: 8.18.0
   jiti: 1.14.0
@@ -473,8 +473,8 @@ packages:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
     dev: true
 
-  /@types/node/16.11.41:
-    resolution: {integrity: sha512-mqoYK2TnVjdkGk8qXAVGc/x9nSaTpSrFaGFm43BUH3IdoBV0nta6hYaGmdOvIMlbHJbUEVen3gvwpwovAZKNdQ==}
+  /@types/node/16.11.42:
+    resolution: {integrity: sha512-iwLrPOopPy6V3E+1yHTpJea3bdsNso0b0utLOJJwaa/PLzqBt3GZl3stMcakc/gr89SfcNk2ki3z7Gvue9hYGQ==}
     dev: true
 
   /@types/normalize-package-data/2.4.1:
@@ -484,7 +484,7 @@ packages:
   /@types/resolve/1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 16.11.41
+      '@types/node': 16.11.42
     dev: true
 
   /@typescript-eslint/eslint-plugin/5.22.0_oaqhgdaqcfyejx4blfvetkodaq:
@@ -3816,7 +3816,7 @@ packages:
     dependencies:
       '@types/chai': 4.3.1
       '@types/chai-subset': 1.3.3
-      '@types/node': 16.11.41
+      '@types/node': 16.11.42
       c8: 7.11.3
       chai: 4.3.6
       debug: 4.3.4
