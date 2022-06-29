@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/unjs/pathe/compare/v0.3.1...v0.3.2) (2022-06-29)
+
+
+### Bug Fixes
+
+* **extname:** handle edge cases wirth leading dot ([dfe46d7](https://github.com/unjs/pathe/commit/dfe46d79035dd7302bb55b84cc445db07e8dde7f)), closes [#21](https://github.com/unjs/pathe/issues/21)
+
 ### [0.3.1](https://github.com/unjs/pathe/compare/v0.3.0...v0.3.1) (2022-06-27)
 
 
