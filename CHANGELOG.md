@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.3](https://github.com/unjs/pathe/compare/v0.3.2...v0.3.3) (2022-08-01)
+
+
+### Bug Fixes
+
+* normalize `process.cwd` on windows ([#31](https://github.com/unjs/pathe/issues/31)) ([a7b0f7b](https://github.com/unjs/pathe/commit/a7b0f7bcf150f82bc9e98109fb52bf394dfdc7ae))
+
 ### [0.3.2](https://github.com/unjs/pathe/compare/v0.3.1...v0.3.2) (2022-06-29)
 
 
