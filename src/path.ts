@@ -82,7 +82,7 @@ export const resolve: typeof path.resolve = function (...args) {
   let resolvedAbsolute = false
 
   for (let i = args.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    const path = i >= 0 ? args[i] : normalize(process.cwd())
+    const path = i >= 0 ? args[i] : process.cwd().replace(/\\/g, '/')
 
     // Skip empty entries
     if (path.length === 0) {
