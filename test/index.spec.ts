@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { basename, dirname, extname, format, parse, relative, delimiter, isAbsolute, join, normalize, resolve, sep, toNamespacedPath } from '../src'
 
