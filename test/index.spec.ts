@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, afterAll, describe, expect, it, vi } from 'vitest'
 
 import { basename, dirname, extname, format, parse, relative, delimiter, isAbsolute, join, normalize, resolve, sep, toNamespacedPath } from '../src'
 
@@ -171,9 +171,11 @@ it('parse', () => {
 runTest('relative', relative, [
   // POSIX
   ['/data/orandea/test/aaa', '/data/orandea/impl/bbb', '../../impl/bbb'],
+  [() => process.cwd(), './dist/client/b-scroll.d.ts', 'dist/client/b-scroll.d.ts'],
 
   // Windows
-  ['C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb', '../../impl/bbb']
+  ['C:\\orandea\\test\\aaa', 'C:\\orandea\\impl\\bbb', '../../impl/bbb'],
+  [() => process.cwd(), './dist/client/b-scroll.d.ts', 'dist/client/b-scroll.d.ts']
 ])
 
 runTest('resolve', resolve, [
@@ -181,13 +183,13 @@ runTest('resolve', resolve, [
   ['/', '/path', '/path'],
   ['/foo/bar', './baz', '/foo/bar/baz'],
   ['/foo/bar', '/tmp/file/', '/tmp/file'],
-  ['wwwroot', 'static_files/png/', '../gif/image.gif', `${process.cwd()}/wwwroot/static_files/gif/image.gif`],
+  ['wwwroot', 'static_files/png/', '../gif/image.gif', () => `${process.cwd().replace(/\\/g, '/')}/wwwroot/static_files/gif/image.gif`],
 
   // Windows
   ['C:\\foo\\bar', '.\\baz', 'C:/foo/bar/baz'],
   ['\\foo\\bar', '.\\baz', '/foo/bar/baz'],
   ['\\foo\\bar', '\\tmp\\file\\', '/tmp/file'],
-  ['wwwroot', 'static_files\\png\\', '..\\gif\\image.gif', `${process.cwd()}/wwwroot/static_files/gif/image.gif`],
+  ['wwwroot', 'static_files\\png\\', '..\\gif\\image.gif', () => `${process.cwd().replace(/\\/g, '/')}/wwwroot/static_files/gif/image.gif`],
   ['C:\\Windows\\path\\only', '../../reports', 'C:/Windows/reports'],
   ['C:\\Windows\\long\\path\\mixed/with/unix', '../..', '..\\../reports', 'C:/Windows/long/reports']
 ])
@@ -212,7 +214,11 @@ describe('constants', () => {
 })
 
 function _s (item) {
-  return JSON.stringify(item).replace(/"/g, '\'')
+  return JSON.stringify(_r(item)).replace(/"/g, '\'')
+}
+
+function _r (item) {
+  return typeof item === 'function' ? item() : item
 }
 
 export function runTest (name, fn, items) {
@@ -220,11 +226,18 @@ export function runTest (name, fn, items) {
     items = Object.entries(items).map(e => e.flat())
   }
   describe(`${name}`, () => {
+    let cwd
     for (const item of items) {
       const expected = item.pop()
       const args = item
       it(`${name}(${args.map(_s).join(',')}) should be ${_s(expected)}`, () => {
-        expect(fn(...args)).to.equal(expected)
+        expect(fn(...args.map(_r))).to.equal(_r(expected))
+      })
+      it(`${name}(${args.map(_s).join(',')}) should be ${_s(expected)} on Windows`, () => {
+        cwd = process.cwd
+        process.cwd = vi.fn(() => 'C:\\Windows\\path\\only')
+        expect(fn(...args.map(_r))).to.equal(_r(expected))
+        process.cwd = cwd
       })
     }
   })
