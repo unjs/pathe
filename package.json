@@ -33,7 +33,7 @@
     "standard-version": "latest",
     "typescript": "^4.7.4",
     "unbuild": "^0.7.6",
-    "vitest": "^0.20.1"
+    "vitest": "^0.20.2"
   },
   "packageManager": "pnpm@7.8.0"
 }
