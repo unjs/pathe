@@ -3,9 +3,19 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "paths": {
+      "pathe/utils": [
+        "./src/utils"
+      ],
+      "pathe": [
+        "./src/index"
+      ]
+    },
   },
   "include": [
-    "src"
+    "src",
+    "test"
   ]
 }

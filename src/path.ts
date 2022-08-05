@@ -8,7 +8,7 @@ Check LICENSE file
 
 import type path from 'path'
 
-import { normalizeWindowsPath } from './utils'
+import { normalizeWindowsPath } from './_internal'
 
 const _UNC_REGEX = /^[/][/]/
 const _UNC_DRIVE_REGEX = /^[/][/]([.]{1,2}[/])?([a-zA-Z]):[/]/

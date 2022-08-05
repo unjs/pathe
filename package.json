@@ -9,6 +9,10 @@
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
+    },
+    "./utils": {
+      "import": "./dist/utils.mjs",
+      "require": "./dist/utils.cjs"
     }
   },
   "main": "./dist/index.cjs",
@@ -22,7 +26,8 @@
     "lint": "eslint --ext .ts .",
     "prepublishOnly": "pnpm build",
     "release": "pnpm vitest run && standard-version && git push --follow-tags && pnpm publish",
-    "test": "pnpm lint && vitest run --coverage"
+    "test": "pnpm lint && vitest run --coverage",
+    "test:types": "tsc --noEmit"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
