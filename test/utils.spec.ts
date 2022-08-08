@@ -7,12 +7,14 @@ describe('resolveAliases', () => {
     expect(resolveAliases({
       '@foo/bar': '@foo/bar/dist/index.mjs',
       '@foo/bar/utils': '@foo/bar/dist/utils.mjs',
-      '@': '/root'
+      '@': '/root',
+      bingpot: '@/bingpot/index.ts'
     })).toMatchInlineSnapshot(`
       {
         "@": "/root",
         "@foo/bar": "@foo/bar/dist/index.mjs",
         "@foo/bar/utils": "@foo/bar/dist/utils.mjs",
+        "bingpot": "/root/bingpot/index.ts",
       }
     `)
   })
