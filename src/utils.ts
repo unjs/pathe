@@ -1,5 +1,3 @@
-import { basename } from 'pathe'
-
 export function resolveAliases (_aliases: Record<string, string>) {
   // Sort aliases from specific to general (ie. fs/promises before fs)
   const aliases = Object.fromEntries(Object.entries(_aliases).sort(([a], [b]) =>
@@ -25,6 +23,8 @@ export function sortPaths (paths: string[]) {
   )
 }
 
+const FILENAME_RE = /(?<=^|\/)([^/]+?)(?=(\.[^.]+)?$)/
+
 export function filename (path: string) {
-  return basename(path).replace(/\.[^.]+$/, '')
+  return path.match(FILENAME_RE)?.[0]
 }
