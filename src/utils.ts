@@ -1,6 +1,6 @@
 const pathSeparators = ['/', '\\', undefined]
 
-export function resolveAliases (_aliases: Record<string, string>) {
+export function normalizeAliases (_aliases: Record<string, string>) {
   // Sort aliases from specific to general (ie. fs/promises before fs)
   const aliases = Object.fromEntries(Object.entries(_aliases).sort(([a], [b]) => comparePaths(a, b)))
   // Resolve alias values in relation to each other

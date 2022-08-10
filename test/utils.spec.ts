@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { resolveAliases, sortPaths, comparePaths, filename } from '../src/utils'
+import { normalizeAliases, sortPaths, comparePaths, filename } from '../src/utils'
 
-describe('resolveAliases', () => {
+describe('normalizeAliases', () => {
   it('should work', () => {
-    expect(resolveAliases({
+    expect(normalizeAliases({
       '@foo/bar': '@foo/bar/dist/index.mjs',
       '@foo/bar/utils': '@foo/bar/dist/utils.mjs',
       '@': '/root',
