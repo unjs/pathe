@@ -33,6 +33,18 @@ describe('sortPaths', () => {
       ]
     `)
   })
+
+  it.todo('compare unrelated prefixes', () => {
+    expect(sortPaths([
+      'path/to/1.intro/foo/bar',
+      'path/to/2.guide/foo/bar/baz',
+    ])).toMatchInlineSnapshot(`
+      [
+        "path/to/2.guide/foo/bar/baz",
+        "path/to/1.intro/foo/bar",
+      ]
+    `)
+  })
 })
 
 describe('comparePaths', () => {
