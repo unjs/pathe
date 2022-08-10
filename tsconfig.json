@@ -3,9 +3,11 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
+    "skipLibCheck": true,
     "esModuleInterop": true
   },
   "include": [
-    "src"
+    "src",
+    "test"
   ]
 }

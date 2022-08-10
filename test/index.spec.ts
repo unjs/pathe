@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { basename, dirname, extname, format, parse, relative, delimiter, isAbsolute, join, normalize, resolve, sep, toNamespacedPath, normalizeString } from '../src'
 
-import { normalizeWindowsPath } from '../src/utils'
+import { normalizeWindowsPath } from '../src/_internal'
 
 runTest('normalizeWindowsPath', normalizeWindowsPath, {
   // POSIX
