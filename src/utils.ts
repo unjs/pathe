@@ -1,8 +1,8 @@
 const pathSeparators = ['/', '\\', undefined]
 
-export function normalizeAliases (_aliases: Record<string, string>) {
+export function resolveAliases (_aliases: Record<string, string>) {
   // Sort aliases from specific to general (ie. fs/promises before fs)
-  const aliases = Object.fromEntries(Object.entries(_aliases).sort(([a], [b]) => comparePaths(a, b)))
+  const aliases = Object.fromEntries(Object.entries(_aliases).sort(([a], [b]) => compareAliases(a, b)))
   // Resolve alias values in relation to each other
   for (const key in aliases) {
     for (const alias in aliases) {
@@ -17,11 +17,11 @@ export function normalizeAliases (_aliases: Record<string, string>) {
   return aliases
 }
 
-export function sortPaths (paths: string[]) {
-  return paths.sort(comparePaths)
+export function sortAliases (paths: string[]) {
+  return paths.sort(compareAliases)
 }
 
-export const comparePaths = (a: string, b: string) => (b.split('/').length - a.split('/').length) || (b.length - a.length)
+const compareAliases = (a: string, b: string) => b.split('/').length - a.split('/').length
 
 const FILENAME_RE = /(?<=^|[\\/])([^\\/]+?)(?=(\.[^.]+)?$)/
 

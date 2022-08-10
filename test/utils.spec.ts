@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { normalizeAliases, sortPaths, comparePaths, filename } from '../src/utils'
+import { resolveAliases, sortAliases, filename } from '../src/utils'
 
-describe('normalizeAliases', () => {
+describe('resolveAliases', () => {
   it('should work', () => {
-    expect(normalizeAliases({
+    expect(resolveAliases({
       '@foo/bar': '@foo/bar/dist/index.mjs',
       '@foo/bar/utils': '@foo/bar/dist/utils.mjs',
       '@': '/root',
@@ -22,14 +22,14 @@ describe('normalizeAliases', () => {
   })
 })
 
-describe('sortPaths', () => {
+describe('sortAliases', () => {
   it('should work', () => {
-    expect(sortPaths(['a/foo', 'a/foo-barbaz', 'a/foo/bar', 'a/b/c'])).toMatchInlineSnapshot(`
+    expect(sortAliases(['a/foo', 'a/foo-barbaz', 'a/foo/bar', 'a/b/c'])).toMatchInlineSnapshot(`
       [
         "a/foo/bar",
         "a/b/c",
-        "a/foo-barbaz",
         "a/foo",
+        "a/foo-barbaz",
       ]
     `)
   })
@@ -44,12 +44,6 @@ describe('sortPaths', () => {
         "path/to/1.intro/foo/bar",
       ]
     `)
-  })
-})
-
-describe('comparePaths', () => {
-  it('should work', () => {
-    expect(comparePaths('foo', 'foo/bar')).toEqual(1)
   })
 })
 
