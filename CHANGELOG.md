@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.4](https://github.com/unjs/pathe/compare/v0.3.3...v0.3.4) (2022-08-10)
+
+
+### Features
+
+* add `normalizeAliases` and `filename` in `/utils` subpath ([#34](https://github.com/unjs/pathe/issues/34)) ([1ece780](https://github.com/unjs/pathe/commit/1ece780a7568d2151c4f839481759997101a0e93))
+
+
+### Bug Fixes
+
+* improve windows path handling and improve coverage ([#36](https://github.com/unjs/pathe/issues/36)) ([34a55cf](https://github.com/unjs/pathe/commit/34a55cf41c9da75d63bff9abc3d5b0b50068b6ac))
+
 ### [0.3.3](https://github.com/unjs/pathe/compare/v0.3.2...v0.3.3) (2022-08-01)
 
 
