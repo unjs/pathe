@@ -8,13 +8,15 @@ describe('resolveAliases', () => {
       '@foo/bar': '@foo/bar/dist/index.mjs',
       '@foo/bar/utils': '@foo/bar/dist/utils.mjs',
       '@': '/root',
-      bingpot: '@/bingpot/index.ts'
+      bingpot: '@/bingpot/index.ts',
+      unchanged: '@bingpot/index.ts'
     })).toMatchInlineSnapshot(`
       {
         "@": "/root",
         "@foo/bar": "@foo/bar/dist/index.mjs",
         "@foo/bar/utils": "@foo/bar/dist/utils.mjs",
         "bingpot": "/root/bingpot/index.ts",
+        "unchanged": "@bingpot/index.ts",
       }
     `)
   })

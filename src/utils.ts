@@ -1,15 +1,15 @@
+const pathSeparators = ['/', '\\', undefined]
+
 export function resolveAliases (_aliases: Record<string, string>) {
   // Sort aliases from specific to general (ie. fs/promises before fs)
   const aliases = Object.fromEntries(Object.entries(_aliases).sort(([a], [b]) => comparePaths(a, b)))
   // Resolve alias values in relation to each other
   for (const key in aliases) {
     for (const alias in aliases) {
-      // Don't resolve @foo/bar
-      if (alias === '@' && !aliases[key].startsWith('@/')) { continue }
       // don't resolve a more specific alias with regard to a less specific one
       if (alias === key || key.startsWith(alias)) { continue }
 
-      if (aliases[key].startsWith(alias)) {
+      if (aliases[key].startsWith(alias) && pathSeparators.includes(aliases[key][alias.length])) {
         aliases[key] = aliases[alias] + aliases[key].slice(alias.length)
       }
     }
