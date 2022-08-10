@@ -10,9 +10,9 @@ import type path from 'path'
 
 import { normalizeWindowsPath } from './_internal'
 
-const _UNC_REGEX = /^[/][/]/
-const _UNC_DRIVE_REGEX = /^[/][/]([.]{1,2}[/])?([a-zA-Z]):[/]/
-const _IS_ABSOLUTE_RE = /^\/|^\\|^[a-zA-Z]:[/\\]/
+const _UNC_REGEX = /^[\\/]{2}/
+const _IS_ABSOLUTE_RE = /^[\\/](?![\\/])|^[\\/]{2}(?!\.)|^[a-zA-Z]:[\\/]/
+const _DRIVE_LETTER_RE = /^[a-zA-Z]:$/
 
 // Force POSIX contants
 export const sep = '/'
@@ -26,7 +26,6 @@ export const normalize: typeof path.normalize = function (path: string) {
   path = normalizeWindowsPath(path)
 
   const isUNCPath = path.match(_UNC_REGEX)
-  const hasUNCDrive = isUNCPath && path.match(_UNC_DRIVE_REGEX)
   const isPathAbsolute = isAbsolute(path)
   const trailingSeparator = path[path.length - 1] === '/'
 
@@ -38,9 +37,10 @@ export const normalize: typeof path.normalize = function (path: string) {
     return trailingSeparator ? './' : '.'
   }
   if (trailingSeparator) { path += '/' }
+  if (_DRIVE_LETTER_RE.test(path)) { path += '/' }
 
   if (isUNCPath) {
-    if (hasUNCDrive) {
+    if (!isPathAbsolute) {
       return `//./${path}`
     }
     return `//${path}`
@@ -58,7 +58,7 @@ export const join: typeof path.join = function (...args) {
   let joined: string
   for (let i = 0; i < args.length; ++i) {
     const arg = args[i]
-    if (arg.length > 0) {
+    if (arg && arg.length > 0) {
       if (joined === undefined) {
         joined = arg
       } else {
@@ -85,7 +85,7 @@ export const resolve: typeof path.resolve = function (...args) {
     const path = i >= 0 ? args[i] : process.cwd().replace(/\\/g, '/')
 
     // Skip empty entries
-    if (path.length === 0) {
+    if (!path || path.length === 0) {
       continue
     }
 
@@ -112,7 +112,7 @@ export function normalizeString (path: string, allowAboveRoot: boolean) {
   let lastSegmentLength = 0
   let lastSlash = -1
   let dots = 0
-  let char = null
+  let char: string | null = null
   for (let i = 0; i <= path.length; ++i) {
     if (i < path.length) {
       char = path[i]
@@ -126,8 +126,8 @@ export function normalizeString (path: string, allowAboveRoot: boolean) {
         // NOOP
       } else if (dots === 2) {
         if (res.length < 2 || lastSegmentLength !== 2 ||
-            res[res.length - 1] !== '.' ||
-            res[res.length - 2] !== '.') {
+          res[res.length - 1] !== '.' ||
+          res[res.length - 2] !== '.') {
           if (res.length > 2) {
             const lastSlashIndex = res.lastIndexOf('/')
             if (lastSlashIndex === -1) {
@@ -202,7 +202,11 @@ export const relative: typeof path.relative = function (from, to) {
 
 // dirname
 export const dirname: typeof path.dirname = function (p) {
-  return normalizeWindowsPath(p).replace(/\/$/, '').split('/').slice(0, -1).join('/') || (isAbsolute(p) ? '/' : '.')
+  const segments = normalizeWindowsPath(p).replace(/\/$/, '').split('/').slice(0, -1)
+  if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0])) {
+    segments[0] += '/'
+  }
+  return segments.join('/') || (isAbsolute(p) ? '/' : '.')
 }
 
 // format
