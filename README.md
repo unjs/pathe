@@ -1,23 +1,19 @@
-# pathe
+# 🛣️ pathe
 
-> Universal `path` utils
+> Universal filesystem path utils
 
 [![version][npm-v-src]][npm-v-href]
 [![downloads][npm-d-src]][npm-d-href]
 [![size][size-src]][size-href]
 
-## ❓ Why
+> **❓ Why**
+>
+> For [historical reasons](https://docs.microsoft.com/en-us/archive/blogs/larryosterman/why-is-the-dos-path-character), windows followed MS-DOS and using backslash for separating paths rather than slash used for macOS, Linux, and other Posix operating systems. Nowadays, [Windows](https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN) supports both Slash and Backslash for paths. [Node.js's built in `path` module](https://nodejs.org/api/path.html) in the default operation of the path module varies based on the operating system on which a Node.js application is running. Specifically, when running on a Windows operating system, the path module will assume that Windows-style paths are being used. **This makes inconsistent code behavior between Windows and POSIX.**
+> Compared to popular [upath](https://github.com/anodynos/upath), pathe is providing **identical exports** of Node.js with normalization on **all operations** and written in modern **ESM/Typescript** and has **no dependency on Node.js**!
 
-For [historical reasons](https://docs.microsoft.com/en-us/archive/blogs/larryosterman/why-is-the-dos-path-character), windows followed MS-DOS
- and using backslash for separating paths rather than slash used for macOS, Linux, and other Posix operating systems. Nowadays, [Windows](https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN) supports both Slash and Backslash for paths.
+This package is a drop-in replacement of the Node.js's [path module](https://nodejs.org/api/path.html) module and ensures paths are normalized with slash `/` and work in environments including Node.js.
 
-[Node.js's built in `path` module](https://nodejs.org/api/path.html) in the default operation of the path module varies based on the operating system on which a Node.js application is running. Specifically, when running on a Windows operating system, the path module will assume that Windows-style paths are being used. **This makes inconsistent code behavior between Windows and POSIX.**
-
-This package is a drop-in replacement of the Node.js's `path` module and ensures paths are normalized with slash `/` and work in environments without Node.js as well!
-
-Compared to popular [upath](https://github.com/anodynos/upath), pathe is providing **identical exports** of Node.js with normalization on **all operations** and written in modern **ESM/Typescript** and has **no dependency on Node.js**!
-
-## 💿 Install
+## 💿 Usage
 
 Install using npm or yarn:
 
@@ -43,6 +39,15 @@ const { resolve } = require('pathe')
 ```
 
 Read more about path utils from [Node.js documentation](https://nodejs.org/api/path.html) and rest assured behavior is ALWAYS like POSIX regardless of your input paths format and running platform!
+
+### Extra utilties
+
+Pathe exports some extra utilities that do not exist in standard Node.js [path module](https://nodejs.org/api/path.html).
+In order to use them, you can import from `pathe/utils` subpath:
+
+```js
+import { filename, normalizeAliases } from 'pathe/utils'
+```
 
 ## License
 
