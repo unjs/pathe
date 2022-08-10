@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { resolveAliases, sortAliases, filename } from '../src/utils'
+import { normalizeAliases, filename } from '../src/utils'
 
-describe('resolveAliases', () => {
+describe('normalizeAliases', () => {
   it('should work', () => {
-    expect(resolveAliases({
+    expect(normalizeAliases({
       '@foo/bar': '@foo/bar/dist/index.mjs',
       '@foo/bar/utils': '@foo/bar/dist/utils.mjs',
       '@': '/root',
@@ -18,19 +18,6 @@ describe('resolveAliases', () => {
         "bingpot": "/root/bingpot/index.ts",
         "unchanged": "@bingpot/index.ts",
       }
-    `)
-  })
-})
-
-describe('sortAliases', () => {
-  it('should work', () => {
-    expect(sortAliases(['a/foo', 'a/foo-barbaz', 'a/foo/bar', 'a/b/c'])).toMatchInlineSnapshot(`
-      [
-        "a/foo/bar",
-        "a/b/c",
-        "a/foo",
-        "a/foo-barbaz",
-      ]
     `)
   })
 })
