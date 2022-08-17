@@ -34,14 +34,14 @@
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@types/node": "^16.11.48",
+    "@types/node": "^16.11.49",
     "c8": "^7.12.0",
     "eslint": "latest",
     "jiti": "^1.14.0",
     "standard-version": "latest",
     "typescript": "^4.7.4",
     "unbuild": "^0.8.8",
-    "vitest": "^0.21.1"
+    "vitest": "^0.22.0"
   },
-  "packageManager": "pnpm@7.9.0"
+  "packageManager": "pnpm@7.9.3"
 }
