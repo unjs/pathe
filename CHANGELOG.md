@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.5](https://github.com/unjs/pathe/compare/v0.3.4...v0.3.5) (2022-08-18)
+
+
+### Bug Fixes
+
+* **extname:** avoid regex look-behinds for safari support ([#42](https://github.com/unjs/pathe/issues/42)) ([c0cec97](https://github.com/unjs/pathe/commit/c0cec976375514bc4b2239b7fde1314e5c83583e))
+
 ### [0.3.4](https://github.com/unjs/pathe/compare/v0.3.3...v0.3.4) (2022-08-10)
 
 
