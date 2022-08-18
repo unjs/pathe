@@ -17,10 +17,10 @@ export function normalizeAliases (_aliases: Record<string, string>) {
   return aliases
 }
 
-const FILENAME_RE = /(?<=^|[\\/])([^\\/]+?)(?=(\.[^.]+)?$)/
+const FILENAME_RE = /(^|[\\/])([^\\/]+?)(?=(\.[^.]+)?$)/
 
 export function filename (path: string) {
-  return path.match(FILENAME_RE)?.[0]
+  return path.match(FILENAME_RE)?.[2]
 }
 
 // --- internals ---
