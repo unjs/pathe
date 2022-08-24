@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "latest",
-    "@types/node": "^16.11.54",
+    "@types/node": "^16.11.56",
     "@vitest/coverage-c8": "^0.22.1",
     "c8": "^7.12.0",
     "eslint": "latest",
