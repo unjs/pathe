@@ -32,6 +32,7 @@ describe('alias', () => {
     }
     it('unchanged', () => {
       expect(resolveAlias('foo/bar.js', aliases)).toBe('foo/bar.js')
+      expect(resolveAlias('./bar.js', aliases)).toBe('./bar.js')
     })
   })
 })

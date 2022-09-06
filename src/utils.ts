@@ -1,4 +1,5 @@
-import { normalize, join } from './path'
+import { join } from './path'
+import { normalizeWindowsPath } from './_internal'
 
 const pathSeparators = ['/', '\\', undefined]
 
@@ -27,7 +28,7 @@ export function normalizeAliases (_aliases: Record<string, string>) {
 }
 
 export function resolveAlias (path: string, aliases: Record<string, string>) {
-  const _path = normalize(path)
+  const _path = normalizeWindowsPath(path)
   aliases = normalizeAliases(aliases)
   for (const alias in aliases) {
     if (_path.startsWith(alias)) {
