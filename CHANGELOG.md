@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.7](https://github.com/unjs/pathe/compare/v0.3.6...v0.3.7) (2022-09-06)
+
+
+### Bug Fixes
+
+* **resolveAlias:** preserve relative paths as is ([f3e5bcc](https://github.com/unjs/pathe/commit/f3e5bcc9c277ff4c9e6aeebdbdb19f9f26e1f62b))
+
 ### [0.3.6](https://github.com/unjs/pathe/compare/v0.3.5...v0.3.6) (2022-09-06)
 
 
