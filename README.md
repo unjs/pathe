@@ -46,7 +46,7 @@ Pathe exports some extra utilities that do not exist in standard Node.js [path m
 In order to use them, you can import from `pathe/utils` subpath:
 
 ```js
-import { filename, normalizeAliases } from 'pathe/utils'
+import { filename, normalizeAliases, resolveAlias } from 'pathe/utils'
 ```
 
 ## License

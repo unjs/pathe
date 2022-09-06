@@ -1,24 +1,38 @@
 import { describe, expect, it } from 'vitest'
 
-import { normalizeAliases, filename } from '../src/utils'
+import { normalizeAliases, filename, resolveAlias } from '../src/utils'
 
-describe('normalizeAliases', () => {
-  it('should work', () => {
-    expect(normalizeAliases({
-      '@foo/bar': '@foo/bar/dist/index.mjs',
-      '@foo/bar/utils': '@foo/bar/dist/utils.mjs',
-      '@': '/root',
-      bingpot: '@/bingpot/index.ts',
-      unchanged: '@bingpot/index.ts'
-    })).toMatchInlineSnapshot(`
+describe('alias', () => {
+  const _aliases = {
+    '@foo/bar': '@foo/bar/dist/index.mjs',
+    '@foo/bar/utils': '@foo/bar/dist/utils.mjs',
+    '@': '/root',
+    bingpot: '@/bingpot/index.ts',
+    test: '@bingpot/index.ts'
+  }
+  const aliases = normalizeAliases(_aliases)
+
+  it('normalizeAliases', () => {
+    expect(aliases).toMatchInlineSnapshot(`
       {
         "@": "/root",
         "@foo/bar": "@foo/bar/dist/index.mjs",
         "@foo/bar/utils": "@foo/bar/dist/utils.mjs",
         "bingpot": "/root/bingpot/index.ts",
-        "unchanged": "@bingpot/index.ts",
+        "test": "@bingpot/index.ts",
       }
     `)
+  })
+
+  describe('resolveAlias', () => {
+    for (const [from, to] of Object.entries(aliases)) {
+      it(from, () => {
+        expect(resolveAlias(from, aliases)).toBe(to)
+      })
+    }
+    it('unchanged', () => {
+      expect(resolveAlias('foo/bar.js', aliases)).toBe('foo/bar.js')
+    })
   })
 })
 

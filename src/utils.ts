@@ -1,3 +1,5 @@
+import { normalize, join } from './path'
+
 const pathSeparators = ['/', '\\', undefined]
 
 export function normalizeAliases (_aliases: Record<string, string>) {
@@ -15,6 +17,17 @@ export function normalizeAliases (_aliases: Record<string, string>) {
     }
   }
   return aliases
+}
+
+export function resolveAlias (path: string, aliases: Record<string, string>) {
+  const _path = normalize(path)
+  aliases = normalizeAliases(aliases)
+  for (const alias in aliases) {
+    if (_path.startsWith(alias)) {
+      return join(aliases[alias], _path.slice(alias.length))
+    }
+  }
+  return _path
 }
 
 const FILENAME_RE = /(^|[\\/])([^\\/]+?)(?=(\.[^.]+)?$)/
