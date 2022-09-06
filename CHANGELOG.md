@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.6](https://github.com/unjs/pathe/compare/v0.3.5...v0.3.6) (2022-09-06)
+
+
+### Features
+
+* `resolveAlias` utility ([f8b3c83](https://github.com/unjs/pathe/commit/f8b3c8334b43f222a637bb2ee922f2d10815b35d))
+
 ### [0.3.5](https://github.com/unjs/pathe/compare/v0.3.4...v0.3.5) (2022-08-18)
 
 
