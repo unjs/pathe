@@ -38,7 +38,7 @@
     "@vitest/coverage-c8": "^0.23.1",
     "c8": "^7.12.0",
     "eslint": "latest",
-    "jiti": "^1.14.0",
+    "jiti": "^1.15.0",
     "standard-version": "latest",
     "typescript": "^4.8.2",
     "unbuild": "^0.8.10",
