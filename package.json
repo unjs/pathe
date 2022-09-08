@@ -40,7 +40,7 @@
     "eslint": "latest",
     "jiti": "^1.15.0",
     "standard-version": "latest",
-    "typescript": "^4.8.2",
+    "typescript": "^4.8.3",
     "unbuild": "^0.8.10",
     "vitest": "^0.23.1"
   },
