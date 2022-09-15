@@ -62,12 +62,14 @@ runTest('basename', basename, [
   ['/temp/myfile.html', 'myfile.html'],
   ['./myfile.html', 'myfile.html'],
   ['./myfile.html', '.html', 'myfile'],
+  ['./undefined', undefined, 'undefined'],
 
   // Windows
   ['C:\\temp\\myfile.html', 'myfile.html'],
   ['\\temp\\myfile.html', 'myfile.html'],
   ['.\\myfile.html', 'myfile.html'],
-  ['.\\myfile.html', '.html', 'myfile']
+  ['.\\myfile.html', '.html', 'myfile'],
+  ['.\\undefined', undefined, 'undefined']
 ])
 
 runTest('dirname', dirname, {
