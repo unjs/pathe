@@ -3,26 +3,26 @@ lockfileVersion: 5.4
 specifiers:
   '@nuxtjs/eslint-config-typescript': latest
   '@types/node': ^16.11.59
-  '@vitest/coverage-c8': ^0.23.2
+  '@vitest/coverage-c8': ^0.23.4
   c8: ^7.12.0
   eslint: latest
   jiti: ^1.15.0
   standard-version: latest
   typescript: ^4.8.3
   unbuild: ^0.8.11
-  vitest: ^0.23.2
+  vitest: ^0.23.4
 
 devDependencies:
   '@nuxtjs/eslint-config-typescript': 11.0.0_irgkl5vooow2ydyo6aokmferha
   '@types/node': 16.11.59
-  '@vitest/coverage-c8': 0.23.2
+  '@vitest/coverage-c8': 0.23.4
   c8: 7.12.0
   eslint: 8.23.1
   jiti: 1.15.0
   standard-version: 9.5.0
   typescript: 4.8.3
   unbuild: 0.8.11
-  vitest: 0.23.2
+  vitest: 0.23.4
 
 packages:
 
@@ -659,11 +659,11 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitest/coverage-c8/0.23.2:
-    resolution: {integrity: sha512-VWT6zGj9iXEZCimnRLAUhf3siYVGIG9VryyMoo7B8zMOd+bnAbH8/7PhqvmjedVwa9wh61nkxqgG7/3Y/mzofQ==}
+  /@vitest/coverage-c8/0.23.4:
+    resolution: {integrity: sha512-jmD00a5DQH9gu9K+YdvVhcMuv2CzHvU4gCnySS40Ec5hKlXtlCzRfNHl00VnhfuBeaQUmaQYe60BLT413HyDdg==}
     dependencies:
       c8: 7.12.0
-      vitest: 0.23.2
+      vitest: 0.23.4
     transitivePeerDependencies:
       - '@edge-runtime/vm'
       - '@vitest/browser'
@@ -3715,8 +3715,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /strip-literal/0.4.0:
-    resolution: {integrity: sha512-ql/sBDoJOybTKSIOWrrh8kgUEMjXMwRAkZTD0EwiwxQH/6tTPkZvMIEjp0CRlpi6V5FMiJyvxeRkEi1KrGISoA==}
+  /strip-literal/0.4.1:
+    resolution: {integrity: sha512-z+F/xmDM8GOdvA5UoZXFxEnxdvMOZ+XEBIwjfLfc8hMSuHpGxjXAUCfuEo+t1GOHSb8+qgI/IBRpxXVMaABYWA==}
     dependencies:
       acorn: 8.8.0
     dev: true
@@ -4018,8 +4018,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitest/0.23.2:
-    resolution: {integrity: sha512-kTBKp3ROPDkYC+x2zWt4znkDtnT08W1FQ6ngRFuqxpBGNuNVS+eWZKfffr8y2JGvEzZ9EzMAOcNaiqMj/FZqMw==}
+  /vitest/0.23.4:
+    resolution: {integrity: sha512-iukBNWqQAv8EKDBUNntspLp9SfpaVFbmzmM0sNcnTxASQZMzRw3PsM6DMlsHiI+I6GeO5/sYDg3ecpC+SNFLrQ==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
@@ -4046,7 +4046,7 @@ packages:
       chai: 4.3.6
       debug: 4.3.4
       local-pkg: 0.4.2
-      strip-literal: 0.4.0
+      strip-literal: 0.4.1
       tinybench: 2.1.5
       tinypool: 0.3.0
       tinyspy: 1.0.2
