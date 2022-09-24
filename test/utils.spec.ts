@@ -33,7 +33,7 @@ describe('alias', () => {
     it('respects path separators', () => {
       const aliases = {
         '~': '/root',
-        '~assets': '/root/some/dir',
+        '~assets': '/root/some/dir'
       }
       expect(resolveAlias('~assets/smth.jpg', aliases)).toMatchInlineSnapshot('"/root/some/dir/smth.jpg"')
     })
