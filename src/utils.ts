@@ -31,7 +31,7 @@ export function resolveAlias (path: string, aliases: Record<string, string>) {
   const _path = normalizeWindowsPath(path)
   aliases = normalizeAliases(aliases)
   for (const alias in aliases) {
-    if (_path.startsWith(alias)) {
+    if (_path.startsWith(alias) && pathSeparators.includes(_path[alias.length])) {
       return join(aliases[alias], _path.slice(alias.length))
     }
   }

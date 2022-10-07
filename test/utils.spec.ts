@@ -30,6 +30,13 @@ describe('alias', () => {
         expect(resolveAlias(from, aliases)).toBe(to)
       })
     }
+    it('respects path separators', () => {
+      const aliases = {
+        '~': '/root',
+        '~assets': '/root/some/dir'
+      }
+      expect(resolveAlias('~assets/smth.jpg', aliases)).toMatchInlineSnapshot('"/root/some/dir/smth.jpg"')
+    })
     it('unchanged', () => {
       expect(resolveAlias('foo/bar.js', aliases)).toBe('foo/bar.js')
       expect(resolveAlias('./bar.js', aliases)).toBe('./bar.js')
@@ -39,7 +46,7 @@ describe('alias', () => {
 
 describe('filename', () => {
   const files = {
-  // POSIX
+    // POSIX
     'test.html': 'test',
     '/temp/myfile.html': 'myfile',
     './myfile.html': 'myfile',
