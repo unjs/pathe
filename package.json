@@ -40,7 +40,7 @@
     "jiti": "^1.16.0",
     "prettier": "^2.8.1",
     "standard-version": "latest",
-    "typescript": "^4.9.3",
+    "typescript": "^4.9.4",
     "unbuild": "^1.0.2",
     "vitest": "^0.25.5"
   },
