@@ -1,6 +1,6 @@
 {
   "name": "pathe",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Universal filesystem path utils",
   "repository": "unjs/pathe",
   "license": "MIT",

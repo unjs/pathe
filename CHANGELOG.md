@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/unjs/pathe/compare/v1.0.1...v1.1.0) (2023-01-20)
+
+
+### Features
+
+* provide default export for node compatibility (resolves [#115](https://github.com/unjs/pathe/issues/115)) ([1ff01d1](https://github.com/unjs/pathe/commit/1ff01d10212c9a9558a23151586c9a3c85d2b5aa))
+
 ### [1.0.1](https://github.com/unjs/pathe/compare/v1.0.0...v1.0.1) (2023-01-20)
 
 
