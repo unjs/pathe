@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/unjs/pathe/compare/v1.0.0...v1.0.1) (2023-01-20)
+
+
+### Bug Fixes
+
+* `process.cwd` fallback on non-node env ([#114](https://github.com/unjs/pathe/issues/114)) ([14714c1](https://github.com/unjs/pathe/commit/14714c144e0409e4877312c74d16c1e517b01f38))
+
 ## [1.0.0](https://github.com/unjs/pathe/compare/v0.3.9...v1.0.0) (2022-11-14)
 
 ### [0.3.9](https://github.com/unjs/pathe/compare/v0.3.8...v0.3.9) (2022-10-07)
