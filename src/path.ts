@@ -72,6 +72,13 @@ export const join: typeof path.join = function (...arguments_) {
   return normalize(joined.replace(/\/\/+/g, "/"));
 };
 
+function cwd () {
+  if (typeof process !== "undefined") {
+    return process.cwd().replace(/\\/g, "/");
+  }
+  return "/";
+}
+
 // resolve
 export const resolve: typeof path.resolve = function (...arguments_) {
   // Normalize windows arguments
@@ -81,7 +88,7 @@ export const resolve: typeof path.resolve = function (...arguments_) {
   let resolvedAbsolute = false;
 
   for (let index = arguments_.length - 1; index >= -1 && !resolvedAbsolute; index--) {
-    const path = index >= 0 ? arguments_[index] : process.cwd().replace(/\\/g, "/");
+    const path = index >= 0 ? arguments_[index] : cwd();
 
     // Skip empty entries
     if (!path || path.length === 0) {
