@@ -20,7 +20,9 @@ export const delimiter = ":";
 
 // normalize
 export const normalize: typeof path.normalize = function (path: string) {
-  if (path.length === 0) { return "."; }
+  if (path.length === 0) {
+    return ".";
+  }
 
   // Normalize windows argument
   path = normalizeWindowsPath(path);
@@ -33,11 +35,17 @@ export const normalize: typeof path.normalize = function (path: string) {
   path = normalizeString(path, !isPathAbsolute);
 
   if (path.length === 0) {
-    if (isPathAbsolute) { return "/"; }
+    if (isPathAbsolute) {
+      return "/";
+    }
     return trailingSeparator ? "./" : ".";
   }
-  if (trailingSeparator) { path += "/"; }
-  if (_DRIVE_LETTER_RE.test(path)) { path += "/"; }
+  if (trailingSeparator) {
+    path += "/";
+  }
+  if (_DRIVE_LETTER_RE.test(path)) {
+    path += "/";
+  }
 
   if (isUNCPath) {
     if (!isPathAbsolute) {
@@ -72,7 +80,7 @@ export const join: typeof path.join = function (...arguments_) {
   return normalize(joined.replace(/\/\/+/g, "/"));
 };
 
-function cwd () {
+function cwd() {
   if (typeof process !== "undefined") {
     return process.cwd().replace(/\\/g, "/");
   }
@@ -82,12 +90,16 @@ function cwd () {
 // resolve
 export const resolve: typeof path.resolve = function (...arguments_) {
   // Normalize windows arguments
-  arguments_ = arguments_.map(argument => normalizeWindowsPath(argument));
+  arguments_ = arguments_.map((argument) => normalizeWindowsPath(argument));
 
   let resolvedPath = "";
   let resolvedAbsolute = false;
 
-  for (let index = arguments_.length - 1; index >= -1 && !resolvedAbsolute; index--) {
+  for (
+    let index = arguments_.length - 1;
+    index >= -1 && !resolvedAbsolute;
+    index--
+  ) {
     const path = index >= 0 ? arguments_[index] : cwd();
 
     // Skip empty entries
@@ -113,7 +125,7 @@ export const resolve: typeof path.resolve = function (...arguments_) {
 };
 
 // Resolves . and .. elements in a path with directory names
-export function normalizeString (path: string, allowAboveRoot: boolean) {
+export function normalizeString(path: string, allowAboveRoot: boolean) {
   let res = "";
   let lastSegmentLength = 0;
   let lastSlash = -1;
@@ -131,9 +143,12 @@ export function normalizeString (path: string, allowAboveRoot: boolean) {
       if (lastSlash === index - 1 || dots === 1) {
         // NOOP
       } else if (dots === 2) {
-        if (res.length < 2 || lastSegmentLength !== 2 ||
+        if (
+          res.length < 2 ||
+          lastSegmentLength !== 2 ||
           res[res.length - 1] !== "." ||
-          res[res.length - 2] !== ".") {
+          res[res.length - 2] !== "."
+        ) {
           if (res.length > 2) {
             const lastSlashIndex = res.lastIndexOf("/");
             if (lastSlashIndex === -1) {
@@ -200,7 +215,9 @@ export const relative: typeof path.relative = function (from, to) {
   const _to = resolve(to).split("/");
   const _fromCopy = [..._from];
   for (const segment of _fromCopy) {
-    if (_to[0] !== segment) { break; }
+    if (_to[0] !== segment) {
+      break;
+    }
     _from.shift();
     _to.shift();
   }
@@ -209,7 +226,10 @@ export const relative: typeof path.relative = function (from, to) {
 
 // dirname
 export const dirname: typeof path.dirname = function (p) {
-  const segments = normalizeWindowsPath(p).replace(/\/$/, "").split("/").slice(0, -1);
+  const segments = normalizeWindowsPath(p)
+    .replace(/\/$/, "")
+    .split("/")
+    .slice(0, -1);
   if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0])) {
     segments[0] += "/";
   }
@@ -218,14 +238,18 @@ export const dirname: typeof path.dirname = function (p) {
 
 // format
 export const format: typeof path.format = function (p) {
-  const segments = [p.root, p.dir, p.base ?? (p.name + p.ext)].filter(Boolean);
-  return normalizeWindowsPath(p.root ? resolve(...segments) : segments.join("/"));
+  const segments = [p.root, p.dir, p.base ?? p.name + p.ext].filter(Boolean);
+  return normalizeWindowsPath(
+    p.root ? resolve(...segments) : segments.join("/")
+  );
 };
 
 // basename
 export const basename: typeof path.basename = function (p, extension) {
   const lastSegment = normalizeWindowsPath(p).split("/").pop();
-  return extension && lastSegment.endsWith(extension) ? lastSegment.slice(0, -extension.length) : lastSegment;
+  return extension && lastSegment.endsWith(extension)
+    ? lastSegment.slice(0, -extension.length)
+    : lastSegment;
 };
 
 // parse
@@ -238,6 +262,6 @@ export const parse: typeof path.parse = function (p) {
     dir: dirname(p),
     base,
     ext: extension,
-    name: base.slice(0, base.length - extension.length)
+    name: base.slice(0, base.length - extension.length),
   };
 };

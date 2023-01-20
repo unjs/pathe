@@ -26,7 +26,7 @@
   "scripts": {
     "build": "unbuild",
     "dev": "vitest",
-    "lint": "eslint --ext .ts .",
+    "lint": "eslint --ext .ts . && prettier -c src test",
     "prepublishOnly": "pnpm build",
     "release": "pnpm vitest run && standard-version && git push --follow-tags && pnpm publish",
     "test": "pnpm lint && vitest run --coverage",

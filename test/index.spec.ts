@@ -1,6 +1,21 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { basename, dirname, extname, format, parse, relative, delimiter, isAbsolute, join, normalize, resolve, sep as separator, toNamespacedPath, normalizeString } from "../src";
+import {
+  basename,
+  dirname,
+  extname,
+  format,
+  parse,
+  relative,
+  delimiter,
+  isAbsolute,
+  join,
+  normalize,
+  resolve,
+  sep as separator,
+  toNamespacedPath,
+  normalizeString,
+} from "../src";
 
 import { normalizeWindowsPath } from "../src/_internal";
 
@@ -11,7 +26,7 @@ runTest("normalizeWindowsPath", normalizeWindowsPath, {
   // Windows
   "c:\\foo\\bar": "c:/foo/bar",
   "\\foo\\bar": "/foo/bar",
-  ".\\foo\\bar": "./foo/bar"
+  ".\\foo\\bar": "./foo/bar",
 });
 
 runTest("isAbsolute", isAbsolute, {
@@ -30,7 +45,7 @@ runTest("isAbsolute", isAbsolute, {
   "\\\\server": true,
   "C:/foo/..": true,
   "bar\\baz": false,
-  "bar/baz": false
+  "bar/baz": false,
 });
 
 runTest("normalizeString", normalizeString, {
@@ -48,16 +63,17 @@ runTest("normalizeString", normalizeString, {
   // Windows
   [normalizeWindowsPath("C:\\temp\\..")]: "C:",
   [normalizeWindowsPath("C:\\temp\\..\\.\\Users")]: "C:/Users",
-  [normalizeWindowsPath("C:\\temp\\..\\.well-known\\Users")]: "C:/.well-known/Users",
-  [normalizeWindowsPath("C:\\temp\\..\\..well-known\\Users")]: "C:/..well-known/Users",
+  [normalizeWindowsPath("C:\\temp\\..\\.well-known\\Users")]:
+    "C:/.well-known/Users",
+  [normalizeWindowsPath("C:\\temp\\..\\..well-known\\Users")]:
+    "C:/..well-known/Users",
   [normalizeWindowsPath("C:\\a\\..\\")]: "C:",
   [normalizeWindowsPath("C:\\temp\\myfile.html")]: "C:/temp/myfile.html",
   [normalizeWindowsPath("\\temp\\myfile.html")]: "temp/myfile.html",
-  [normalizeWindowsPath(".\\myfile.html")]: "myfile.html"
+  [normalizeWindowsPath(".\\myfile.html")]: "myfile.html",
 });
 
 runTest("basename", basename, [
-
   // POSIX
   ["/temp/myfile.html", "myfile.html"],
   ["./myfile.html", "myfile.html"],
@@ -69,7 +85,7 @@ runTest("basename", basename, [
   ["\\temp\\myfile.html", "myfile.html"],
   [".\\myfile.html", "myfile.html"],
   [".\\myfile.html", ".html", "myfile"],
-  [".\\undefined", undefined, "undefined"]
+  [".\\undefined", undefined, "undefined"],
 ]);
 
 runTest("dirname", dirname, {
@@ -85,7 +101,7 @@ runTest("dirname", dirname, {
   "C:.\\temp\\bar\\": "C:./temp",
   "C:\\temp\\myfile.html": "C:/temp",
   "\\temp\\myfile.html": "/temp",
-  ".\\myfile.html": "."
+  ".\\myfile.html": ".",
 });
 
 runTest("extname", extname, {
@@ -104,19 +120,22 @@ runTest("extname", extname, {
   // Windows
   "C:\\temp\\myfile.html": ".html",
   "\\temp\\myfile.html": ".html",
-  ".\\myfile.html": ".html"
+  ".\\myfile.html": ".html",
 });
 
 runTest("format", format, [
   // POSIX
-  [{ root: "/ignored", dir: "/home/user/dir", base: "file.txt" }, "/home/user/dir/file.txt"],
+  [
+    { root: "/ignored", dir: "/home/user/dir", base: "file.txt" },
+    "/home/user/dir/file.txt",
+  ],
   [{ root: "/", base: "file.txt", ext: "ignored" }, "/file.txt"],
   [{ root: "/", name: "file", ext: ".txt" }, "/file.txt"],
   [{ name: "file", ext: ".txt" }, "file.txt"],
 
   // Windows
   [{ name: "file", base: "file.txt" }, "file.txt"],
-  [{ dir: "C:\\path\\dir", base: "file.txt" }, "C:/path/dir/file.txt"]
+  [{ dir: "C:\\path\\dir", base: "file.txt" }, "C:/path/dir/file.txt"],
 ]);
 
 runTest("join", join, [
@@ -137,7 +156,7 @@ runTest("join", join, [
   // UNC paths
   ["\\\\server\\share\\file", "..\\path", "//server/share/path"],
   ["\\\\.\\c:\\temp\\file", "..\\path", "//./c:/temp/path"],
-  ["\\\\server/share/file", "../path", "//server/share/path"]
+  ["\\\\server/share/file", "../path", "//server/share/path"],
 ]);
 
 runTest("normalize", normalize, {
@@ -176,7 +195,7 @@ runTest("normalize", normalize, {
   "\\\\.\\c:\\temp\\file\\..\\path": "//./c:/temp/path",
   "\\\\server/share/file/../path": "//server/share/path",
   "\\\\C:\\foo\\bar": "//C:/foo/bar",
-  "\\\\.\\foo\\bar": "//./foo/bar"
+  "\\\\.\\foo\\bar": "//./foo/bar",
 });
 
 it("parse", () => {
@@ -186,14 +205,14 @@ it("parse", () => {
     dir: "/home/user/dir",
     base: "file.txt",
     ext: ".txt",
-    name: "file"
+    name: "file",
   });
   expect(parse("./dir/file")).to.deep.equal({
     root: ".",
     dir: "./dir",
     base: "file",
     ext: "",
-    name: "file"
+    name: "file",
   });
 
   // Windows
@@ -202,26 +221,38 @@ it("parse", () => {
     dir: "C:/path/dir",
     base: "file.txt",
     ext: ".txt",
-    name: "file"
+    name: "file",
   });
   expect(parse(".\\dir\\file")).to.deep.equal({
     root: ".",
     dir: "./dir",
     base: "file",
     ext: "",
-    name: "file"
+    name: "file",
   });
 });
 
 runTest("relative", relative, [
   // POSIX
   ["/data/orandea/test/aaa", "/data/orandea/impl/bbb", "../../impl/bbb"],
-  [() => process.cwd(), "./dist/client/b-scroll.d.ts", "dist/client/b-scroll.d.ts"],
+  [
+    () => process.cwd(),
+    "./dist/client/b-scroll.d.ts",
+    "dist/client/b-scroll.d.ts",
+  ],
 
   // Windows
   ["C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb", "../../impl/bbb"],
-  [() => process.cwd().replace(/\\/g, "/"), "./dist/client/b-scroll.d.ts", "dist/client/b-scroll.d.ts"],
-  [() => process.cwd(), "./dist/client/b-scroll.d.ts", "dist/client/b-scroll.d.ts"]
+  [
+    () => process.cwd().replace(/\\/g, "/"),
+    "./dist/client/b-scroll.d.ts",
+    "dist/client/b-scroll.d.ts",
+  ],
+  [
+    () => process.cwd(),
+    "./dist/client/b-scroll.d.ts",
+    "dist/client/b-scroll.d.ts",
+  ],
 ]);
 
 runTest("resolve", resolve, [
@@ -232,7 +263,13 @@ runTest("resolve", resolve, [
   ["/foo/bar", "./baz", undefined, null, "", "/foo/bar/baz"],
   ["/foo/bar", "..", ".", "./baz", "/foo/baz"],
   ["/foo/bar", "/tmp/file/", "/tmp/file"],
-  ["wwwroot", "static_files/png/", "../gif/image.gif", () => `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`],
+  [
+    "wwwroot",
+    "static_files/png/",
+    "../gif/image.gif",
+    () =>
+      `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
+  ],
 
   // Windows
   ["C:\\foo\\bar", ".\\baz", "C:/foo/bar/baz"],
@@ -240,10 +277,31 @@ runTest("resolve", resolve, [
   ["\\foo\\bar", "..", ".", ".\\baz", "/foo/baz"],
   ["\\foo\\bar", "\\tmp\\file\\", "/tmp/file"],
   ["\\foo\\bar", undefined, null, "", "\\tmp\\file\\", "/tmp/file"],
-  ["\\foo\\bar", undefined, null, "", "\\tmp\\file\\", undefined, null, "", "/tmp/file"],
-  ["wwwroot", "static_files\\png\\", "..\\gif\\image.gif", () => `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`],
+  [
+    "\\foo\\bar",
+    undefined,
+    null,
+    "",
+    "\\tmp\\file\\",
+    undefined,
+    null,
+    "",
+    "/tmp/file",
+  ],
+  [
+    "wwwroot",
+    "static_files\\png\\",
+    "..\\gif\\image.gif",
+    () =>
+      `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
+  ],
   ["C:\\Windows\\path\\only", "../../reports", "C:/Windows/reports"],
-  ["C:\\Windows\\long\\path\\mixed/with/unix", "../..", "..\\../reports", "C:/Windows/long/reports"]
+  [
+    "C:\\Windows\\long\\path\\mixed/with/unix",
+    "../..",
+    "..\\../reports",
+    "C:/Windows/long/reports",
+  ],
 ]);
 
 describe("resolve with catastrophic process.cwd() failure", () => {
@@ -262,7 +320,7 @@ runTest("toNamespacedPath", toNamespacedPath, {
 
   // Windows
   "\\foo\\bar": "/foo/bar",
-  "C:\\foo\\bar": "C:/foo/bar"
+  "C:\\foo\\bar": "C:/foo/bar",
 });
 
 describe("constants", () => {
@@ -275,30 +333,38 @@ describe("constants", () => {
   });
 });
 
-function _s (item) {
+function _s(item) {
   return (JSON.stringify(_r(item)) || "undefined").replace(/"/g, "'");
 }
 
-function _r (item) {
+function _r(item) {
   return typeof item === "function" ? item() : item;
 }
 
-export function runTest (name, function_, items) {
+export function runTest(name, function_, items) {
   if (!Array.isArray(items)) {
-    items = Object.entries(items).map(e => e.flat());
+    items = Object.entries(items).map((e) => e.flat());
   }
   describe(`${name}`, () => {
     let cwd;
     for (const item of items) {
       const expected = item.pop();
       const arguments_ = item;
-      it(`${name}(${arguments_.map(i => _s(i)).join(",")}) should be ${_s(expected)}`, () => {
-        expect(function_(...arguments_.map(i => _r(i)))).to.equal(_r(expected));
+      it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
+        expected
+      )}`, () => {
+        expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
+          _r(expected)
+        );
       });
-      it(`${name}(${arguments_.map(i => _s(i)).join(",")}) should be ${_s(expected)} on Windows`, () => {
+      it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
+        expected
+      )} on Windows`, () => {
         cwd = process.cwd;
         process.cwd = vi.fn(() => "C:\\Windows\\path\\only");
-        expect(function_(...arguments_.map(i => _r(i)))).to.equal(_r(expected));
+        expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
+          _r(expected)
+        );
         process.cwd = cwd;
       });
     }

@@ -1,5 +1,5 @@
 // Util to normalize windows paths to posix
-export function normalizeWindowsPath (input: string = "") {
+export function normalizeWindowsPath(input = "") {
   if (!input || !input.includes("\\")) {
     return input;
   }

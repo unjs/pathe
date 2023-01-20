@@ -8,7 +8,7 @@ describe("alias", () => {
     "@foo/bar/utils": "@foo/bar/dist/utils.mjs",
     "@": "/root",
     bingpot: "@/bingpot/index.ts",
-    test: "@bingpot/index.ts"
+    test: "@bingpot/index.ts",
   };
   const aliases = normalizeAliases(_aliases);
 
@@ -33,9 +33,11 @@ describe("alias", () => {
     it("respects path separators", () => {
       const aliases = {
         "~": "/root",
-        "~assets": "/root/some/dir"
+        "~assets": "/root/some/dir",
       };
-      expect(resolveAlias("~assets/smth.jpg", aliases)).toMatchInlineSnapshot("\"/root/some/dir/smth.jpg\"");
+      expect(resolveAlias("~assets/smth.jpg", aliases)).toMatchInlineSnapshot(
+        '"/root/some/dir/smth.jpg"'
+      );
     });
     it("unchanged", () => {
       expect(resolveAlias("foo/bar.js", aliases)).toBe("foo/bar.js");
@@ -55,7 +57,7 @@ describe("filename", () => {
     "C:\\temp\\": undefined,
     "C:\\temp\\myfile.html": "myfile",
     "\\temp\\myfile.html": "myfile",
-    ".\\myfile.html": "myfile"
+    ".\\myfile.html": "myfile",
   };
   for (const file in files) {
     it(file, () => {
