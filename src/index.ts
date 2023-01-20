@@ -1,3 +1,3 @@
 export * from "./path";
 
-export * as default from './path'
+export * as default from "./path";
