@@ -5,7 +5,7 @@ specifiers:
   '@vitest/coverage-c8': ^0.29.2
   eslint: latest
   eslint-config-unjs: ^0.1.0
-  jiti: ^1.17.1
+  jiti: ^1.17.2
   prettier: ^2.8.4
   standard-version: latest
   typescript: ^4.9.5
@@ -17,7 +17,7 @@ devDependencies:
   '@vitest/coverage-c8': 0.29.2_vitest@0.29.2
   eslint: 8.35.0
   eslint-config-unjs: 0.1.0_ycpbpc6yetojsgtrx3mwntkhsu
-  jiti: 1.17.1
+  jiti: 1.17.2
   prettier: 2.8.4
   standard-version: 9.5.0
   typescript: 4.9.5
@@ -2834,8 +2834,8 @@ packages:
       istanbul-lib-report: 3.0.0
     dev: true
 
-  /jiti/1.17.1:
-    resolution: {integrity: sha512-NZIITw8uZQFuzQimqjUxIrIcEdxYDFIe/0xYfIlVXTkiBjjyBEvgasj5bb0/cHtPRD/NziPbT312sFrkI5ALpw==}
+  /jiti/1.17.2:
+    resolution: {integrity: sha512-Xf0nU8+8wuiQpLcqdb2HRyHqYwGk2Pd+F7kstyp20ZuqTyCmB9dqpX2NxaxFc1kovraa2bG6c1RL3W7XfapiZg==}
     hasBin: true
     dev: true
 
@@ -3111,7 +3111,7 @@ packages:
       esbuild: 0.17.8
       fs-extra: 11.1.0
       globby: 13.1.3
-      jiti: 1.17.1
+      jiti: 1.17.2
       mri: 1.2.0
       pathe: 1.1.0
       typescript: 4.9.5
@@ -4064,7 +4064,7 @@ packages:
       esbuild: 0.17.8
       globby: 13.1.3
       hookable: 5.4.2
-      jiti: 1.17.1
+      jiti: 1.17.2
       magic-string: 0.29.0
       mkdist: 1.1.1_typescript@4.9.5
       mlly: 1.1.1
