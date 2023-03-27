@@ -53,7 +53,7 @@ import { filename, normalizeAliases, resolveAlias } from 'pathe/utils'
 
 MIT. Made with 💖
 
-Some code used form Node.js project. See [LICENSE](./LICENSE).
+Some code used from Node.js project. See [LICENSE](./LICENSE).
 
 <!-- Refs -->
 [npm-v-src]: https://img.shields.io/npm/v/pathe?style=flat-square
