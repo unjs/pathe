@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/unjs/pathe/compare/v1.1.0...v1.1.1) (2023-06-01)
+
+
+### Bug Fixes
+
+* move `types` condition to the front ([#134](https://github.com/unjs/pathe/issues/134)) ([78715ee](https://github.com/unjs/pathe/commit/78715ee7886270cb6a86c6b6c5bbc6f8c83908a4))
+
 ## [1.1.0](https://github.com/unjs/pathe/compare/v1.0.1...v1.1.0) (2023-01-20)
 
 
