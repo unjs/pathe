@@ -5,10 +5,10 @@ Based on Node.js implementation:
 Check LICENSE file
 
 */
-
 import type path from "node:path";
 
 import { normalizeWindowsPath } from "./_internal";
+import { _isRootPath } from "./utils";
 
 const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
@@ -213,6 +213,12 @@ export const extname: typeof path.extname = function (p) {
 export const relative: typeof path.relative = function (from, to) {
   const _from = resolve(from).split("/");
   const _to = resolve(to).split("/");
+  if (_isRootPath(resolve(from))) {
+    _from.shift();
+  }
+  if (_isRootPath(resolve(to))) {
+    _to.shift();
+  }
   const _fromCopy = [..._from];
   for (const segment of _fromCopy) {
     if (_to[0] !== segment) {

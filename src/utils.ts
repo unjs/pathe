@@ -61,3 +61,7 @@ export function filename(path: string) {
 function _compareAliases(a: string, b: string) {
   return b.split("/").length - a.split("/").length;
 }
+
+export function _isRootPath(path: string) {
+  return path === "/" || /^\/[a-z]:$/i.test(path);
+}
