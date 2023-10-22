@@ -211,12 +211,15 @@ export const extname: typeof path.extname = function (p) {
 
 // relative
 export const relative: typeof path.relative = function (from, to) {
-  const _from = resolve(from).split("/");
-  const _to = resolve(to).split("/");
-  if (_isAbsolutePath(resolve(from))) {
+  const resolvedFrom = resolve(from);
+  const _from = resolvedFrom.split("/");
+  const resolvedTo = resolve(to);
+  const _to = resolvedTo.split("/");
+
+  if (_isAbsolutePath(resolvedFrom)) {
     _from.shift();
   }
-  if (_isAbsolutePath(resolve(to))) {
+  if (_isAbsolutePath(resolvedTo)) {
     _to.shift();
   }
   const _fromCopy = [..._from];
