@@ -12,7 +12,7 @@ export function normalizeAliases(_aliases: Record<string, string>) {
 
   // Sort aliases from specific to general (ie. fs/promises before fs)
   const aliases = Object.fromEntries(
-    Object.entries(_aliases).sort(([a], [b]) => _compareAliases(a, b))
+    Object.entries(_aliases).sort(([a], [b]) => _compareAliases(a, b)),
   );
 
   // Resolve alias values in relation to each other
