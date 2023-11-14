@@ -81,7 +81,7 @@ export const join: typeof path.join = function (...arguments_) {
 };
 
 function cwd() {
-  if (typeof process !== "undefined") {
+  if (typeof process !== "undefined" && typeof process.cwd === "function") {
     return process.cwd().replace(/\\/g, "/");
   }
   return "/";
