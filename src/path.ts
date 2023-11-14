@@ -212,8 +212,8 @@ export const extname: typeof path.extname = function (p) {
 
 // relative
 export const relative: typeof path.relative = function (from, to) {
-  const _from = resolve(from).replace(_ROOT_FOLDER_RE, '$1').split("/");
-  const _to = resolve(to).replace(_ROOT_FOLDER_RE, '$1').split("/");
+  const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/");
+  const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/");
 
   const _fromCopy = [..._from];
   for (const segment of _fromCopy) {
