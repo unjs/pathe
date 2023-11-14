@@ -355,19 +355,19 @@ export function runTest(name, function_, items) {
       const expected = item.pop();
       const arguments_ = item;
       it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
-        expected
+        expected,
       )}`, () => {
         expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
-          _r(expected)
+          _r(expected),
         );
       });
       it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
-        expected
+        expected,
       )} on Windows`, () => {
         cwd = process.cwd;
         process.cwd = vi.fn(() => "C:\\Windows\\path\\only");
         expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
-          _r(expected)
+          _r(expected),
         );
         process.cwd = cwd;
       });

@@ -36,7 +36,7 @@ describe("alias", () => {
         "~assets": "/root/some/dir",
       };
       expect(resolveAlias("~assets/smth.jpg", aliases)).toMatchInlineSnapshot(
-        '"/root/some/dir/smth.jpg"'
+        '"/root/some/dir/smth.jpg"',
       );
     });
     it("unchanged", () => {
