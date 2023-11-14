@@ -8,11 +8,11 @@ Check LICENSE file
 import type path from "node:path";
 
 import { normalizeWindowsPath } from "./_internal";
-import { _isAbsolutePath } from "./utils";
 
 const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
+const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 
 // Force POSIX contants
 export const sep = "/";
@@ -211,17 +211,9 @@ export const extname: typeof path.extname = function (p) {
 
 // relative
 export const relative: typeof path.relative = function (from, to) {
-  const resolvedFrom = resolve(from);
-  const _from = resolvedFrom.split("/");
-  const resolvedTo = resolve(to);
-  const _to = resolvedTo.split("/");
+  const _from = resolve(from).replace(_ROOT_FOLDER_RE, '$1').split("/");
+  const _to = resolve(to).replace(_ROOT_FOLDER_RE, '$1').split("/");
 
-  if (_isAbsolutePath(resolvedFrom)) {
-    _from.shift();
-  }
-  if (_isAbsolutePath(resolvedTo)) {
-    _to.shift();
-  }
   const _fromCopy = [..._from];
   for (const segment of _fromCopy) {
     if (_to[0] !== segment) {
