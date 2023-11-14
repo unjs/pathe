@@ -5,6 +5,7 @@ Based on Node.js implementation:
 Check LICENSE file
 
 */
+
 import type path from "node:path";
 
 import { normalizeWindowsPath } from "./_internal";
