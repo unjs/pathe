@@ -243,6 +243,7 @@ runTest("relative", relative, [
 
   // Windows
   ["C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb", "../../impl/bbb"],
+  ["C:\\orandea\\test\\aaa", "c:\\orandea\\impl\\bbb", "../../impl/bbb"],
   [
     () => process.cwd().replace(/\\/g, "/"),
     "./dist/client/b-scroll.d.ts",
