@@ -43,8 +43,17 @@ export function normalizeAliases(_aliases: Record<string, string>) {
 export function resolveAlias(path: string, aliases: Record<string, string>) {
   const _path = normalizeWindowsPath(path);
   aliases = normalizeAliases(aliases);
-  for (const alias in aliases) { 
-    if (_path.startsWith(alias) && pathSeparators.has(_path[SEPARATORS.includes(alias[alias.length - 1]) ? alias.length - 1 : alias.length])) {
+  for (const alias in aliases) {
+    if (
+      _path.startsWith(alias) &&
+      pathSeparators.has(
+        _path[
+          SEPARATORS.includes(alias[alias.length - 1])
+            ? alias.length - 1
+            : alias.length
+        ],
+      )
+    ) {
       return join(aliases[alias], _path.slice(alias.length));
     }
   }
