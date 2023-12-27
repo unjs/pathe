@@ -1,7 +1,8 @@
 import { join } from "./path";
 import { normalizeWindowsPath } from "./_internal";
 
-const pathSeparators = new Set(["/", "\\", undefined]);
+const SEPARATORS = ["/", "\\"];
+const pathSeparators = new Set([...SEPARATORS, undefined]);
 
 const normalizedAliasSymbol = Symbol.for("pathe:normalizedAlias");
 
@@ -43,7 +44,7 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
   const _path = normalizeWindowsPath(path);
   aliases = normalizeAliases(aliases);
   for (const alias in aliases) { 
-    if (_path.startsWith(alias) && pathSeparators.has(_path[alias[alias.length - 1] === '/' ? alias.length - 1 : alias.length])) {
+    if (_path.startsWith(alias) && pathSeparators.has(_path[SEPARATORS.includes(alias[alias.length - 1]) ? alias.length - 1 : alias.length])) {
       return join(aliases[alias], _path.slice(alias.length));
     }
   }

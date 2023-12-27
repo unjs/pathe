@@ -9,7 +9,7 @@ describe("alias", () => {
     "@": "/root",
     bingpot: "@/bingpot/index.ts",
     test: "@bingpot/index.ts",
-    "~~/": "C:/nitro"
+    "~~/": "C:/nitro",
   };
   const aliases = normalizeAliases(_aliases);
 
@@ -47,7 +47,7 @@ describe("alias", () => {
     });
     it('respect ending with /', () => {
       expect(resolveAlias("~~/user-module/mod", aliases)).toBe('C:/nitro/user-module/mod')
-    })
+    });
   });
 });
 
