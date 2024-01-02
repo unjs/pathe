@@ -235,6 +235,8 @@ it("parse", () => {
 runTest("relative", relative, [
   // POSIX
   ["/data/orandea/test/aaa", "/data/orandea/impl/bbb", "../../impl/bbb"],
+  ["/", "/foo/bar", "foo/bar"],
+  ["/foo", "/", ".."],
   [
     () => process.cwd(),
     "./dist/client/b-scroll.d.ts",
@@ -244,6 +246,8 @@ runTest("relative", relative, [
   // Windows
   ["C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb", "../../impl/bbb"],
   ["C:\\orandea\\test\\aaa", "c:\\orandea\\impl\\bbb", "../../impl/bbb"],
+  ["C:\\", "C:\\foo\\bar", "foo/bar"],
+  ["C:\\foo", "C:\\", ".."],
   [
     () => process.cwd().replace(/\\/g, "/"),
     "./dist/client/b-scroll.d.ts",
