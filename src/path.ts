@@ -13,7 +13,6 @@ import { normalizeWindowsPath } from "./_internal";
 const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
-const _DRIVE_LETTER_START_RE = /^[A-Za-z]:\//;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 
 // Force POSIX contants
@@ -213,14 +212,9 @@ export const extname: typeof path.extname = function (p) {
 
 // relative
 export const relative: typeof path.relative = function (from, to) {
-  const _from = resolve(from)
-    .replace(_ROOT_FOLDER_RE, "$1")
-    .replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase())
-    .split("/");
-  const _to = resolve(to)
-    .replace(_ROOT_FOLDER_RE, "$1")
-    .replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase())
-    .split("/");
+  const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/");
+  const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/");
+
   const _fromCopy = [..._from];
   for (const segment of _fromCopy) {
     if (_to[0] !== segment) {
