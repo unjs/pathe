@@ -215,6 +215,11 @@ export const relative: typeof path.relative = function (from, to) {
   const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/");
   const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/");
 
+  // Different windows drive letters
+  if (_to[0][1] === ":" && _from[0][1] === ":" && _from[0] !== _to[0]) {
+    return _to.join("/");
+  }
+
   const _fromCopy = [..._from];
   for (const segment of _fromCopy) {
     if (_to[0] !== segment) {
