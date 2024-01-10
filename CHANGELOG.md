@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v1.1.2
+
+[compare changes](https://github.com/unjs/pathe/compare/v1.1.1...v1.1.2)
+
+### 🩹 Fixes
+
+- Trim root folder `/` when calculating relative paths ([#142](https://github.com/unjs/pathe/pull/142))
+- Check `process.cwd` before calling it ([#147](https://github.com/unjs/pathe/pull/147))
+- Uppercase windows drive letters ([#151](https://github.com/unjs/pathe/pull/151))
+- **resolveAlias:** Handle aliases ending with trailing slash ([#155](https://github.com/unjs/pathe/pull/155))
+- **relative:** Handle different windows drive letters ([#158](https://github.com/unjs/pathe/pull/158))
+
+### 🏡 Chore
+
+- Update lockfile ([b310408](https://github.com/unjs/pathe/commit/b310408))
+- Use changelogen for release ([dffa918](https://github.com/unjs/pathe/commit/dffa918))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Julien Huang ([@huang-julien](http://github.com/huang-julien))
+- Daniel Roe <daniel@roe.dev>
+- Kræn Hansen ([@kraenhansen](http://github.com/kraenhansen))
+- Lsh
+
 ### [1.1.1](https://github.com/unjs/pathe/compare/v1.1.0...v1.1.1) (2023-06-01)
 
 
