@@ -1,8 +1,7 @@
 import { join } from "./path";
 import { normalizeWindowsPath } from "./_internal";
 
-const SEPARATORS = ["/", "\\"];
-const pathSeparators = new Set([...SEPARATORS, undefined]);
+const pathSeparators = new Set(["/", "\\", undefined]);
 
 const normalizedAliasSymbol = Symbol.for("pathe:normalizedAlias");
 
@@ -43,18 +42,16 @@ export function normalizeAliases(_aliases: Record<string, string>) {
 export function resolveAlias(path: string, aliases: Record<string, string>) {
   const _path = normalizeWindowsPath(path);
   aliases = normalizeAliases(aliases);
-  for (const alias in aliases) {
-    if (
-      _path.startsWith(alias) &&
-      pathSeparators.has(
-        _path[
-          SEPARATORS.includes(alias[alias.length - 1])
-            ? alias.length - 1
-            : alias.length
-        ],
-      )
-    ) {
-      return join(aliases[alias], _path.slice(alias.length));
+  for (const [alias, to] of Object.entries(aliases)) {
+    if (!_path.startsWith(alias)) {
+      continue;
+    }
+
+    // Strip trailing slash from alias for check
+    const _alias = hasTrailingSlash(alias) ? alias.slice(0, -1) : alias;
+
+    if (hasTrailingSlash(_path[_alias.length])) {
+      return join(to, _path.slice(alias.length));
     }
   }
   return _path;
@@ -70,4 +67,10 @@ export function filename(path: string) {
 
 function _compareAliases(a: string, b: string) {
   return b.split("/").length - a.split("/").length;
+}
+
+// Returns true if path ends with a slash or **is empty**
+function hasTrailingSlash(path = "/") {
+  const lastChar = path[path.length - 1];
+  return lastChar === "/" || lastChar === "\\";
 }
