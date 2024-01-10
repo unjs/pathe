@@ -9,7 +9,8 @@ describe("alias", () => {
     "@": "/root",
     bingpot: "@/bingpot/index.ts",
     test: "@bingpot/index.ts",
-    "~~/": "C:/nitro",
+    "~/": "/src",
+    "~win/": "C:/src",
   };
   const aliases = normalizeAliases(_aliases);
 
@@ -21,7 +22,8 @@ describe("alias", () => {
         "@foo/bar/utils": "@foo/bar/dist/utils.mjs",
         "bingpot": "/root/bingpot/index.ts",
         "test": "@bingpot/index.ts",
-        "~~/": "C:/nitro",
+        "~/": "/src",
+        "~win/": "C:/src",
       }
     `);
   });
@@ -46,9 +48,8 @@ describe("alias", () => {
       expect(resolveAlias("./bar.js", aliases)).toBe("./bar.js");
     });
     it("respect ending with /", () => {
-      expect(resolveAlias("~~/user-module/mod", aliases)).toBe(
-        "C:/nitro/user-module/mod",
-      );
+      expect(resolveAlias("~/foo/bar", aliases)).toBe("/src/foo/bar");
+      expect(resolveAlias("~win/foo/bar", aliases)).toBe("C:/src/foo/bar");
     });
   });
 });
