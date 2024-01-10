@@ -9,7 +9,9 @@ describe("alias", () => {
     "@": "/root",
     bingpot: "@/bingpot/index.ts",
     test: "@bingpot/index.ts",
+    "~": "/src/index.js",
     "~/": "/src",
+    "~win": "C:/src/index.js",
     "~win/": "C:/src",
   };
   const aliases = normalizeAliases(_aliases);
@@ -22,7 +24,9 @@ describe("alias", () => {
         "@foo/bar/utils": "@foo/bar/dist/utils.mjs",
         "bingpot": "/root/bingpot/index.ts",
         "test": "@bingpot/index.ts",
+        "~": "/src/index.js",
         "~/": "/src",
+        "~win": "C:/src/index.js",
         "~win/": "C:/src",
       }
     `);
