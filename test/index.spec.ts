@@ -24,7 +24,7 @@ runTest("normalizeWindowsPath", normalizeWindowsPath, {
   "/foo/bar": "/foo/bar",
 
   // Windows
-  "c:\\foo\\bar": "c:/foo/bar",
+  "c:\\foo\\bar": "C:/foo/bar",
   "\\foo\\bar": "/foo/bar",
   ".\\foo\\bar": "./foo/bar",
 });
@@ -179,11 +179,11 @@ runTest("normalize", normalize, {
   "C:\\temp\\..": "C:/",
   "C:\\temp\\\\foo\\bar\\..\\": "C:/temp/foo/",
   "C:////temp\\\\/\\/\\/foo/bar": "C:/temp/foo/bar",
-  "c:/windows/nodejs/path": "c:/windows/nodejs/path",
-  "c:/windows/../nodejs/path": "c:/nodejs/path",
+  "c:/windows/nodejs/path": "C:/windows/nodejs/path",
+  "c:/windows/../nodejs/path": "C:/nodejs/path",
 
-  "c:\\windows\\nodejs\\path": "c:/windows/nodejs/path",
-  "c:\\windows\\..\\nodejs\\path": "c:/nodejs/path",
+  "c:\\windows\\nodejs\\path": "C:/windows/nodejs/path",
+  "c:\\windows\\..\\nodejs\\path": "C:/nodejs/path",
 
   "/windows\\unix/mixed": "/windows/unix/mixed",
   "\\windows//unix/mixed": "/windows/unix/mixed",
@@ -245,6 +245,7 @@ runTest("relative", relative, [
 
   // Windows
   ["C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb", "../../impl/bbb"],
+  ["C:\\orandea\\test\\aaa", "c:\\orandea\\impl\\bbb", "../../impl/bbb"],
   ["C:\\", "C:\\foo\\bar", "foo/bar"],
   ["C:\\foo", "C:\\", ".."],
   [
