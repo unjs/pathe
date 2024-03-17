@@ -40,7 +40,7 @@ const { resolve } = require('pathe')
 
 Read more about path utils from [Node.js documentation](https://nodejs.org/api/path.html) and rest assured behavior is ALWAYS like POSIX regardless of your input paths format and running platform!
 
-### Extra utilties
+### Extra utilities
 
 Pathe exports some extra utilities that do not exist in standard Node.js [path module](https://nodejs.org/api/path.html).
 In order to use them, you can import from `pathe/utils` subpath:
