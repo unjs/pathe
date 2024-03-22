@@ -1,5 +1,6 @@
 {
   "name": "pathe",
+  "type": "module",
   "version": "1.1.2",
   "description": "Universal filesystem path utils",
   "repository": "unjs/pathe",
@@ -7,17 +8,16 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
     "./utils": {
-      "types": "./dist/utils.d.ts",
       "import": "./dist/utils.mjs",
       "require": "./dist/utils.cjs"
     }
   },
   "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
