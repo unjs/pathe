@@ -261,7 +261,12 @@ export const basename: typeof path.basename = function (p, extension) {
 
 // parse
 export const parse: typeof path.parse = function (p) {
-  const root = normalizeWindowsPath(p).split("/").shift() || "/";
+  let root = normalizeWindowsPath(p).split("/").shift();
+  if (root === "") {
+    root = "/";
+  } else {
+    root += "/";
+  }
   const base = basename(p);
   const extension = extname(base);
   return {
