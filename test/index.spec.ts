@@ -208,7 +208,7 @@ it("parse", () => {
     name: "file",
   });
   expect(parse("./dir/file")).to.deep.equal({
-    root: ".",
+    root: "./",
     dir: "./dir",
     base: "file",
     ext: "",
@@ -217,18 +217,41 @@ it("parse", () => {
 
   // Windows
   expect(parse("C:\\path\\dir\\file.txt")).to.deep.equal({
-    root: "C:",
+    root: "C:/",
     dir: "C:/path/dir",
     base: "file.txt",
     ext: ".txt",
     name: "file",
   });
   expect(parse(".\\dir\\file")).to.deep.equal({
-    root: ".",
+    root: "./",
     dir: "./dir",
     base: "file",
     ext: "",
     name: "file",
+  });
+  // Windows path can have spaces
+  expect(parse("C:\\pa th\\dir\\file.txt")).to.deep.equal({
+    root: "C:/",
+    dir: "C:/pa th/dir",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  // Test with normalized windows path
+  expect(parse("C:/path/dir/file.txt")).to.deep.equal({
+    root: 'C:/',
+    dir: 'C:/path/dir',
+    base: 'file.txt',
+    ext: '.txt',
+    name: 'file'
+  })
+  expect(parse("C:/pa th/dir/file.txt")).to.deep.equal({
+    root: 'C:/',
+    dir: 'C:/pa th/dir',
+    base: 'file.txt',
+    ext: '.txt',
+    name: 'file'
   });
 });
 
