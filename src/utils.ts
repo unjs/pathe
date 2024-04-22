@@ -57,6 +57,28 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
   return _path;
 }
 
+export function reverseResolveAlias(
+  path: string,
+  aliases: Record<string, string>,
+) {
+  const _path = normalizeWindowsPath(path);
+  aliases = normalizeAliases(aliases);
+
+  for (const [to, alias] of Object.entries(aliases).reverse()) {
+    if (!_path.startsWith(alias)) {
+      continue;
+    }
+
+    // Strip trailing slash from alias for check
+    const _alias = hasTrailingSlash(alias) ? alias.slice(0, -1) : alias;
+
+    if (hasTrailingSlash(_path[_alias.length])) {
+      return join(to, _path.slice(alias.length));
+    }
+  }
+  return _path;
+}
+
 const FILENAME_RE = /(^|[/\\])([^/\\]+?)(?=(\.[^.]+)?$)/;
 
 export function filename(path: string) {
