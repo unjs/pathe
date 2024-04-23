@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeAliases, filename, resolveAlias } from "../src/utils";
+import {
+  normalizeAliases,
+  filename,
+  resolveAlias,
+  reverseResolveAlias,
+} from "../src/utils";
 
 describe("alias", () => {
   const _aliases = {
@@ -54,6 +59,33 @@ describe("alias", () => {
     it("respect ending with /", () => {
       expect(resolveAlias("~/foo/bar", aliases)).toBe("/src/foo/bar");
       expect(resolveAlias("~win/foo/bar", aliases)).toBe("C:/src/foo/bar");
+    });
+  });
+
+  describe("reverseResolveAlias", () => {
+    for (const [to, from] of Object.entries(aliases)) {
+      it(from, () => {
+        expect(reverseResolveAlias(from, aliases)).toBe(to);
+      });
+    }
+    it("respects path separators", () => {
+      const aliases = {
+        "~": "/root",
+        "~assets": "/root/some/assets",
+      };
+      expect(
+        reverseResolveAlias("/root/some/assets/smth.jpg", aliases),
+      ).toMatchInlineSnapshot('"~assets/smth.jpg"');
+    });
+    it("unchanged", () => {
+      expect(reverseResolveAlias("foo/bar.js", aliases)).toBe("foo/bar.js");
+      expect(reverseResolveAlias("./bar.js", aliases)).toBe("./bar.js");
+    });
+    it("respect ending with /", () => {
+      expect(reverseResolveAlias("/src/foo/bar", aliases)).toBe("~/foo/bar");
+      expect(reverseResolveAlias("C:/src/foo/bar", aliases)).toBe(
+        "~win/foo/bar",
+      );
     });
   });
 });
