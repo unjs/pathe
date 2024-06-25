@@ -17,7 +17,7 @@ const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 
 // Force POSIX contants
 export const sep = "/";
-export const delimiter = ":";
+export const delimiter = /^win/i.test(process.platform) ? ";" : ":";
 
 // normalize
 export const normalize: typeof path.normalize = function (path: string) {

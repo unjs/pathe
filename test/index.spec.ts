@@ -331,7 +331,9 @@ runTest("toNamespacedPath", toNamespacedPath, {
 
 describe("constants", () => {
   it("delimiter should equal :", () => {
-    expect(delimiter).to.equal(":");
+    expect(delimiter).to.equal(
+      /^win/i.test(process.platform) ? ";" : ":",
+    );
   });
 
   it("sep should equal /", () => {
