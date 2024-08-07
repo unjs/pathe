@@ -98,6 +98,9 @@ runTest("basename", basename, [
   ["C:\\foo\\bar\\\\\\", "bar"],
   [".\\foo\\bar\\", "bar"],
   [".\\foo\\bar\\\\\\", "bar"],
+
+  // Empty string
+  ["", ""],
 ]);
 
 runTest("dirname", dirname, {

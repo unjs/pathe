@@ -253,10 +253,18 @@ export const format: typeof path.format = function (p) {
 
 // basename
 export const basename: typeof path.basename = function (p, extension) {
-  const lastSegment = normalizeWindowsPath(p)
-    .replace(/\/+$/, "")
-    .split("/")
-    .pop();
+  const segments = normalizeWindowsPath(p).split("/");
+
+  // default to empty string
+  let lastSegment = "";
+  for (let i = segments.length - 1; i >= 0; i--) {
+    const val = segments[i];
+    if (val) {
+      lastSegment = val;
+      break;
+    }
+  }
+
   return extension && lastSegment.endsWith(extension)
     ? lastSegment.slice(0, -extension.length)
     : lastSegment;
