@@ -57,10 +57,21 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
   return _path;
 }
 
-const FILENAME_RE = /(^|[/\\])([^/\\]+?)(?=(\.[^.]+)?$)/;
-
+const SLASH_RE = /[/\\]/;
 export function filename(path: string) {
-  return path.match(FILENAME_RE)?.[2];
+  const base = path.split(SLASH_RE).pop();
+
+  if (!base) {
+    return undefined;
+  }
+
+  const separatorIndex = base.lastIndexOf(".");
+
+  if (separatorIndex <= 0) {
+    return base;
+  }
+
+  return base.slice(0, separatorIndex);
 }
 
 // --- internals ---
