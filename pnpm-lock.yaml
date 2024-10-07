@@ -21,8 +21,8 @@ devDependencies:
     specifier: ^0.2.1
     version: 0.2.1(eslint@8.57.0)(typescript@5.4.3)
   jiti:
-    specifier: ^1.21.0
-    version: 1.21.0
+    specifier: ^2.3.3
+    version: 2.3.3
   prettier:
     specifier: ^3.2.5
     version: 3.2.5
@@ -2900,6 +2900,11 @@ packages:
 
   /jiti@1.21.0:
     resolution: {integrity: sha512-gFqAIbuKyyso/3G2qhiO2OM6shY6EPP/R0+mkDbyspxKazh8BXDC5FiFsUjlczgdNz/vfra0da2y+aHrusLG/Q==}
+    hasBin: true
+    dev: true
+
+  /jiti@2.3.3:
+    resolution: {integrity: sha512-EX4oNDwcXSivPrw2qKH2LB5PoFxEvgtv2JgwW0bU858HoLQ+kutSvjLMUqBd0PeJYEinLWhoI9Ol0eYMqj/wNQ==}
     hasBin: true
     dev: true
 
