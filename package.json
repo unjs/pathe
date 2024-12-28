@@ -42,7 +42,7 @@
     "jiti": "^1.21.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.3",
-    "unbuild": "^2.0.0",
+    "unbuild": "^3.2.0",
     "vitest": "^1.4.0"
   },
   "packageManager": "pnpm@8.15.5"
