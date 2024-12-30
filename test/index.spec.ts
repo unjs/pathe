@@ -81,6 +81,21 @@ runTest("basename", basename, [
   ["./myfile.html", ".html", "myfile"],
   ["./undefined", undefined, "undefined"],
 
+  // Trailing separators (issue https://github.com/unjs/pathe/issues/179)
+  // POSIX
+  ["/foo/bar/", "bar"],
+  ["/foo/bar///", "bar"],
+  ["./foo/bar/", "bar"],
+  ["./foo/bar///", "bar"],
+  // Windows
+  ["C:\\foo\\bar\\", "bar"],
+  ["C:\\foo\\bar\\\\\\", "bar"],
+  [".\\foo\\bar\\", "bar"],
+  [".\\foo\\bar\\\\\\", "bar"],
+
+  // Empty string
+  ["", ""],
+
   // Windows
   [String.raw`C:\temp\myfile.html`, "myfile.html"],
   [String.raw`\temp\myfile.html`, "myfile.html"],
