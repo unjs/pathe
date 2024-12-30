@@ -124,6 +124,8 @@ runTest("extname", extname, {
   // POSIX
   "/temp/myfile.html": ".html",
   "./myfile.html": ".html",
+  "./myfile.tar.gz": ".gz",
+  "./myfile.tar.gz.br": ".br",
 
   ".foo": "",
   "..foo": ".foo",
