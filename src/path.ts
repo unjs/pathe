@@ -15,6 +15,7 @@ const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 const _EXTNAME_RE = /.(\.[^./]+)$/;
+const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
 
 // Force POSIX constants
 
@@ -268,11 +269,9 @@ export const basename: typeof path.basename = function (p, extension) {
     : lastSegment;
 };
 
-const PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
-
 export const parse: typeof path.parse = function (p) {
   // The root of the path such as '/' or 'c:\'
-  let root = PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") ?? "";
+  const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
   const extension = extname(base);
   return {
