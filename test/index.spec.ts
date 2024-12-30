@@ -388,8 +388,10 @@ runTest("toNamespacedPath", toNamespacedPath, {
 });
 
 describe("constants", () => {
-  it("delimiter should equal :", () => {
-    expect(delimiter).to.equal(":");
+  it("delimiter", () => {
+    expect(delimiter).to.equal(
+      globalThis.process?.platform === "win32" ? ";" : ":",
+    );
   });
 
   it("sep should equal /", () => {
