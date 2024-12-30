@@ -14,23 +14,14 @@ const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
+const _EXTNAME_RE = /.(\.[^./]+)$/;
 
-// Force POSIX contants
-/**
- * File system path separator constant, forced to POSIX style for consistency.
- */
-export const sep = "/";
-/**
- * Path delimiter constant, used to separate paths in environment variables.
- */
-export const delimiter = ":";
+// Force POSIX constants
 
-/**
- * Normalises the given path, resolving '.' and '.' segments.
- *
- * @param path - The path to normalise.
- * @returns the normalised path.
- */
+export const sep: typeof path.sep = "/";
+
+export const delimiter: typeof path.delimiter = ":";
+
 export const normalize: typeof path.normalize = function (path: string) {
   if (path.length === 0) {
     return ".";
@@ -69,12 +60,6 @@ export const normalize: typeof path.normalize = function (path: string) {
   return isPathAbsolute && !isAbsolute(path) ? `/${path}` : path;
 };
 
-/**
- * Joins all given path segments using the POSIX separator, then normalises the resulting path.
- *
- * @param arguments_ - The path segments to join.
- * @returns the joined and normalised path.
- */
 export const join: typeof path.join = function (...arguments_) {
   if (arguments_.length === 0) {
     return ".";
@@ -104,13 +89,6 @@ function cwd() {
   return "/";
 }
 
-/**
- * Resolves a sequence of paths to an absolute path.
- * The resulting path is normalised and trailing slashes are removed unless the path is a root directory.
- *
- * @param arguments_ - The sequence of paths to resolve.
- * @returns the resolved absolute path.
- */
 export const resolve: typeof path.resolve = function (...arguments_) {
   // Normalize windows arguments
   arguments_ = arguments_.map((argument) => normalizeWindowsPath(argument));
@@ -221,47 +199,19 @@ export function normalizeString(path: string, allowAboveRoot: boolean) {
   return res;
 }
 
-/**
- * Determines if a path is an absolute path.
- *
- * @param p - The path to check.
- * @returns `true` if the path is absolute, otherwise `false`.
- */
 export const isAbsolute: typeof path.isAbsolute = function (p) {
   return _IS_ABSOLUTE_RE.test(p);
 };
 
-/**
- * Converts a non-namespaced path into a namespaced path. On POSIX systems this is a noop.
- *
- * @param p - The path to convert.
- * @returns the namespaced path.
- */
 export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
   return normalizeWindowsPath(p);
 };
 
-// extname
-const _EXTNAME_RE = /.(\.[^./]+)$/;
-/**
- * Returns the extension of the path, from the last occurrence of the '.' (period) character to the end of the string in the last part of the path.
- * If there is no '.' in the last part of the path, or if there are no '.' characters other than the first character of the basename of the path, an empty string is returned.
- *
- * @param p - The path to evaluate.
- * @returns the extension of the path.
- */
 export const extname: typeof path.extname = function (p) {
   const match = _EXTNAME_RE.exec(normalizeWindowsPath(p));
   return (match && match[1]) || "";
 };
 
-/**
- * Specifies the relative path from one path to another.
- *
- * @param from - The source path.
- * @param to - The destination path.
- * @returns the relative path from the source to the target.
- */
 export const relative: typeof path.relative = function (from, to) {
   const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/");
   const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/");
@@ -282,13 +232,6 @@ export const relative: typeof path.relative = function (from, to) {
   return [..._from.map(() => ".."), ..._to].join("/");
 };
 
-/**
- * Returns the directory name of a path, similar to the Unix dirname command.
- * Trailing directory separators are ignored.
- *
- * @param p - The path to evaluate.
- * @returns the directory portion of the path.
- */
 export const dirname: typeof path.dirname = function (p) {
   const segments = normalizeWindowsPath(p)
     .replace(/\/$/, "")
@@ -300,12 +243,6 @@ export const dirname: typeof path.dirname = function (p) {
   return segments.join("/") || (isAbsolute(p) ? "/" : ".");
 };
 
-/**
- * Returns a path string from an object.
- *
- * @param p - The path object.
- * @returns the formatted path string.
- */
 export const format: typeof path.format = function (p) {
   const segments = [p.root, p.dir, p.base ?? p.name + p.ext].filter(Boolean);
   return normalizeWindowsPath(
@@ -313,14 +250,6 @@ export const format: typeof path.format = function (p) {
   );
 };
 
-/**
- * Returns the last part of a path, similar to the Unix basename command.
- * Trailing directory separators are considered part of the path.
- *
- * @param p - The path to evaluate.
- * @param extension - An optional file extension to remove from the result.
- * @returns the last part of the path.
- */
 export const basename: typeof path.basename = function (p, extension) {
   const lastSegment = normalizeWindowsPath(p).split("/").pop();
   return extension && lastSegment.endsWith(extension)
@@ -328,12 +257,6 @@ export const basename: typeof path.basename = function (p, extension) {
     : lastSegment;
 };
 
-/**
- * Returns an object from a path string - the opposite of format().
- *
- * @param p - The path string to parse.
- * @returns an object representing the path.
- */
 export const parse: typeof path.parse = function (p) {
   const root = normalizeWindowsPath(p).split("/").shift() || "/";
   const base = basename(p);
