@@ -64,12 +64,24 @@ describe("filename", () => {
     "test.html": "test",
     "/temp/myfile.html": "myfile",
     "./myfile.html": "myfile",
+    "/Users/john.doe/foo/myFile.js": "myFile",
+    "/Users/john.doe/foo/myFile": "myFile",
+    "./.hidden/myFile.ts": "myFile",
+    "./.hidden/myFile": "myFile",
+    "/temp/.gitignore": ".gitignore",
+    "./foo.bar.baz.js": "foo.bar.baz",
 
     // Windows
     "C:\\temp\\": undefined,
     "C:\\temp\\myfile.html": "myfile",
     "\\temp\\myfile.html": "myfile",
     ".\\myfile.html": "myfile",
+    ".\\john.doe\\myfile.js": "myfile",
+    ".\\john.doe\\myfile": "myfile",
+    ".\\.hidden\\myfile.js": "myfile",
+    ".\\.hidden\\myfile": "myfile",
+    "C:\\temp\\.gitignore": ".gitignore",
+    "C:\\temp\\foo.bar.baz.js": "foo.bar.baz",
   };
   for (const file in files) {
     it(file, () => {

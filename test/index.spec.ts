@@ -61,16 +61,17 @@ runTest("normalizeString", normalizeString, {
   // './foobar./../a/./': 'a',
 
   // Windows
-  [normalizeWindowsPath("C:\\temp\\..")]: "C:",
-  [normalizeWindowsPath("C:\\temp\\..\\.\\Users")]: "C:/Users",
-  [normalizeWindowsPath("C:\\temp\\..\\.well-known\\Users")]:
+  [normalizeWindowsPath(String.raw`C:\temp\..`)]: "C:",
+  [normalizeWindowsPath(String.raw`C:\temp\..\.\Users`)]: "C:/Users",
+  [normalizeWindowsPath(String.raw`C:\temp\..\.well-known\Users`)]:
     "C:/.well-known/Users",
-  [normalizeWindowsPath("C:\\temp\\..\\..well-known\\Users")]:
+  [normalizeWindowsPath(String.raw`C:\temp\..\..well-known\Users`)]:
     "C:/..well-known/Users",
   [normalizeWindowsPath("C:\\a\\..\\")]: "C:",
-  [normalizeWindowsPath("C:\\temp\\myfile.html")]: "C:/temp/myfile.html",
-  [normalizeWindowsPath("\\temp\\myfile.html")]: "temp/myfile.html",
-  [normalizeWindowsPath(".\\myfile.html")]: "myfile.html",
+  [normalizeWindowsPath(String.raw`C:\temp\myfile.html`)]:
+    "C:/temp/myfile.html",
+  [normalizeWindowsPath(String.raw`\temp\myfile.html`)]: "temp/myfile.html",
+  [normalizeWindowsPath(String.raw`.\myfile.html`)]: "myfile.html",
 });
 
 runTest("basename", basename, [
@@ -80,12 +81,27 @@ runTest("basename", basename, [
   ["./myfile.html", ".html", "myfile"],
   ["./undefined", undefined, "undefined"],
 
+  // Trailing separators (issue https://github.com/unjs/pathe/issues/179)
+  // POSIX
+  ["/foo/bar/", "bar"],
+  ["/foo/bar///", "bar"],
+  ["./foo/bar/", "bar"],
+  ["./foo/bar///", "bar"],
   // Windows
-  ["C:\\temp\\myfile.html", "myfile.html"],
-  ["\\temp\\myfile.html", "myfile.html"],
-  [".\\myfile.html", "myfile.html"],
-  [".\\myfile.html", ".html", "myfile"],
-  [".\\undefined", undefined, "undefined"],
+  ["C:\\foo\\bar\\", "bar"],
+  ["C:\\foo\\bar\\\\\\", "bar"],
+  [".\\foo\\bar\\", "bar"],
+  [".\\foo\\bar\\\\\\", "bar"],
+
+  // Empty string
+  ["", ""],
+
+  // Windows
+  [String.raw`C:\temp\myfile.html`, "myfile.html"],
+  [String.raw`\temp\myfile.html`, "myfile.html"],
+  [String.raw`.\myfile.html`, "myfile.html"],
+  [String.raw`.\myfile.html`, ".html", "myfile"],
+  [String.raw`.\undefined`, undefined, "undefined"],
 ]);
 
 runTest("dirname", dirname, {
@@ -135,7 +151,7 @@ runTest("format", format, [
 
   // Windows
   [{ name: "file", base: "file.txt" }, "file.txt"],
-  [{ dir: "C:\\path\\dir", base: "file.txt" }, "C:/path/dir/file.txt"],
+  [{ dir: String.raw`C:\path\dir`, base: "file.txt" }, "C:/path/dir/file.txt"],
 ]);
 
 runTest("join", join, [
@@ -145,18 +161,29 @@ runTest("join", join, [
   ["/test//", "//path", "/test/path"],
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
   ["./some/local/unix/", "../path", "some/local/path"],
-  ["./some\\current\\mixed", "..\\path", "some/current/path"],
-  ["../some/relative/destination", "..\\path", "../some/relative/path"],
+  [String.raw`./some\current\mixed`, String.raw`..\path`, "some/current/path"],
+  [
+    "../some/relative/destination",
+    String.raw`..\path`,
+    "../some/relative/path",
+  ],
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
   ["/foo", "bar", "baz/asdf", "quux", "..", "/foo/bar/baz/asdf"],
 
-  ["C:\\foo", "bar", "baz\\asdf", "quux", "..", "C:/foo/bar/baz/asdf"],
-  ["some/nodejs\\windows", "../path", "some/nodejs/path"],
-  ["some\\windows\\only", "..\\path", "some/windows/path"],
+  [
+    String.raw`C:\foo`,
+    "bar",
+    String.raw`baz\asdf`,
+    "quux",
+    "..",
+    "C:/foo/bar/baz/asdf",
+  ],
+  [String.raw`some/nodejs\windows`, "../path", "some/nodejs/path"],
+  [String.raw`some\windows\only`, String.raw`..\path`, "some/windows/path"],
   // UNC paths
-  ["\\\\server\\share\\file", "..\\path", "//server/share/path"],
-  ["\\\\.\\c:\\temp\\file", "..\\path", "//./c:/temp/path"],
-  ["\\\\server/share/file", "../path", "//server/share/path"],
+  [String.raw`\\server\share\file`, String.raw`..\path`, "//server/share/path"],
+  [String.raw`\\.\c:\temp\file`, String.raw`..\path`, "//./c:/temp/path"],
+  [String.raw`\\server/share/file`, "../path", "//server/share/path"],
 ]);
 
 runTest("normalize", normalize, {
@@ -216,14 +243,14 @@ it("parse", () => {
   });
 
   // Windows
-  expect(parse("C:\\path\\dir\\file.txt")).to.deep.equal({
+  expect(parse(String.raw`C:\path\dir\file.txt`)).to.deep.equal({
     root: "C:",
     dir: "C:/path/dir",
     base: "file.txt",
     ext: ".txt",
     name: "file",
   });
-  expect(parse(".\\dir\\file")).to.deep.equal({
+  expect(parse(String.raw`.\dir\file`)).to.deep.equal({
     root: ".",
     dir: "./dir",
     base: "file",
@@ -244,11 +271,19 @@ runTest("relative", relative, [
   ],
 
   // Windows
-  ["C:\\orandea\\test\\aaa", "C:\\orandea\\impl\\bbb", "../../impl/bbb"],
-  ["C:\\orandea\\test\\aaa", "c:\\orandea\\impl\\bbb", "../../impl/bbb"],
-  ["C:\\", "C:\\foo\\bar", "foo/bar"],
-  ["C:\\foo", "C:\\", ".."],
-  ["C:\\foo", "d:\\bar", "D:/bar"],
+  [
+    String.raw`C:\orandea\test\aaa`,
+    String.raw`C:\orandea\impl\bbb`,
+    "../../impl/bbb",
+  ],
+  [
+    String.raw`C:\orandea\test\aaa`,
+    String.raw`c:\orandea\impl\bbb`,
+    "../../impl/bbb",
+  ],
+  ["C:\\", String.raw`C:\foo\bar`, "foo/bar"],
+  [String.raw`C:\foo`, "C:\\", ".."],
+  [String.raw`C:\foo`, String.raw`d:\bar`, "D:/bar"],
   [
     () => process.cwd().replace(/\\/g, "/"),
     "./dist/client/b-scroll.d.ts",
@@ -278,13 +313,13 @@ runTest("resolve", resolve, [
   ],
 
   // Windows
-  ["C:\\foo\\bar", ".\\baz", "C:/foo/bar/baz"],
-  ["\\foo\\bar", ".\\baz", "/foo/bar/baz"],
-  ["\\foo\\bar", "..", ".", ".\\baz", "/foo/baz"],
-  ["\\foo\\bar", "\\tmp\\file\\", "/tmp/file"],
-  ["\\foo\\bar", undefined, null, "", "\\tmp\\file\\", "/tmp/file"],
+  [String.raw`C:\foo\bar`, String.raw`.\baz`, "C:/foo/bar/baz"],
+  [String.raw`\foo\bar`, String.raw`.\baz`, "/foo/bar/baz"],
+  [String.raw`\foo\bar`, "..", ".", String.raw`.\baz`, "/foo/baz"],
+  [String.raw`\foo\bar`, "\\tmp\\file\\", "/tmp/file"],
+  [String.raw`\foo\bar`, undefined, null, "", "\\tmp\\file\\", "/tmp/file"],
   [
-    "\\foo\\bar",
+    String.raw`\foo\bar`,
     undefined,
     null,
     "",
@@ -297,15 +332,15 @@ runTest("resolve", resolve, [
   [
     "wwwroot",
     "static_files\\png\\",
-    "..\\gif\\image.gif",
+    String.raw`..\gif\image.gif`,
     () =>
       `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
   ],
-  ["C:\\Windows\\path\\only", "../../reports", "C:/Windows/reports"],
+  [String.raw`C:\Windows\path\only`, "../../reports", "C:/Windows/reports"],
   [
-    "C:\\Windows\\long\\path\\mixed/with/unix",
+    String.raw`C:\Windows\long\path\mixed/with/unix`,
     "../..",
-    "..\\../reports",
+    String.raw`..\../reports`,
     "C:/Windows/long/reports",
   ],
 ]);
@@ -369,7 +404,7 @@ export function runTest(name, function_, items) {
         expected,
       )} on Windows`, () => {
         cwd = process.cwd;
-        process.cwd = vi.fn(() => "C:\\Windows\\path\\only");
+        process.cwd = vi.fn(() => String.raw`C:\Windows\path\only`);
         expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
           _r(expected),
         );
