@@ -258,7 +258,7 @@ it("parse", () => {
     name: "file",
   });
   // Windows path can have spaces
-  expect(parse("C:\\pa th\\dir\\file.txt")).to.deep.equal({
+  expect(parse(String.raw`C:\pa th\dir\file.txt`)).to.deep.equal({
     root: "C:/",
     dir: "C:/pa th/dir",
     base: "file.txt",
