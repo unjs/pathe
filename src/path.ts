@@ -16,8 +16,18 @@ const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 const _EXTNAME_RE = /.(\.[^./]+)$/;
 
-export const sep: typeof path.sep = "/";
+/**
+ * Constant for path separator.
+ *
+ * Always equals to `"/"`.
+ */
+export const sep = "/";
 
+/**
+ * The platform-specific file delimiter.
+ *
+ * Equals to `";"` in windows and `":"` in all other platforms.
+ */
 export const delimiter = globalThis.process?.platform === "win32" ? ";" : ":";
 
 export const normalize: typeof path.normalize = function (path: string) {
