@@ -6,7 +6,7 @@ export * from "./path";
 
 export type Pathe = Omit<
   typeof NodePath,
-  "posix" | "win32" | "matchesGlob" /* TODO */
+  "posix" | "win32" | "matchesGlob" // https://github.com/unjs/pathe/issues/182
 >;
 
 export const posix = path satisfies Pathe;
