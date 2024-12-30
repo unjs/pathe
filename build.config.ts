@@ -1,25 +1,21 @@
 import { resolve } from "node:path";
 import { defineBuildConfig } from "unbuild";
-import { build } from "esbuild";
+import { build, type BuildOptions } from "esbuild";
 
 export default defineBuildConfig({
-  rollup: {
-    inlineDependencies: true,
-  },
   hooks: {
     async "build:before"(ctx) {
-      await build({
+      await build(<BuildOptions>{
         format: "esm",
         bundle: true,
         minify: true,
-        outfile: resolve("minimatch.min.mjs"),
+        outfile: resolve("tmp/minimatch.min.mjs"),
         stdin: {
           resolveDir: process.cwd(),
           contents: `export { minimatch } from "minimatch";`,
         },
       });
-
-      ctx.options.alias["minimatch"] = resolve("minimatch.min.mjs");
+      ctx.options.alias["minimatch"] = resolve("tmp/minimatch.min.mjs");
     },
   },
 });
