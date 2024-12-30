@@ -18,7 +18,7 @@ const _EXTNAME_RE = /.(\.[^./]+)$/;
 
 export const sep: typeof path.sep = "/";
 
-export const delimiter = /^win/i.test(globalThis.process?.platform) ? ";" : ":";
+export const delimiter = globalThis.process?.platform === "win32" ? ";" : ":";
 
 export const normalize: typeof path.normalize = function (path: string) {
   if (path.length === 0) {
