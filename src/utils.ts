@@ -5,6 +5,8 @@ const pathSeparators = new Set(["/", "\\", undefined]);
 
 const normalizedAliasSymbol = Symbol.for("pathe:normalizedAlias");
 
+const SLASH_RE = /[/\\]/;
+
 /**
  * Normalises alias mappings, ensuring that more specific aliases are resolved before less specific ones.
  * This function also ensures that aliases do not resolve to themselves cyclically.
@@ -72,8 +74,6 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
   return _path;
 }
 
-const FILENAME_RE = /(^|[/\\])([^/\\]+?)(?=(\.[^.]+)?$)/;
-
 /**
  * Extracts the filename from a given path, excluding any directory paths and the file extension.
  *
@@ -81,7 +81,19 @@ const FILENAME_RE = /(^|[/\\])([^/\\]+?)(?=(\.[^.]+)?$)/;
  * @returns the filename without the extension, or `undefined` if the filename cannot be extracted.
  */
 export function filename(path: string) {
-  return path.match(FILENAME_RE)?.[2];
+  const base = path.split(SLASH_RE).pop();
+
+  if (!base) {
+    return undefined;
+  }
+
+  const separatorIndex = base.lastIndexOf(".");
+
+  if (separatorIndex <= 0) {
+    return base;
+  }
+
+  return base.slice(0, separatorIndex);
 }
 
 // --- internals ---
