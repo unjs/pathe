@@ -8,6 +8,8 @@ Check LICENSE file
 
 import type path from "node:path";
 
+import { minimatch } from "minimatch";
+
 import { normalizeWindowsPath } from "./_internal";
 
 const _UNC_REGEX = /^[/\\]{2}/;
@@ -289,4 +291,16 @@ export const parse: typeof path.parse = function (p) {
     ext: extension,
     name: base.slice(0, base.length - extension.length),
   };
+};
+
+export const matchesGlob: typeof path.matchesGlob = (path, pattern) => {
+  // https://github.com/nodejs/node/blob/main/lib/internal/fs/glob.js#L660
+  // https://github.com/isaacs/minimatch#windows
+  return minimatch(normalize(path), pattern, {
+    windowsPathsNoEscape: true,
+    nonegate: true,
+    nocomment: true,
+    optimizationLevel: 2,
+    nocaseMagicOnly: true,
+  });
 };
