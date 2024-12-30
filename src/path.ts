@@ -15,6 +15,7 @@ const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 const _EXTNAME_RE = /.(\.[^./]+)$/;
+const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
 
 // Force POSIX constants
 
@@ -269,7 +270,8 @@ export const basename: typeof path.basename = function (p, extension) {
 };
 
 export const parse: typeof path.parse = function (p) {
-  const root = normalizeWindowsPath(p).split("/").shift() || "/";
+  // The root of the path such as '/' or 'c:\'
+  const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
   const extension = extname(base);
   return {
