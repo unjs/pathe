@@ -14,12 +14,23 @@ const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
+const _EXTNAME_RE = /.(\.[^./]+)$/;
+const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
 
-// Force POSIX contants
+/**
+ * Constant for path separator.
+ *
+ * Always equals to `"/"`.
+ */
 export const sep = "/";
-export const delimiter = ":";
 
-// normalize
+/**
+ * The platform-specific file delimiter.
+ *
+ * Equals to `";"` in windows and `":"` in all other platforms.
+ */
+export const delimiter = globalThis.process?.platform === "win32" ? ";" : ":";
+
 export const normalize: typeof path.normalize = function (path: string) {
   if (path.length === 0) {
     return ".";
@@ -58,7 +69,6 @@ export const normalize: typeof path.normalize = function (path: string) {
   return isPathAbsolute && !isAbsolute(path) ? `/${path}` : path;
 };
 
-// join
 export const join: typeof path.join = function (...arguments_) {
   if (arguments_.length === 0) {
     return ".";
@@ -88,7 +98,6 @@ function cwd() {
   return "/";
 }
 
-// resolve
 export const resolve: typeof path.resolve = function (...arguments_) {
   // Normalize windows arguments
   arguments_ = arguments_.map((argument) => normalizeWindowsPath(argument));
@@ -125,7 +134,13 @@ export const resolve: typeof path.resolve = function (...arguments_) {
   return resolvedPath.length > 0 ? resolvedPath : ".";
 };
 
-// Resolves . and .. elements in a path with directory names
+/**
+ * Resolves a string path, resolving '.' and '.' segments and allowing paths above the root.
+ *
+ * @param path - The path to normalise.
+ * @param allowAboveRoot - Whether to allow the resulting path to be above the root directory.
+ * @returns the normalised path string.
+ */
 export function normalizeString(path: string, allowAboveRoot: boolean) {
   let res = "";
   let lastSegmentLength = 0;
@@ -193,24 +208,19 @@ export function normalizeString(path: string, allowAboveRoot: boolean) {
   return res;
 }
 
-// isAbsolute
 export const isAbsolute: typeof path.isAbsolute = function (p) {
   return _IS_ABSOLUTE_RE.test(p);
 };
 
-// toNamespacedPath
 export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
   return normalizeWindowsPath(p);
 };
 
-// extname
-const _EXTNAME_RE = /.(\.[^./]+)$/;
 export const extname: typeof path.extname = function (p) {
   const match = _EXTNAME_RE.exec(normalizeWindowsPath(p));
   return (match && match[1]) || "";
 };
 
-// relative
 export const relative: typeof path.relative = function (from, to) {
   const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/");
   const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/");
@@ -231,7 +241,6 @@ export const relative: typeof path.relative = function (from, to) {
   return [..._from.map(() => ".."), ..._to].join("/");
 };
 
-// dirname
 export const dirname: typeof path.dirname = function (p) {
   const segments = normalizeWindowsPath(p)
     .replace(/\/$/, "")
@@ -243,7 +252,6 @@ export const dirname: typeof path.dirname = function (p) {
   return segments.join("/") || (isAbsolute(p) ? "/" : ".");
 };
 
-// format
 export const format: typeof path.format = function (p) {
   const segments = [p.root, p.dir, p.base ?? p.name + p.ext].filter(Boolean);
   return normalizeWindowsPath(
@@ -251,17 +259,27 @@ export const format: typeof path.format = function (p) {
   );
 };
 
-// basename
 export const basename: typeof path.basename = function (p, extension) {
-  const lastSegment = normalizeWindowsPath(p).split("/").pop();
+  const segments = normalizeWindowsPath(p).split("/");
+
+  // default to empty string
+  let lastSegment = "";
+  for (let i = segments.length - 1; i >= 0; i--) {
+    const val = segments[i];
+    if (val) {
+      lastSegment = val;
+      break;
+    }
+  }
+
   return extension && lastSegment.endsWith(extension)
     ? lastSegment.slice(0, -extension.length)
     : lastSegment;
 };
 
-// parse
 export const parse: typeof path.parse = function (p) {
-  const root = normalizeWindowsPath(p).split("/").shift() || "/";
+  // The root of the path such as '/' or 'c:\'
+  const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
   const extension = extname(base);
   return {
