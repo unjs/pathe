@@ -365,9 +365,9 @@ runTest("toNamespacedPath", toNamespacedPath, {
 });
 
 describe("constants", () => {
-  it("delimiter should equal :", () => {
+  it("delimiter", () => {
     expect(delimiter).to.equal(
-      /^win/i.test(globalThis.process?.platform) ? ";" : ":",
+      globalThis.process?.platform === "win32" ? ";" : ":",
     );
   });
 
