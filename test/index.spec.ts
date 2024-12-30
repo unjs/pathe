@@ -235,7 +235,7 @@ it("parse", () => {
     name: "file",
   });
   expect(parse("./dir/file")).to.deep.equal({
-    root: "./",
+    root: "",
     dir: "./dir",
     base: "file",
     ext: "",
@@ -251,7 +251,7 @@ it("parse", () => {
     name: "file",
   });
   expect(parse(String.raw`.\dir\file`)).to.deep.equal({
-    root: "./",
+    root: "",
     dir: "./dir",
     base: "file",
     ext: "",
