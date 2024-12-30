@@ -5,6 +5,15 @@ const pathSeparators = new Set(["/", "\\", undefined]);
 
 const normalizedAliasSymbol = Symbol.for("pathe:normalizedAlias");
 
+const SLASH_RE = /[/\\]/;
+
+/**
+ * Normalises alias mappings, ensuring that more specific aliases are resolved before less specific ones.
+ * This function also ensures that aliases do not resolve to themselves cyclically.
+ *
+ * @param _aliases - A set of alias mappings where each key is an alias and its value is the actual path it points to.
+ * @returns a set of normalised alias mappings.
+ */
 export function normalizeAliases(_aliases: Record<string, string>) {
   if ((_aliases as any)[normalizedAliasSymbol]) {
     return _aliases;
@@ -39,6 +48,14 @@ export function normalizeAliases(_aliases: Record<string, string>) {
   return aliases;
 }
 
+/**
+ * Resolves a path string to its alias if applicable, otherwise returns the original path.
+ * This function normalises the path, resolves the alias and then joins it to the alias target if necessary.
+ *
+ * @param path - The path string to resolve.
+ * @param aliases - A set of alias mappings to use for resolution.
+ * @returns the resolved path as a string.
+ */
 export function resolveAlias(path: string, aliases: Record<string, string>) {
   const _path = normalizeWindowsPath(path);
   aliases = normalizeAliases(aliases);
@@ -57,10 +74,26 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
   return _path;
 }
 
-const FILENAME_RE = /(^|[/\\])([^/\\]+?)(?=(\.[^.]+)?$)/;
-
+/**
+ * Extracts the filename from a given path, excluding any directory paths and the file extension.
+ *
+ * @param path - The full path of the file from which to extract the filename.
+ * @returns the filename without the extension, or `undefined` if the filename cannot be extracted.
+ */
 export function filename(path: string) {
-  return path.match(FILENAME_RE)?.[2];
+  const base = path.split(SLASH_RE).pop();
+
+  if (!base) {
+    return undefined;
+  }
+
+  const separatorIndex = base.lastIndexOf(".");
+
+  if (separatorIndex <= 0) {
+    return base;
+  }
+
+  return base.slice(0, separatorIndex);
 }
 
 // --- internals ---
