@@ -12,14 +12,14 @@ export default defineBuildConfig({
         format: "esm",
         bundle: true,
         minify: true,
-        outfile: resolve("minimalist.min.mjs"),
+        outfile: resolve("minimatch.min.mjs"),
         stdin: {
           resolveDir: process.cwd(),
           contents: `export { minimatch } from "minimatch";`,
         },
       });
 
-      ctx.options.alias["minimatch"] = resolve("minimalist.min.mjs");
+      ctx.options.alias["minimatch"] = resolve("minimatch.min.mjs");
     },
   },
 });
