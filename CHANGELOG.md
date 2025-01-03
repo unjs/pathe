@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.0.0
+
+[compare changes](https://github.com/unjs/pathe/compare/v1.1.2...v2.0.0)
+
+### 🚀 Enhancements
+
+- Add `posix` and `win32` exports to match `node:path` ([#193](https://github.com/unjs/pathe/pull/193))
+- ⚠️  Set `delimiter` to `;` in windows ([#176](https://github.com/unjs/pathe/pull/176))
+- Add `matchesGlob` export ([#195](https://github.com/unjs/pathe/pull/195))
+- **utils:** Add `reverseResolveAlias` util ([#173](https://github.com/unjs/pathe/pull/173))
+
+### 🩹 Fixes
+
+- **basename:** Ignore trailing seperator ([#180](https://github.com/unjs/pathe/pull/180))
+- **utils/filename:** Handle files beginning with a period or without ext ([#185](https://github.com/unjs/pathe/pull/185))
+- **parse:** ⚠️  Fix root handling to be consistent with node ([#194](https://github.com/unjs/pathe/pull/194))
+- **join:** ⚠️  Preserve normalized unc paths ([#196](https://github.com/unjs/pathe/pull/196))
+
+### 📖 Documentation
+
+- Fix typo ([#163](https://github.com/unjs/pathe/pull/163))
+- Add jsdocs for `pathe/utils` ([#170](https://github.com/unjs/pathe/pull/170))
+
+### 📦 Build
+
+- Add `type: module` to `package.json` ([#190](https://github.com/unjs/pathe/pull/190))
+- Update exports ([#164](https://github.com/unjs/pathe/pull/164))
+
+### 🏡 Chore
+
+- Update dependencies ([2b23e17](https://github.com/unjs/pathe/commit/2b23e17))
+- Lint ([a85706b](https://github.com/unjs/pathe/commit/a85706b))
+- **docs:** Fix TS casing ([#181](https://github.com/unjs/pathe/pull/181))
+- Include eslint.config ([c885fe6](https://github.com/unjs/pathe/commit/c885fe6))
+- Update readme ([3493b05](https://github.com/unjs/pathe/commit/3493b05))
+- Update readme ([e9e0244](https://github.com/unjs/pathe/commit/e9e0244))
+
+### ✅ Tests
+
+- Add additional tests for `extname` ([#186](https://github.com/unjs/pathe/pull/186))
+
+### 🤖 CI
+
+- Update node to 22 lts ([bce11a5](https://github.com/unjs/pathe/commit/bce11a5))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Set `delimiter` to `;` in windows ([#176](https://github.com/unjs/pathe/pull/176))
+- **parse:** ⚠️  Fix root handling to be consistent with node ([#194](https://github.com/unjs/pathe/pull/194))
+- **join:** ⚠️  Preserve normalized unc paths ([#196](https://github.com/unjs/pathe/pull/196))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- Jesse Bakels <jesse.me@gmail.com>
+- Danilo Campana Fuchs ([@danilofuchs](http://github.com/danilofuchs))
+- Krzysztof ([@malezjaa](http://github.com/malezjaa))
+- Mateusz Kadlubowski ([@xeho91](http://github.com/xeho91))
+- Joaquín Sánchez ([@userquin](http://github.com/userquin))
+- Connor Pearson ([@cjpearson](http://github.com/cjpearson))
+- Sukka ([@SukkaW](http://github.com/SukkaW))
+- Max ([@onmax](http://github.com/onmax))
+- @beer ([@iiio2](http://github.com/iiio2))
+- Homa Wong ([@unional](http://github.com/unional))
+- Ikko Eltociear Ashimine <eltociear@gmail.com>
+
 ## v1.1.2
 
 [compare changes](https://github.com/unjs/pathe/compare/v1.1.1...v1.1.2)
