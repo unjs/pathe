@@ -403,6 +403,7 @@ describe("constants", () => {
 runTest("matchesGlob", matchesGlob, [
   ["/foo/bar", "/foo/**", true],
   [String.raw`\foo\bar`, "/foo/**", true],
+  ["/foo/bar", "/{bar,foo}/**", true],
 ]);
 
 function _s(item) {

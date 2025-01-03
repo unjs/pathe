@@ -6,12 +6,12 @@ import { build, type BuildOptions, transform } from "esbuild";
 export default defineBuildConfig({
   hooks: {
     async "build:before"(ctx) {
-      ctx.options.alias["minimatch"] = await buildMinimatch();
+      ctx.options.alias["zeptomatch"] = await buildZeptomatch();
     },
   },
 });
 
-async function buildMinimatch() {
+async function buildZeptomatch() {
   let bundle = await build(<BuildOptions>{
     format: "iife",
     globalName: "__lib__",
@@ -19,29 +19,25 @@ async function buildMinimatch() {
     write: false,
     stdin: {
       resolveDir: process.cwd(),
-      contents: /* js */ `export { minimatch } from "minimatch";`,
+      contents: /* js */ `export { default as zeptomatch } from "zeptomatch";`,
     },
   }).then((r) => r.outputFiles![0].text);
-
-  bundle = bundle
-    .replace("options.debug", "false")
-    .replace(/ this\.debug\(/gm, " // this.debug(");
 
   bundle = (await transform(bundle, { minify: true })).code!;
 
   bundle = /* js */ `
-let _lazyMinimatch = () => { ${bundle}; return __lib__; };
-let _minimatch;
-export const minimatch = (path, pattern, opts) => {
-  if (!_minimatch) {
-    _minimatch = _lazyMinimatch();
-    _lazyMinimatch = null;
+let _lazyMatch = () => { ${bundle}; return __lib__.default || __lib__; };
+let _match;
+export default (path, pattern) => {
+  if (!_match) {
+    _match = _lazyMatch();
+    _lazyMatch = null;
   }
-  return _minimatch.minimatch(path, pattern, opts);
+  return _match(path, pattern);
 };
   `;
 
-  const outFile = resolve("tmp/node_modules/minimatch/minimatch.min.mjs");
+  const outFile = resolve("tmp/node_modules/zeptomatch/zeptomatch.min.mjs");
   await mkdir(dirname(outFile), { recursive: true });
   await writeFile(outFile, bundle);
   return outFile;

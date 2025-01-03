@@ -8,7 +8,7 @@ Check LICENSE file
 
 import type path from "node:path";
 
-import { minimatch } from "minimatch";
+import zeptomatch from "zeptomatch";
 
 import { normalizeWindowsPath } from "./_internal";
 
@@ -293,14 +293,14 @@ export const parse: typeof path.parse = function (p) {
   };
 };
 
-export const matchesGlob: typeof path.matchesGlob = (path, pattern) => {
-  // https://github.com/nodejs/node/blob/main/lib/internal/fs/glob.js#L660
-  // https://github.com/isaacs/minimatch#windows
-  return minimatch(normalize(path), pattern, {
-    windowsPathsNoEscape: true,
-    nonegate: true,
-    nocomment: true,
-    optimizationLevel: 2,
-    nocaseMagicOnly: true,
-  });
+/**
+ * The `path.matchesGlob()` method determines if `path` matches the `pattern`.
+ * @param path The path to glob-match against.
+ * @param pattern The glob to check the path against.
+ */
+export const matchesGlob = (
+  path: string,
+  pattern: string | string[],
+): boolean => {
+  return zeptomatch(pattern, normalize(path));
 };
