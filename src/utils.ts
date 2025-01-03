@@ -77,14 +77,12 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
 /**
  * Resolves a path string to its possible alias.
  *
- * Returns an array of possible alias resolutions, sorted by specificity (longest first).
- *
- * Returns `undefined` if no alias is found.
+ * Returns an array of possible alias resolutions (could be empty), sorted by specificity (longest first).
  */
 export function reverseResolveAlias(
   path: string,
   aliases: Record<string, string>,
-): undefined | string[] {
+): string[] {
   const _path = normalizeWindowsPath(path);
   aliases = normalizeAliases(aliases);
 
@@ -103,10 +101,8 @@ export function reverseResolveAlias(
     }
   }
 
-  return matches.length > 0
-    ? // Sort by length, longest (more specific) first
-      matches.sort((a, b) => b.length - a.length)
-    : undefined;
+  // Sort by length, longest (more specific) first
+  return matches.sort((a, b) => b.length - a.length);
 }
 
 /**

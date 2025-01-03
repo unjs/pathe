@@ -85,8 +85,8 @@ describe("alias", () => {
     });
 
     it("no match", () => {
-      expect(reverseResolveAlias("foo/bar.js", aliases)).toBeUndefined();
-      expect(reverseResolveAlias("./bar.js", aliases)).toBeUndefined();
+      expect(reverseResolveAlias("foo/bar.js", aliases)).toMatchObject([]);
+      expect(reverseResolveAlias("./bar.js", aliases)).toMatchObject([]);
     });
 
     it("respect ending with /", () => {
