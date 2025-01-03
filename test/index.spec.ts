@@ -15,6 +15,7 @@ import {
   sep as separator,
   toNamespacedPath,
   normalizeString,
+  matchesGlob,
 } from "../src";
 
 import { normalizeWindowsPath } from "../src/_internal";
@@ -124,6 +125,8 @@ runTest("extname", extname, {
   // POSIX
   "/temp/myfile.html": ".html",
   "./myfile.html": ".html",
+  "./myfile.tar.gz": ".gz",
+  "./myfile.tar.gz.br": ".br",
 
   ".foo": "",
   "..foo": ".foo",
@@ -157,6 +160,10 @@ runTest("format", format, [
 runTest("join", join, [
   ["."],
   [undefined, "."],
+  ["", "."],
+  ["./", "./"],
+  ["", "/foo", "/foo"],
+  ["/foo", "//bar", "/foo/bar"],
   ["/", "/path", "/path"],
   ["/test//", "//path", "/test/path"],
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
@@ -184,6 +191,7 @@ runTest("join", join, [
   [String.raw`\\server\share\file`, String.raw`..\path`, "//server/share/path"],
   [String.raw`\\.\c:\temp\file`, String.raw`..\path`, "//./c:/temp/path"],
   [String.raw`\\server/share/file`, "../path", "//server/share/path"],
+  [String.raw`//server/share/file`, "../path", "//server/share/path"],
 ]);
 
 runTest("normalize", normalize, {
@@ -398,6 +406,12 @@ describe("constants", () => {
     expect(separator).to.equal("/");
   });
 });
+
+runTest("matchesGlob", matchesGlob, [
+  ["/foo/bar", "/foo/**", true],
+  [String.raw`\foo\bar`, "/foo/**", true],
+  ["/foo/bar", "/{bar,foo}/**", true],
+]);
 
 function _s(item) {
   return (JSON.stringify(_r(item)) || "undefined").replace(/"/g, "'");

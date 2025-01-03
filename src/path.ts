@@ -8,6 +8,8 @@ Check LICENSE file
 
 import type path from "node:path";
 
+import zeptomatch from "zeptomatch";
+
 import { normalizeWindowsPath } from "./_internal";
 
 const _UNC_REGEX = /^[/\\]{2}/;
@@ -69,26 +71,28 @@ export const normalize: typeof path.normalize = function (path: string) {
   return isPathAbsolute && !isAbsolute(path) ? `/${path}` : path;
 };
 
-export const join: typeof path.join = function (...arguments_) {
-  if (arguments_.length === 0) {
-    return ".";
-  }
+export const join: typeof path.join = function (...segments) {
+  let path = "";
 
-  let joined: string;
-  for (const argument of arguments_) {
-    if (argument && argument.length > 0) {
-      if (joined === undefined) {
-        joined = argument;
+  for (const seg of segments) {
+    if (!seg) {
+      continue;
+    }
+    if (path.length > 0) {
+      const pathTrailing = path[path.length - 1] === "/";
+      const segLeading = seg[0] === "/";
+      const both = pathTrailing && segLeading;
+      if (both) {
+        path += seg.slice(1);
       } else {
-        joined += `/${argument}`;
+        path += pathTrailing || segLeading ? seg : `/${seg}`;
       }
+    } else {
+      path += seg;
     }
   }
-  if (joined === undefined) {
-    return ".";
-  }
 
-  return normalize(joined.replace(/\/\/+/g, "/"));
+  return normalize(path);
 };
 
 function cwd() {
@@ -289,4 +293,16 @@ export const parse: typeof path.parse = function (p) {
     ext: extension,
     name: base.slice(0, base.length - extension.length),
   };
+};
+
+/**
+ * The `path.matchesGlob()` method determines if `path` matches the `pattern`.
+ * @param path The path to glob-match against.
+ * @param pattern The glob to check the path against.
+ */
+export const matchesGlob = (
+  path: string,
+  pattern: string | string[],
+): boolean => {
+  return zeptomatch(pattern, normalize(path));
 };
