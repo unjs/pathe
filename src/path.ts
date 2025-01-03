@@ -8,6 +8,8 @@ Check LICENSE file
 
 import type path from "node:path";
 
+import zeptomatch from "zeptomatch";
+
 import { normalizeWindowsPath } from "./_internal";
 
 const _UNC_REGEX = /^[/\\]{2}/;
@@ -289,4 +291,16 @@ export const parse: typeof path.parse = function (p) {
     ext: extension,
     name: base.slice(0, base.length - extension.length),
   };
+};
+
+/**
+ * The `path.matchesGlob()` method determines if `path` matches the `pattern`.
+ * @param path The path to glob-match against.
+ * @param pattern The glob to check the path against.
+ */
+export const matchesGlob = (
+  path: string,
+  pattern: string | string[],
+): boolean => {
+  return zeptomatch(pattern, normalize(path));
 };

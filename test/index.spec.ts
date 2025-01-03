@@ -15,6 +15,7 @@ import {
   sep as separator,
   toNamespacedPath,
   normalizeString,
+  matchesGlob,
 } from "../src";
 
 import { normalizeWindowsPath } from "../src/_internal";
@@ -400,6 +401,12 @@ describe("constants", () => {
     expect(separator).to.equal("/");
   });
 });
+
+runTest("matchesGlob", matchesGlob, [
+  ["/foo/bar", "/foo/**", true],
+  [String.raw`\foo\bar`, "/foo/**", true],
+  ["/foo/bar", "/{bar,foo}/**", true],
+]);
 
 function _s(item) {
   return (JSON.stringify(_r(item)) || "undefined").replace(/"/g, "'");
