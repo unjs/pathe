@@ -162,6 +162,7 @@ runTest("join", join, [
   ["", "."],
   ["./", "./"],
   ["", "/foo", "/foo"],
+  ["/foo", "//bar", "/foo/bar"],
   ["/", "/path", "/path"],
   ["/test//", "//path", "/test/path"],
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
