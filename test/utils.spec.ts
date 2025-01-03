@@ -63,11 +63,17 @@ describe("alias", () => {
   });
 
   describe("reverseResolveAlias", () => {
+    const overrides = {
+      "/root/bingpot/index.ts": ["@/bingpot/index.ts", "bingpot"],
+      "/root/index.js": ["@/index.js", "~"],
+    };
     for (const [to, from] of Object.entries(aliases)) {
-      it(from, () => {
-        expect(reverseResolveAlias(from, aliases)).toBe(to);
+      const expected = overrides[from] || [to];
+      it(`reverseResolveAlias("${from}")`, () => {
+        expect(reverseResolveAlias(from, aliases)).toMatchObject(expected);
       });
     }
+
     it("respects path separators", () => {
       const aliases = {
         "~": "/root",
@@ -75,17 +81,21 @@ describe("alias", () => {
       };
       expect(
         reverseResolveAlias("/root/some/assets/smth.jpg", aliases),
-      ).toMatchInlineSnapshot('"~assets/smth.jpg"');
+      ).toMatchObject(["~/some/assets/smth.jpg", "~assets/smth.jpg"]);
     });
-    it("unchanged", () => {
-      expect(reverseResolveAlias("foo/bar.js", aliases)).toBe("foo/bar.js");
-      expect(reverseResolveAlias("./bar.js", aliases)).toBe("./bar.js");
+
+    it("no match", () => {
+      expect(reverseResolveAlias("foo/bar.js", aliases)).toBeUndefined();
+      expect(reverseResolveAlias("./bar.js", aliases)).toBeUndefined();
     });
+
     it("respect ending with /", () => {
-      expect(reverseResolveAlias("/src/foo/bar", aliases)).toBe("~/foo/bar");
-      expect(reverseResolveAlias("C:/src/foo/bar", aliases)).toBe(
+      expect(reverseResolveAlias("/src/foo/bar", aliases)).toMatchObject([
+        "~/foo/bar",
+      ]);
+      expect(reverseResolveAlias("C:/src/foo/bar", aliases)).toMatchObject([
         "~win/foo/bar",
-      );
+      ]);
     });
   });
 });
