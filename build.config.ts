@@ -1,4 +1,4 @@
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { writeFile, mkdir } from "node:fs/promises";
 import { defineBuildConfig } from "unbuild";
 import { build, type BuildOptions, transform } from "esbuild";
@@ -13,9 +13,9 @@ export default defineBuildConfig({
 
 async function buildMinimatch() {
   let bundle = await build(<BuildOptions>{
-    format: "esm",
+    format: "iife",
+    globalName: "__lib__",
     bundle: true,
-    minify: !true,
     write: false,
     stdin: {
       resolveDir: process.cwd(),
@@ -29,8 +29,20 @@ async function buildMinimatch() {
 
   bundle = (await transform(bundle, { minify: true })).code!;
 
-  const outFile = resolve("tmp/minimatch.min.mjs");
-  await mkdir("tmp", { recursive: true });
+  bundle = /* js */ `
+let _lazyMinimatch = () => { ${bundle}; return __lib__; };
+let _minimatch;
+export const minimatch = (path, pattern, opts) => {
+  if (!_minimatch) {
+    _minimatch = _lazyMinimatch();
+    _lazyMinimatch = null;
+  }
+  return _minimatch.minimatch(path, pattern, opts);
+};
+  `;
+
+  const outFile = resolve("tmp/node_modules/minimatch/minimatch.min.mjs");
+  await mkdir(dirname(outFile), { recursive: true });
   await writeFile(outFile, bundle);
   return outFile;
 }
