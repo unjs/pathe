@@ -9,34 +9,28 @@ export * from "./_path";
  *
  * Equals to `";"` in windows and `":"` in all other platforms.
  */
-export const delimiter: ";" | ":" =
-  globalThis.process?.platform === "win32" ? ";" : ":";
+export const delimiter: ";" | ":" = /* @__PURE__ */ (() =>
+  globalThis.process?.platform === "win32" ? ";" : ":")();
 
-export const posix = {
-  ..._path,
-  delimiter: ":",
-  get posix() {
-    return posix;
-  },
-  get win32() {
-    return win32;
-  },
-} as typeof Posix;
+// Mix namespaces without side-effects of object to allow tree-shaking
 
-export const win32 = {
-  ..._path,
-  delimiter: ";",
-  get posix() {
-    return posix;
-  },
-  get win32() {
-    return win32;
-  },
-} as typeof Win32;
+const _platforms = { posix: undefined, win32: undefined } as {
+  posix: typeof Posix;
+  win32: typeof Win32;
+};
 
-export default {
-  ...posix,
-  delimiter,
-  posix,
-  win32,
-} as PlatformPath;
+const mix = (obj, del: ";" | ":" = delimiter) => {
+  return new Proxy(obj, {
+    get(_, prop) {
+      if (prop === "delimiter") return del;
+      if (prop === "posix") return posix;
+      if (prop === "win32") return win32;
+      return _platforms[prop] || obj[prop];
+    },
+  });
+};
+
+export const posix = /* @__PURE__ */ mix(_path, ":") as typeof Posix;
+export const win32 = /* @__PURE__ */ mix(_path, ";") as typeof Win32;
+
+export default /* @__PURE__ */ mix(posix) as PlatformPath;
