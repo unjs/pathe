@@ -33,7 +33,7 @@ export function normalizeAliases(_aliases: Record<string, string>) {
       }
 
       if (
-        aliases[key].startsWith(alias) &&
+        aliases[key]?.startsWith(alias) &&
         pathSeparators.has(aliases[key][alias.length])
       ) {
         aliases[key] = aliases[alias] + aliases[key].slice(alias.length);

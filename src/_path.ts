@@ -146,7 +146,8 @@ export function normalizeString(path: string, allowAboveRoot: boolean) {
   let char: string | null = null;
   for (let index = 0; index <= path.length; ++index) {
     if (index < path.length) {
-      char = path[index];
+      // casted because we know it exists thanks to the length check
+      char = path[index] as string;
     } else if (char === "/") {
       break;
     } else {
@@ -219,8 +220,15 @@ export const extname: typeof path.extname = function (p) {
 };
 
 export const relative: typeof path.relative = function (from, to) {
-  const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/");
-  const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/");
+  // we cast these because `split` will always be at least one string
+  const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/") as [
+    string,
+    ...string[],
+  ];
+  const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/") as [
+    string,
+    ...string[],
+  ];
 
   // Different windows drive letters
   if (_to[0][1] === ":" && _from[0][1] === ":" && _from[0] !== _to[0]) {
@@ -243,7 +251,7 @@ export const dirname: typeof path.dirname = function (p) {
     .replace(/\/$/, "")
     .split("/")
     .slice(0, -1);
-  if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0])) {
+  if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0] as string)) {
     segments[0] += "/";
   }
   return segments.join("/") || (isAbsolute(p) ? "/" : ".");

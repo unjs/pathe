@@ -68,7 +68,7 @@ describe("alias", () => {
       "/root/index.js": ["@/index.js", "~"],
     };
     for (const [to, from] of Object.entries(aliases)) {
-      const expected = overrides[from] || [to];
+      const expected = overrides[from as keyof typeof overrides] || [to];
       it(`reverseResolveAlias("${from}")`, () => {
         expect(reverseResolveAlias(from, aliases)).toMatchObject(expected);
       });
@@ -127,7 +127,7 @@ describe("filename", () => {
   };
   for (const file in files) {
     it(file, () => {
-      expect(filename(file)).toEqual(files[file]);
+      expect(filename(file)).toEqual(files[file as keyof typeof files]);
     });
   }
 });
