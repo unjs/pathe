@@ -26,13 +26,6 @@ const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
  */
 export const sep = "/";
 
-/**
- * The platform-specific file delimiter.
- *
- * Equals to `";"` in windows and `":"` in all other platforms.
- */
-export const delimiter = globalThis.process?.platform === "win32" ? ";" : ":";
-
 export const normalize: typeof path.normalize = function (path: string) {
   if (path.length === 0) {
     return ".";
