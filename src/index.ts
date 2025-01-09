@@ -19,18 +19,18 @@ const _platforms = { posix: undefined, win32: undefined } as {
   win32: typeof Win32;
 };
 
-const mix = (obj, del: ";" | ":" = delimiter) => {
-  return new Proxy(obj, {
+const mix = (del: ";" | ":" = delimiter) => {
+  return new Proxy(_path, {
     get(_, prop) {
       if (prop === "delimiter") return del;
       if (prop === "posix") return posix;
       if (prop === "win32") return win32;
-      return _platforms[prop] || obj[prop];
+      return _platforms[prop] || _path[prop];
     },
-  });
+  }) as unknown as PlatformPath;
 };
 
-export const posix = /* @__PURE__ */ mix(_path, ":") as typeof Posix;
-export const win32 = /* @__PURE__ */ mix(_path, ";") as typeof Win32;
+export const posix = /* @__PURE__ */ mix(":") as typeof Posix;
+export const win32 = /* @__PURE__ */ mix(";") as typeof Win32;
 
-export default /* @__PURE__ */ mix(posix) as PlatformPath;
+export default posix;
