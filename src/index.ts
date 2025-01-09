@@ -1,8 +1,8 @@
-import type { posix as Posix, win32 as Win32, PlatformPath } from "node:path";
-
 import * as _path from "./_path";
 
 export * from "./_path";
+
+type NodePath = typeof import("node:path");
 
 /**
  * The platform-specific file delimiter.
@@ -15,8 +15,8 @@ export const delimiter: ";" | ":" = /* @__PURE__ */ (() =>
 // Mix namespaces without side-effects of object to allow tree-shaking
 
 const _platforms = { posix: undefined, win32: undefined } as {
-  posix: typeof Posix;
-  win32: typeof Win32;
+  posix: NodePath["posix"];
+  win32: NodePath["win32"];
 };
 
 const mix = (del: ";" | ":" = delimiter) => {
@@ -27,10 +27,11 @@ const mix = (del: ";" | ":" = delimiter) => {
       if (prop === "win32") return win32;
       return _platforms[prop] || _path[prop];
     },
-  }) as unknown as PlatformPath;
+  }) as unknown as NodePath;
 };
 
-export const posix = /* @__PURE__ */ mix(":") as typeof Posix;
-export const win32 = /* @__PURE__ */ mix(";") as typeof Win32;
+export const posix = /* @__PURE__ */ mix(":") as NodePath["posix"];
 
-export default posix;
+export const win32 = /* @__PURE__ */ mix(";") as NodePath["win32"];
+
+export default posix as NodePath;
