@@ -16,6 +16,8 @@ import {
   toNamespacedPath,
   normalizeString,
   matchesGlob,
+  posix,
+  win32,
 } from "../src";
 
 import { normalizeWindowsPath } from "../src/_internal";
@@ -397,6 +399,8 @@ runTest("toNamespacedPath", toNamespacedPath, {
 
 describe("constants", () => {
   it("delimiter", () => {
+    expect(posix.delimiter).to.equal(":");
+    expect(win32.delimiter).to.equal(";");
     expect(delimiter).to.equal(
       globalThis.process?.platform === "win32" ? ";" : ":",
     );
@@ -404,6 +408,13 @@ describe("constants", () => {
 
   it("sep should equal /", () => {
     expect(separator).to.equal("/");
+  });
+});
+
+describe("mixed namespaces", () => {
+  it("nested namespaces work", () => {
+    expect(posix.win32.posix.delimiter).to.equal(":");
+    expect(win32.posix.win32.delimiter).to.equal(";");
   });
 });
 
