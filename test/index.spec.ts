@@ -153,6 +153,10 @@ runTest("format", format, [
   [{ root: "/", base: "file.txt", ext: "ignored" }, "/file.txt"],
   [{ root: "/", name: "file", ext: ".txt" }, "/file.txt"],
   [{ name: "file", ext: ".txt" }, "file.txt"],
+  [{ name: "file" }, "file"],
+  [{ ext: "ext" }, ".ext"],
+  [{ ext: ".ext" }, ".ext"],
+  [{ dir: "/foo", name: "file" }, "/foo/file"],
 
   // Windows
   [{ name: "file", base: "file.txt" }, "file.txt"],
