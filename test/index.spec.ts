@@ -428,38 +428,54 @@ runTest("matchesGlob", matchesGlob, [
   ["/foo/bar", "/{bar,foo}/**", true],
 ]);
 
-function _s(item) {
+function _s(item: unknown) {
   return (JSON.stringify(_r(item)) || "undefined").replace(/"/g, "'");
 }
 
-function _r(item) {
+function _r(item: unknown) {
   return typeof item === "function" ? item() : item;
 }
 
-export function runTest(name, function_, items) {
+type AnyFunction<TArgs extends unknown[] = never> = (...args: TArgs) => unknown;
+type TestCaseArray<T extends AnyFunction> = [
+  ...unknown[],
+  ReturnType<T> | (() => ReturnType<T>),
+];
+
+export function runTest<T extends AnyFunction>(
+  name: string,
+  function_: T,
+  items: Record<PropertyKey, ReturnType<T>> | Array<TestCaseArray<T>>,
+) {
   if (!Array.isArray(items)) {
-    items = Object.entries(items).map((e) => e.flat());
+    items = Object.entries(items).map((e) => e.flat()) as Array<
+      TestCaseArray<T>
+    >;
   }
   describe(`${name}`, () => {
     let cwd;
     for (const item of items) {
-      const expected = item.pop();
-      const arguments_ = item;
+      const expected = item.pop() as ReturnType<T>;
+      const arguments_ = item as unknown as Parameters<T>;
       it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
         expected,
       )}`, () => {
-        expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
-          _r(expected),
-        );
+        expect(
+          (function_ as unknown as AnyFunction<unknown[]>)(
+            ...arguments_.map((i) => _r(i)),
+          ),
+        ).to.equal(_r(expected));
       });
       it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
         expected,
       )} on Windows`, () => {
         cwd = process.cwd;
         process.cwd = vi.fn(() => String.raw`C:\Windows\path\only`);
-        expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
-          _r(expected),
-        );
+        expect(
+          (function_ as unknown as AnyFunction<unknown[]>)(
+            ...arguments_.map((i) => _r(i)),
+          ),
+        ).to.equal(_r(expected));
         process.cwd = cwd;
       });
     }

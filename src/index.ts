@@ -14,9 +14,10 @@ export const delimiter: ";" | ":" = /* @__PURE__ */ (() =>
 
 // Mix namespaces without side-effects of object to allow tree-shaking
 
-const _platforms = { posix: undefined, win32: undefined } as {
+const _platforms = { posix: undefined, win32: undefined } as unknown as {
   posix: NodePath["posix"];
   win32: NodePath["win32"];
+  [key: PropertyKey]: unknown;
 };
 
 const mix = (del: ";" | ":" = delimiter) => {
@@ -25,7 +26,7 @@ const mix = (del: ";" | ":" = delimiter) => {
       if (prop === "delimiter") return del;
       if (prop === "posix") return posix;
       if (prop === "win32") return win32;
-      return _platforms[prop] || _path[prop];
+      return _platforms[prop] || _path[prop as keyof typeof _path];
     },
   }) as unknown as NodePath;
 };
