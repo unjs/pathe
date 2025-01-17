@@ -16,7 +16,7 @@ const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
-const _EXTNAME_RE = /.(\.[^./]+)$/;
+const _EXTNAME_RE = /.(\.[^./]+|\.)$/;
 const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
 
 /**
@@ -215,6 +215,7 @@ export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
 };
 
 export const extname: typeof path.extname = function (p) {
+  if (p === "..") return "";
   const match = _EXTNAME_RE.exec(normalizeWindowsPath(p));
   return (match && match[1]) || "";
 };

@@ -136,7 +136,8 @@ runTest("extname", extname, {
   "..": "",
   ".": "",
   "./": "",
-  // '...': '.', // TODO: Edge case behavior of Node?
+  "foo.": ".",
+  "...": ".",
 
   // Windows
   "C:\\temp\\myfile.html": ".html",
