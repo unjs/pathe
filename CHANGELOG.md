@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.0.2
+
+[compare changes](https://github.com/unjs/pathe/compare/v2.0.1...v2.0.2)
+
+### 🩹 Fixes
+
+- **format:** Allow calls with partial arguments ([#198](https://github.com/unjs/pathe/pull/198))
+- Use `node:path` export types ([#199](https://github.com/unjs/pathe/pull/199))
+- **extname:** Handle inputs ending with dot ([#203](https://github.com/unjs/pathe/pull/203))
+
+### 🏡 Chore
+
+- Enable strict typescript compilation ([#200](https://github.com/unjs/pathe/pull/200))
+- Update deps ([c284a3d](https://github.com/unjs/pathe/commit/c284a3d))
+
+### ❤️ Contributors
+
+- Zhiyuanzmj ([@zhiyuanzmj](http://github.com/zhiyuanzmj))
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+- James Garbutt ([@43081j](http://github.com/43081j))
+
 ## v2.0.1
 
 [compare changes](https://github.com/unjs/pathe/compare/v2.0.0...v2.0.1)
