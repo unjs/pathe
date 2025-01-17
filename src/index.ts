@@ -26,6 +26,7 @@ const mix = (del: ";" | ":" = delimiter) => {
       if (prop === "delimiter") return del;
       if (prop === "posix") return posix;
       if (prop === "win32") return win32;
+      if (prop === "sep" && del === ";") return "\\";
       return _platforms[prop] || _path[prop as keyof typeof _path];
     },
   }) as unknown as NodePath;

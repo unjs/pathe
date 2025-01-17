@@ -413,6 +413,10 @@ describe("constants", () => {
   it("sep should equal /", () => {
     expect(separator).to.equal("/");
   });
+
+  it("win32 sep should equal \\", () => {
+    expect(win32.sep).to.equal("\\");
+  });
 });
 
 describe("mixed namespaces", () => {
