@@ -46,7 +46,7 @@
     "test:types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^22.10.10",
+    "@types/node": "^22.13.0",
     "@vitest/coverage-v8": "^3.0.4",
     "changelogen": "^0.5.7",
     "esbuild": "^0.24.2",
