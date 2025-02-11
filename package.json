@@ -46,18 +46,18 @@
     "test:types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@types/node": "^22.13.0",
-    "@vitest/coverage-v8": "^3.0.4",
+    "@types/node": "^22.13.1",
+    "@vitest/coverage-v8": "^3.0.5",
     "changelogen": "^0.5.7",
-    "esbuild": "^0.24.2",
-    "eslint": "^9.19.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.20.1",
     "eslint-config-unjs": "^0.4.2",
     "jiti": "^2.4.2",
-    "prettier": "^3.4.2",
+    "prettier": "^3.5.0",
     "typescript": "^5.7.3",
     "unbuild": "^3.3.1",
-    "vitest": "^3.0.4",
+    "vitest": "^3.0.5",
     "zeptomatch": "^2.0.0"
   },
-  "packageManager": "pnpm@9.15.4"
+  "packageManager": "pnpm@9.15.5"
 }
