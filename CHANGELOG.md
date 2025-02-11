@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## v2.0.3
+
+[compare changes](https://github.com/unjs/pathe/compare/v2.0.2...v2.0.3)
+
+### 📦 Build
+
+- Fix `matchesGlob` import ([c72a8a7](https://github.com/unjs/pathe/commit/c72a8a7))
+
+### 🏡 Chore
+
+- Update deps ([e628ea0](https://github.com/unjs/pathe/commit/e628ea0))
+- Fix ci ([2994efc](https://github.com/unjs/pathe/commit/2994efc))
+
+### ❤️ Contributors
+
+- Pooya Parsa ([@pi0](http://github.com/pi0))
+
 ## v2.0.2
 
 [compare changes](https://github.com/unjs/pathe/compare/v2.0.1...v2.0.2)
