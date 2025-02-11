@@ -19,7 +19,7 @@ async function buildZeptomatch() {
     write: false,
     stdin: {
       resolveDir: process.cwd(),
-      contents: /* js */ `export { default as zeptomatch } from "zeptomatch";`,
+      contents: /* js */ `export { default } from "zeptomatch";`,
     },
   }).then((r) => r.outputFiles![0].text);
 
