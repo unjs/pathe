@@ -12,7 +12,7 @@ For [historical reasons](https://docs.microsoft.com/en-us/archive/blogs/larryost
 
 Compared to popular [upath](https://github.com/anodynos/upath), pathe provides **identical exports** of Node.js with normalization on **all operations** and is written in modern **ESM/TypeScript** and has **no dependency on Node.js**!
 
-This package is a drop-in replacement of the Node.js's [path module](https://nodejs.org/api/path.html) module and ensures paths are normalized with slash `/` and work in environments including Node.js.
+This package is a drop-in replacement of the Node.js's [path module](https://nodejs.org/api/path.html) module and ensures paths are normalized with slash `/` and work in environments including Node.js and browsers.
 
 ## 💿 Usage
 
