@@ -112,7 +112,7 @@ export function reverseResolveAlias(
  * @returns the filename without the extension, or `undefined` if the filename cannot be extracted.
  */
 export function filename(path: string) {
-  const base = path.split(SLASH_RE).pop();
+  const base = path.split(SLASH_RE).at(-1);
 
   if (!base) {
     return undefined;
