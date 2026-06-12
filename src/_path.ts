@@ -291,9 +291,11 @@ export const parse: typeof path.parse = function (p) {
   const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
   const extension = extname(base);
+  const dir = dirname(p);
   return {
     root,
-    dir: dirname(p),
+    // node:path returns "" (not ".") when the path has no directory component
+    dir: dir === "." && !normalizeWindowsPath(p).includes("/") ? "" : dir,
     base,
     ext: extension,
     name: base.slice(0, base.length - extension.length),

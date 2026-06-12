@@ -295,6 +295,44 @@ it("parse", () => {
     ext: ".txt",
     name: "file",
   });
+
+  // Bare filenames with no directory component — dir must be "" not "."
+  // node:path.posix.parse("foo.txt").dir === ""
+  expect(parse("foo.txt")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "foo.txt",
+    ext: ".txt",
+    name: "foo",
+  });
+  expect(parse("foo")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "foo",
+    ext: "",
+    name: "foo",
+  });
+  expect(parse(".")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: ".",
+    ext: "",
+    name: ".",
+  });
+  expect(parse("..")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "..",
+    ext: "",
+    name: "..",
+  });
+  expect(parse(".gitignore")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: ".gitignore",
+    ext: "",
+    name: ".gitignore",
+  });
 });
 
 runTest("relative", relative, [
