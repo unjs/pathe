@@ -291,9 +291,29 @@ export const parse: typeof path.parse = function (p) {
   const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
   const extension = extname(base);
+
+  // Compute `dir` directly from the path string to match Node.js behavior.
+  // Using dirname(p) would return '.' for paths with no directory component
+  // (e.g. 'foo', '', '.', '..'), but Node.js path.parse() returns '' in those cases.
+  const normalizedP = normalizeWindowsPath(p);
+  const withoutTrailing = normalizedP.replace(/\/+$/, "");
+  const lastSlashIndex = withoutTrailing.lastIndexOf("/");
+  let dir: string;
+  if (!base) {
+    // No base component (e.g. '/' or '//') — dir equals the root
+    dir = root || "";
+  } else if (lastSlashIndex === -1) {
+    // No slash in the path — no directory component
+    dir = "";
+  } else {
+    const dirPart = withoutTrailing.slice(0, lastSlashIndex);
+    // If the slice is empty the path looks like '/foo', so the dir is '/'
+    dir = dirPart || (isAbsolute(p) ? "/" : "");
+  }
+
   return {
     root,
-    dir: dirname(p),
+    dir,
     base,
     ext: extension,
     name: base.slice(0, base.length - extension.length),

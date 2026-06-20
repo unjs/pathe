@@ -295,6 +295,62 @@ it("parse", () => {
     ext: ".txt",
     name: "file",
   });
+
+  // Paths with no directory component should return dir:'' not dir:'.'
+  // (matches Node.js path.parse() behavior)
+  expect(parse("")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "",
+    ext: "",
+    name: "",
+  });
+  expect(parse(".")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: ".",
+    ext: "",
+    name: ".",
+  });
+  expect(parse("..")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "..",
+    ext: "",
+    name: "..",
+  });
+  expect(parse("file.txt")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  expect(parse("file")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "file",
+    ext: "",
+    name: "file",
+  });
+
+  // Root-only paths
+  expect(parse("/")).to.deep.equal({
+    root: "/",
+    dir: "/",
+    base: "",
+    ext: "",
+    name: "",
+  });
+
+  // Trailing-slash paths
+  expect(parse("/home/user/")).to.deep.equal({
+    root: "/",
+    dir: "/home",
+    base: "user",
+    ext: "",
+    name: "user",
+  });
 });
 
 runTest("relative", relative, [
