@@ -1,11 +1,24 @@
-const _DRIVE_LETTER_START_RE = /^[A-Za-z]:\//;
-
 // Util to normalize windows paths to posix
 export function normalizeWindowsPath(input = "") {
   if (!input) {
     return input;
   }
-  return input
-    .replace(/\\/g, "/")
-    .replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase());
+
+  let normalized = input;
+  if (normalized.includes("\\")) {
+    normalized = normalized.replace(/\\/g, "/");
+  }
+
+  const driveLetter = normalized[0];
+  if (
+    normalized[1] === ":" &&
+    normalized[2] === "/" &&
+    driveLetter &&
+    driveLetter >= "a" &&
+    driveLetter <= "z"
+  ) {
+    normalized = driveLetter.toUpperCase() + normalized.slice(1);
+  }
+
+  return normalized;
 }
