@@ -59,7 +59,7 @@
     "vitest": "^3.2.4",
     "zeptomatch": "^2.0.2"
   },
-  "packageManager": "pnpm@10.18.0",
+  "packageManager": "pnpm@11.9.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
