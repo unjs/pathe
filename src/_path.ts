@@ -215,8 +215,9 @@ export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
 };
 
 export const extname: typeof path.extname = function (p) {
-  if (p === "..") return "";
-  const match = _EXTNAME_RE.exec(normalizeWindowsPath(p));
+  const base = basename(p);
+  if (base === "..") return "";
+  const match = _EXTNAME_RE.exec(base);
   return (match && match[1]) || "";
 };
 

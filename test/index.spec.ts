@@ -139,6 +139,15 @@ runTest("extname", extname, {
   "foo.": ".",
   "...": ".",
 
+  // Multi-segment input: extension is resolved from the last segment only,
+  // consistent with node:path and `parse().ext` (#203 only handled bare "..").
+  "dir/.bashrc": "",
+  "foo/bar.tar.gz": ".gz",
+  "a/..": "",
+  "/foo/..": "",
+  "a/.": "",
+  "trailing.dir/": ".dir",
+
   // Windows
   "C:\\temp\\myfile.html": ".html",
   "\\temp\\myfile.html": ".html",
