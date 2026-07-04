@@ -10,7 +10,13 @@ export function normalizeWindowsPath(input = "") {
   }
 
   const driveLetter = normalized[0];
-  if (driveLetter && normalized[1] === ":" && normalized[2] === "/" && driveLetter >= "a" && driveLetter <= "z") {
+  if (
+    driveLetter &&
+    normalized[1] === ":" &&
+    normalized[2] === "/" &&
+    driveLetter >= "a" &&
+    driveLetter <= "z"
+  ) {
     normalized = driveLetter.toUpperCase() + normalized.slice(1);
   }
 

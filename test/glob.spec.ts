@@ -29,10 +29,7 @@ const isMatch = (
   _options?: { partial?: boolean },
 ): boolean => matchGlob(glob, path);
 
-const compile = (
-  _glob?: string | string[],
-  _options?: { partial?: boolean },
-): unknown => {
+const compile = (_glob?: string | string[], _options?: { partial?: boolean }): unknown => {
   throw new Error("compile() is not ported");
 };
 
