@@ -7,12 +7,18 @@ const _DRIVE_LETTER_START_RE = /^[A-Za-z]:\//;
 // so no interleaving is possible.
 let _preserveBackslash = false;
 
-export function getPreserveBackslash() {
-  return _preserveBackslash;
-}
-
-export function setPreserveBackslash(value: boolean) {
-  _preserveBackslash = value;
+// Wrap a path function so backslashes are preserved (POSIX filename semantics)
+// for the duration of the synchronous call, then restore the previous mode.
+export function withPreserveBackslash<T extends (...args: any[]) => any>(fn: T): T {
+  return function (this: unknown, ...args: unknown[]) {
+    const previous = _preserveBackslash;
+    _preserveBackslash = true;
+    try {
+      return fn.apply(this, args);
+    } finally {
+      _preserveBackslash = previous;
+    }
+  } as T;
 }
 
 // Util to normalize windows paths to posix

@@ -1,5 +1,5 @@
 import * as _path from "./_path";
-import { getPreserveBackslash, setPreserveBackslash } from "./_internal";
+import { withPreserveBackslash } from "./_internal";
 
 export * from "./_path";
 
@@ -19,20 +19,6 @@ const _platforms = { posix: undefined, win32: undefined } as unknown as {
   posix: NodePath["posix"];
   win32: NodePath["win32"];
   [key: PropertyKey]: unknown;
-};
-
-// Wrap a path function so backslashes are preserved (POSIX filename semantics)
-// for the duration of the synchronous call, then restore the previous mode.
-const withPreserveBackslash = <T extends (...args: any[]) => any>(fn: T): T => {
-  return function (this: unknown, ...args: unknown[]) {
-    const previous = getPreserveBackslash();
-    setPreserveBackslash(true);
-    try {
-      return fn.apply(this, args);
-    } finally {
-      setPreserveBackslash(previous);
-    }
-  } as T;
 };
 
 const mix = (del: ";" | ":" = delimiter, preserveBackslash = false) => {
