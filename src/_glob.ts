@@ -296,13 +296,13 @@ const makeRangeAlpha = (start: string, end: string): string[] =>
 
 const identity = <T>(value: T): T => value;
 
-const NormalizeGrammar = star(
-  or([
-    match(/\\./, identity),
-    match(/\*\*\*+/, "*"),
-    match(/([^/{[(!])\*\*/, (_: string, $1: string) => `${$1}*`),
-    match(/(^|.)\*\*(?=[^*/)\]}])/, (_: string, $1: string) => `${$1}*`),
-    match(/./, identity),
+const NormalizeGrammar = /* @__PURE__ */ star(
+  /* @__PURE__ */ or([
+    /* @__PURE__ */ match(/\\./, identity),
+    /* @__PURE__ */ match(/\*\*\*+/, "*"),
+    /* @__PURE__ */ match(/([^/{[(!])\*\*/, (_: string, $1: string) => `${$1}*`),
+    /* @__PURE__ */ match(/(^|.)\*\*(?=[^*/)\]}])/, (_: string, $1: string) => `${$1}*`),
+    /* @__PURE__ */ match(/./, identity),
   ]),
 );
 
@@ -310,73 +310,90 @@ const normalizeGlob = (glob: string): string => parse(glob, NormalizeGrammar).jo
 
 // --- Parse grammar (glob -> node graph) ---
 
-const Escaped = match(/\\./, regex);
-const Escape = match(/[$.*+?^(){}[\]|]/, (char: string) => regex(`\\${char}`));
-const Slash = match(/[\\/]/, slash);
-const Passthrough = match(/[^$.*+?^(){}[\]|\\/]+/, regex);
+const Escaped = /* @__PURE__ */ match(/\\./, regex);
+const Escape = /* @__PURE__ */ match(/[$.*+?^(){}[\]|]/, (char: string) => regex(`\\${char}`));
+const Slash = /* @__PURE__ */ match(/[\\/]/, slash);
+const Passthrough = /* @__PURE__ */ match(/[^$.*+?^(){}[\]|\\/]+/, regex);
 
-const NegationOdd = match(/^(?:!!)*!(.*)$/, (_: string, glob: string) =>
+const NegationOdd = /* @__PURE__ */ match(/^(?:!!)*!(.*)$/, (_: string, glob: string) =>
   regex(`(?!^${compileGlob(glob).source}$).*?`),
 );
-const NegationEven = match(/^(!!)+/);
-const Negation = or([NegationOdd, NegationEven]);
+const NegationEven = /* @__PURE__ */ match(/^(!!)+/);
+const Negation = /* @__PURE__ */ or([NegationOdd, NegationEven]);
 
-const StarStarBetween = match(/\/(\*\*\/)+/, () =>
+const StarStarBetween = /* @__PURE__ */ match(/\/(\*\*\/)+/, () =>
   alternation([sequence([slash(), regex(".+?"), slash()]), slash()]),
 );
-const StarStarStart = match(/^(\*\*\/)+/, () =>
+const StarStarStart = /* @__PURE__ */ match(/^(\*\*\/)+/, () =>
   alternation([regex("^"), sequence([regex(".*?"), slash()])]),
 );
-const StarStarEnd = match(/\/(\*\*)$/, () =>
+const StarStarEnd = /* @__PURE__ */ match(/\/(\*\*)$/, () =>
   alternation([sequence([slash(), regex(".*?")]), regex("$")]),
 );
-const StarStarNone = match(/\*\*/, () => regex(".*?"));
-const StarStar = or([StarStarBetween, StarStarStart, StarStarEnd, StarStarNone]);
+const StarStarNone = /* @__PURE__ */ match(/\*\*/, () => regex(".*?"));
+const StarStar = /* @__PURE__ */ or([StarStarBetween, StarStarStart, StarStarEnd, StarStarNone]);
 
-const StarDouble = match(/\*\/(?!\*\*\/|\*$)/, () => sequence([regex("[^\\\\/]*?"), slash()]));
-const StarSingle = match(/\*/, () => regex("[^\\\\/]*"));
-const Star = or([StarDouble, StarSingle]);
+const StarDouble = /* @__PURE__ */ match(/\*\/(?!\*\*\/|\*$)/, () =>
+  sequence([regex("[^\\\\/]*?"), slash()]),
+);
+const StarSingle = /* @__PURE__ */ match(/\*/, () => regex("[^\\\\/]*"));
+const Star = /* @__PURE__ */ or([StarDouble, StarSingle]);
 
-const Question = match("?", () => regex("[^\\\\/]"));
+const Question = /* @__PURE__ */ match("?", () => regex("[^\\\\/]"));
 
-const ClassOpen = match("[", identity);
-const ClassClose = match("]", identity);
-const ClassNegation = match(/[!^]/, "^\\\\/");
-const ClassRange = match(/[a-z]-[a-z]|[0-9]-[0-9]/i, identity);
-const ClassEscaped = match(/\\./, identity);
-const ClassEscape = match(/[$.*+?^(){}[|]/, (char: string) => `\\${char}`);
-const ClassSlash = match(/[\\/]/, "\\\\/");
-const ClassPassthrough = match(/[^$.*+?^(){}[\]|\\/]+/, identity);
-const ClassValue = or([ClassEscaped, ClassEscape, ClassSlash, ClassRange, ClassPassthrough]);
-const Class = and([ClassOpen, optional(ClassNegation), star(ClassValue), ClassClose], (_) =>
-  regex(_.join("")),
+const ClassOpen = /* @__PURE__ */ match("[", identity);
+const ClassClose = /* @__PURE__ */ match("]", identity);
+const ClassNegation = /* @__PURE__ */ match(/[!^]/, "^\\\\/");
+const ClassRange = /* @__PURE__ */ match(/[a-z]-[a-z]|[0-9]-[0-9]/i, identity);
+const ClassEscaped = /* @__PURE__ */ match(/\\./, identity);
+const ClassEscape = /* @__PURE__ */ match(/[$.*+?^(){}[|]/, (char: string) => `\\${char}`);
+const ClassSlash = /* @__PURE__ */ match(/[\\/]/, "\\\\/");
+const ClassPassthrough = /* @__PURE__ */ match(/[^$.*+?^(){}[\]|\\/]+/, identity);
+const ClassValue = /* @__PURE__ */ or([
+  ClassEscaped,
+  ClassEscape,
+  ClassSlash,
+  ClassRange,
+  ClassPassthrough,
+]);
+const Class = /* @__PURE__ */ and(
+  [
+    ClassOpen,
+    /* @__PURE__ */ optional(ClassNegation),
+    /* @__PURE__ */ star(ClassValue),
+    ClassClose,
+  ],
+  (_) => regex(_.join("")),
 );
 
-const RangeOpen = match("{", "(?:");
-const RangeClose = match("}", ")");
-const RangeNumeric = match(/(\d+)\.\.(\d+)/, (_: string, $1: string, $2: string) =>
+const RangeOpen = /* @__PURE__ */ match("{", "(?:");
+const RangeClose = /* @__PURE__ */ match("}", ")");
+const RangeNumeric = /* @__PURE__ */ match(/(\d+)\.\.(\d+)/, (_: string, $1: string, $2: string) =>
   makeRangePaddedInt(+$1, +$2, Math.min($1.length, $2.length)).join("|"),
 );
-const RangeAlphaLower = match(/([a-z]+)\.\.([a-z]+)/, (_: string, $1: string, $2: string) =>
-  makeRangeAlpha($1, $2).join("|"),
+const RangeAlphaLower = /* @__PURE__ */ match(
+  /([a-z]+)\.\.([a-z]+)/,
+  (_: string, $1: string, $2: string) => makeRangeAlpha($1, $2).join("|"),
 );
-const RangeAlphaUpper = match(/([A-Z]+)\.\.([A-Z]+)/, (_: string, $1: string, $2: string) =>
-  makeRangeAlpha($1.toLowerCase(), $2.toLowerCase()).join("|").toUpperCase(),
+const RangeAlphaUpper = /* @__PURE__ */ match(
+  /([A-Z]+)\.\.([A-Z]+)/,
+  (_: string, $1: string, $2: string) =>
+    makeRangeAlpha($1.toLowerCase(), $2.toLowerCase()).join("|").toUpperCase(),
 );
-const RangeValue = or([RangeNumeric, RangeAlphaLower, RangeAlphaUpper]);
-const Range = and([RangeOpen, RangeValue, RangeClose], (_) => regex(_.join("")));
+const RangeValue = /* @__PURE__ */ or([RangeNumeric, RangeAlphaLower, RangeAlphaUpper]);
+const Range = /* @__PURE__ */ and([RangeOpen, RangeValue, RangeClose], (_) => regex(_.join("")));
 
-const BracesOpen = match("{");
-const BracesClose = match("}");
-const BracesComma = match(",");
-const BracesEscaped = match(/\\./, regex);
-const BracesEscape = match(/[$.*+?^(){[\]|]/, (char: string) => regex(`\\${char}`));
-const BracesSlash = match(/[\\/]/, slash);
-const BracesPassthrough = match(/[^$.*+?^(){}[\]|\\/,]+/, regex);
-const BracesNested = lazy(() => Braces);
-const BracesEmptyValue = match("", () => regex("(?:)"));
-const BracesFullValue = plus(
-  or([
+const BracesOpen = /* @__PURE__ */ match("{");
+const BracesClose = /* @__PURE__ */ match("}");
+const BracesComma = /* @__PURE__ */ match(",");
+const BracesEscaped = /* @__PURE__ */ match(/\\./, regex);
+const BracesEscape = /* @__PURE__ */ match(/[$.*+?^(){[\]|]/, (char: string) => regex(`\\${char}`));
+const BracesSlash = /* @__PURE__ */ match(/[\\/]/, slash);
+const BracesPassthrough = /* @__PURE__ */ match(/[^$.*+?^(){}[\]|\\/,]+/, regex);
+const BracesNested = /* @__PURE__ */ lazy(() => Braces);
+const BracesEmptyValue = /* @__PURE__ */ match("", () => regex("(?:)"));
+const BracesFullValue = /* @__PURE__ */ plus(
+  /* @__PURE__ */ or([
     StarStar,
     Star,
     Question,
@@ -390,14 +407,23 @@ const BracesFullValue = plus(
   ]),
   sequence,
 );
-const BracesValue = or([BracesFullValue, BracesEmptyValue]);
-const Braces: Rule = and(
-  [BracesOpen, optional(and([BracesValue, star(and([BracesComma, BracesValue]))])), BracesClose],
+const BracesValue = /* @__PURE__ */ or([BracesFullValue, BracesEmptyValue]);
+const Braces: Rule = /* @__PURE__ */ and(
+  [
+    BracesOpen,
+    /* @__PURE__ */ optional(
+      /* @__PURE__ */ and([
+        BracesValue,
+        /* @__PURE__ */ star(/* @__PURE__ */ and([BracesComma, BracesValue])),
+      ]),
+    ),
+    BracesClose,
+  ],
   alternation,
 );
 
-const Grammar = star(
-  or([
+const Grammar = /* @__PURE__ */ star(
+  /* @__PURE__ */ or([
     Negation,
     StarStar,
     Star,
@@ -415,7 +441,7 @@ const Grammar = star(
 
 // --- Compilation ---
 
-const _cache = new Map<string, RegExp>();
+const _cache = /* @__PURE__ */ new Map<string, RegExp>();
 
 function compileGlob(glob: string): RegExp {
   let re = _cache.get(glob);
