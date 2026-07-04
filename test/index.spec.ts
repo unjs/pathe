@@ -19,6 +19,7 @@ import {
   posix,
   win32,
 } from "../src";
+import pathe from "../src";
 
 import { normalizeWindowsPath } from "../src/_internal";
 
@@ -397,9 +398,20 @@ describe("posix preserves backslashes (node:path.posix parity)", () => {
       ext: ".txt",
     });
   });
+  it("does not uppercase drive letters (ordinary filename on POSIX)", () => {
+    expect(posix.normalize("c:/foo")).to.equal("c:/foo");
+    expect(posix.join("c:/foo", "bar")).to.equal("c:/foo/bar");
+  });
+  it("keeps stable function identity like node:path", () => {
+    expect(posix.join).to.equal(posix.join);
+    expect(posix.join.name).to.equal("join");
+  });
   it("default export and win32 still convert backslashes", () => {
     expect(join("foo", "bar\\baz")).to.equal("foo/bar/baz");
     expect(win32.join("foo", "bar\\baz")).to.equal("foo/bar/baz");
+  });
+  it("default export keeps delimiter ':' for backward compatibility", () => {
+    expect(pathe.delimiter).to.equal(":");
   });
 });
 

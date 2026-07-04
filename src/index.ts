@@ -42,13 +42,14 @@ export const posix = /* @__PURE__ */ mix(":", true) as NodePath["posix"];
 
 export const win32 = /* @__PURE__ */ mix(";") as NodePath["win32"];
 
-// Default export keeps converting backslashes (backward compatible); opt into
-// POSIX backslash-preserving semantics explicitly via `posix.*`.
+// Default export keeps the historical behavior (backslashes converted to `/`,
+// `delimiter` fixed to ":") for backward compatibility; opt into POSIX
+// backslash-preserving semantics explicitly via `posix.*`.
 // Built as a plain object rather than a Proxy to avoid a `get` trap on every
 // property access, since it needs no per-call wrapping.
 export default /* @__PURE__ */ {
   ..._path,
-  delimiter,
+  delimiter: ":",
   posix,
   win32,
 } as unknown as NodePath;
