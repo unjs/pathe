@@ -20,9 +20,19 @@ import { describe as vDescribe, it as vIt, expect } from "vitest";
 
 import { matchGlob } from "../src/_glob";
 
-const isMatch = matchGlob;
+// The vendored suite exercises features (e.g. `partial`) not ported to
+// `matchGlob`; accept and ignore an optional options arg so those (skipped)
+// cases still type-check.
+const isMatch = (
+  glob: string | string[],
+  path: string,
+  _options?: { partial?: boolean },
+): boolean => matchGlob(glob, path);
 
-const compile = () => {
+const compile = (
+  _glob?: string | string[],
+  _options?: { partial?: boolean },
+): unknown => {
   throw new Error("compile() is not ported");
 };
 
@@ -33,7 +43,11 @@ type Assert = {
   not: (a: unknown, b: unknown) => void;
 };
 
-const describe = (name: string, fn: (it: any) => void): void => {
+type Register = ((label: string, body: (t: Assert) => void) => void) & {
+  skip: (label: string, body: (t: Assert) => void) => void;
+};
+
+const describe = (name: string, fn: (it: Register) => void): void => {
   vDescribe(name, () => {
     const register = (label: string, body: (t: Assert) => void) => {
       if (/partial|memoization/.test(label)) {
