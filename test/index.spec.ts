@@ -28,6 +28,8 @@ runTest("normalizeWindowsPath", normalizeWindowsPath, {
 
   // Windows
   "c:\\foo\\bar": "C:/foo/bar",
+  "c:/foo/bar": "C:/foo/bar",
+  "C:/foo/bar": "C:/foo/bar",
   "\\foo\\bar": "/foo/bar",
   ".\\foo\\bar": "./foo/bar",
 });
