@@ -376,6 +376,33 @@ describe("mixed namespaces", () => {
   });
 });
 
+describe("posix preserves backslashes (node:path.posix parity)", () => {
+  // On POSIX systems `\` is an ordinary filename character (#236).
+  it("join", () => {
+    expect(posix.join("foo", "bar\\baz")).to.equal("foo/bar\\baz");
+  });
+  it("normalize", () => {
+    expect(posix.normalize("foo\\bar")).to.equal("foo\\bar");
+  });
+  it("basename", () => {
+    expect(posix.basename("a/b/foo\\bar")).to.equal("foo\\bar");
+  });
+  it("dirname", () => {
+    expect(posix.dirname("a/foo\\bar/c")).to.equal("a/foo\\bar");
+  });
+  it("parse", () => {
+    expect(posix.parse("a/foo\\bar.txt")).toMatchObject({
+      base: "foo\\bar.txt",
+      name: "foo\\bar",
+      ext: ".txt",
+    });
+  });
+  it("default export and win32 still convert backslashes", () => {
+    expect(join("foo", "bar\\baz")).to.equal("foo/bar/baz");
+    expect(win32.join("foo", "bar\\baz")).to.equal("foo/bar/baz");
+  });
+});
+
 runTest("matchesGlob", matchesGlob, [
   ["/foo/bar", "/foo/**", true],
   [String.raw`\foo\bar`, "/foo/**", true],
