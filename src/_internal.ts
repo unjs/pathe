@@ -13,7 +13,6 @@ export function normalizeWindowsPath(input = "") {
   if (
     normalized[1] === ":" &&
     normalized[2] === "/" &&
-    driveLetter &&
     driveLetter >= "a" &&
     driveLetter <= "z"
   ) {
