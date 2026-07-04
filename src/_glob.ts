@@ -441,15 +441,29 @@ const Grammar = /* @__PURE__ */ star(
 
 // --- Compilation ---
 
+// Bounded LRU cache so long-running processes matching many distinct globs
+// don't grow memory without limit. A `Map` preserves insertion order, so the
+// least-recently-used entry is always the first key.
+const CACHE_MAX = 1000;
 const _cache = /* @__PURE__ */ new Map<string, RegExp>();
 
 function compileGlob(glob: string): RegExp {
-  let re = _cache.get(glob);
-  if (re === undefined) {
-    const node: Node = parse(normalizeGlob(glob), Grammar)[0];
-    const source = nodeSource(node);
-    re = new RegExp(`^(?:${source})[\\\\/]?$`, "s");
-    _cache.set(glob, re);
+  const cached = _cache.get(glob);
+  if (cached !== undefined) {
+    // Re-insert to mark as most-recently-used.
+    _cache.delete(glob);
+    _cache.set(glob, cached);
+    return cached;
+  }
+  const node: Node = parse(normalizeGlob(glob), Grammar)[0];
+  const source = nodeSource(node);
+  const re = new RegExp(`^(?:${source})[\\\\/]?$`, "s");
+  _cache.set(glob, re);
+  if (_cache.size > CACHE_MAX) {
+    const oldest = _cache.keys().next().value;
+    if (oldest !== undefined) {
+      _cache.delete(oldest);
+    }
   }
   return re;
 }
