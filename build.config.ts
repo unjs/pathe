@@ -1,13 +1,23 @@
 import { dirname, resolve } from "node:path";
 import { writeFile, mkdir } from "node:fs/promises";
-import { defineBuildConfig } from "unbuild";
+import { defineBuildConfig } from "obuild/config";
 import { build, type BuildOptions, transform } from "esbuild";
 
 export default defineBuildConfig({
+  entries: [
+    {
+      "type": "bundle",
+      input: [
+        "./src/index.ts",
+        "./src/utils.ts"
+      ]
+    }
+  ],
   hooks: {
-    async "build:before"(ctx) {
-      ctx.options.alias["zeptomatch"] = await buildZeptomatch();
-    },
+    async rolldownConfig(cfg) {
+      cfg.resolve!.alias ??= {}
+      cfg.resolve!.alias["zeptomatch"] = await buildZeptomatch();
+    }
   },
 });
 
