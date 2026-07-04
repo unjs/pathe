@@ -68,13 +68,10 @@ runTest("normalizeString", normalizeString, {
   // Windows
   [normalizeWindowsPath(String.raw`C:\temp\..`)]: "C:",
   [normalizeWindowsPath(String.raw`C:\temp\..\.\Users`)]: "C:/Users",
-  [normalizeWindowsPath(String.raw`C:\temp\..\.well-known\Users`)]:
-    "C:/.well-known/Users",
-  [normalizeWindowsPath(String.raw`C:\temp\..\..well-known\Users`)]:
-    "C:/..well-known/Users",
+  [normalizeWindowsPath(String.raw`C:\temp\..\.well-known\Users`)]: "C:/.well-known/Users",
+  [normalizeWindowsPath(String.raw`C:\temp\..\..well-known\Users`)]: "C:/..well-known/Users",
   [normalizeWindowsPath("C:\\a\\..\\")]: "C:",
-  [normalizeWindowsPath(String.raw`C:\temp\myfile.html`)]:
-    "C:/temp/myfile.html",
+  [normalizeWindowsPath(String.raw`C:\temp\myfile.html`)]: "C:/temp/myfile.html",
   [normalizeWindowsPath(String.raw`\temp\myfile.html`)]: "temp/myfile.html",
   [normalizeWindowsPath(String.raw`.\myfile.html`)]: "myfile.html",
 });
@@ -149,10 +146,7 @@ runTest("extname", extname, {
 
 runTest("format", format, [
   // POSIX
-  [
-    { root: "/ignored", dir: "/home/user/dir", base: "file.txt" },
-    "/home/user/dir/file.txt",
-  ],
+  [{ root: "/ignored", dir: "/home/user/dir", base: "file.txt" }, "/home/user/dir/file.txt"],
   [{ root: "/", base: "file.txt", ext: "ignored" }, "/file.txt"],
   [{ root: "/", name: "file", ext: ".txt" }, "/file.txt"],
   [{ name: "file", ext: ".txt" }, "file.txt"],
@@ -178,22 +172,11 @@ runTest("join", join, [
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
   ["./some/local/unix/", "../path", "some/local/path"],
   [String.raw`./some\current\mixed`, String.raw`..\path`, "some/current/path"],
-  [
-    "../some/relative/destination",
-    String.raw`..\path`,
-    "../some/relative/path",
-  ],
+  ["../some/relative/destination", String.raw`..\path`, "../some/relative/path"],
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
   ["/foo", "bar", "baz/asdf", "quux", "..", "/foo/bar/baz/asdf"],
 
-  [
-    String.raw`C:\foo`,
-    "bar",
-    String.raw`baz\asdf`,
-    "quux",
-    "..",
-    "C:/foo/bar/baz/asdf",
-  ],
+  [String.raw`C:\foo`, "bar", String.raw`baz\asdf`, "quux", "..", "C:/foo/bar/baz/asdf"],
   [String.raw`some/nodejs\windows`, "../path", "some/nodejs/path"],
   [String.raw`some\windows\only`, String.raw`..\path`, "some/windows/path"],
   // UNC paths
@@ -304,23 +287,11 @@ runTest("relative", relative, [
   ["/data/orandea/test/aaa", "/data/orandea/impl/bbb", "../../impl/bbb"],
   ["/", "/foo/bar", "foo/bar"],
   ["/foo", "/", ".."],
-  [
-    () => process.cwd(),
-    "./dist/client/b-scroll.d.ts",
-    "dist/client/b-scroll.d.ts",
-  ],
+  [() => process.cwd(), "./dist/client/b-scroll.d.ts", "dist/client/b-scroll.d.ts"],
 
   // Windows
-  [
-    String.raw`C:\orandea\test\aaa`,
-    String.raw`C:\orandea\impl\bbb`,
-    "../../impl/bbb",
-  ],
-  [
-    String.raw`C:\orandea\test\aaa`,
-    String.raw`c:\orandea\impl\bbb`,
-    "../../impl/bbb",
-  ],
+  [String.raw`C:\orandea\test\aaa`, String.raw`C:\orandea\impl\bbb`, "../../impl/bbb"],
+  [String.raw`C:\orandea\test\aaa`, String.raw`c:\orandea\impl\bbb`, "../../impl/bbb"],
   ["C:\\", String.raw`C:\foo\bar`, "foo/bar"],
   [String.raw`C:\foo`, "C:\\", ".."],
   [String.raw`C:\foo`, String.raw`d:\bar`, "D:/bar"],
@@ -329,11 +300,7 @@ runTest("relative", relative, [
     "./dist/client/b-scroll.d.ts",
     "dist/client/b-scroll.d.ts",
   ],
-  [
-    () => process.cwd(),
-    "./dist/client/b-scroll.d.ts",
-    "dist/client/b-scroll.d.ts",
-  ],
+  [() => process.cwd(), "./dist/client/b-scroll.d.ts", "dist/client/b-scroll.d.ts"],
 ]);
 
 runTest("resolve", resolve, [
@@ -348,8 +315,7 @@ runTest("resolve", resolve, [
     "wwwroot",
     "static_files/png/",
     "../gif/image.gif",
-    () =>
-      `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
+    () => `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
   ],
 
   // Windows
@@ -358,23 +324,12 @@ runTest("resolve", resolve, [
   [String.raw`\foo\bar`, "..", ".", String.raw`.\baz`, "/foo/baz"],
   [String.raw`\foo\bar`, "\\tmp\\file\\", "/tmp/file"],
   [String.raw`\foo\bar`, undefined, null, "", "\\tmp\\file\\", "/tmp/file"],
-  [
-    String.raw`\foo\bar`,
-    undefined,
-    null,
-    "",
-    "\\tmp\\file\\",
-    undefined,
-    null,
-    "",
-    "/tmp/file",
-  ],
+  [String.raw`\foo\bar`, undefined, null, "", "\\tmp\\file\\", undefined, null, "", "/tmp/file"],
   [
     "wwwroot",
     "static_files\\png\\",
     String.raw`..\gif\image.gif`,
-    () =>
-      `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
+    () => `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
   ],
   [String.raw`C:\Windows\path\only`, "../../reports", "C:/Windows/reports"],
   [
@@ -408,9 +363,7 @@ describe("constants", () => {
   it("delimiter", () => {
     expect(posix.delimiter).to.equal(":");
     expect(win32.delimiter).to.equal(";");
-    expect(delimiter).to.equal(
-      globalThis.process?.platform === "win32" ? ";" : ":",
-    );
+    expect(delimiter).to.equal(globalThis.process?.platform === "win32" ? ";" : ":");
   });
 
   it("sep should equal /", () => {
@@ -440,10 +393,7 @@ function _r(item: unknown) {
 }
 
 type AnyFunction<TArgs extends unknown[] = never> = (...args: TArgs) => unknown;
-type TestCaseArray<T extends AnyFunction> = [
-  ...unknown[],
-  ReturnType<T> | (() => ReturnType<T>),
-];
+type TestCaseArray<T extends AnyFunction> = [...unknown[], ReturnType<T> | (() => ReturnType<T>)];
 
 export function runTest<T extends AnyFunction>(
   name: string,
@@ -451,22 +401,16 @@ export function runTest<T extends AnyFunction>(
   items: Record<PropertyKey, ReturnType<T>> | Array<TestCaseArray<T>>,
 ) {
   if (!Array.isArray(items)) {
-    items = Object.entries(items).map((e) => e.flat()) as Array<
-      TestCaseArray<T>
-    >;
+    items = Object.entries(items).map((e) => e.flat()) as Array<TestCaseArray<T>>;
   }
   describe(`${name}`, () => {
     let cwd;
     for (const item of items) {
       const expected = item.pop() as ReturnType<T>;
       const arguments_ = item as unknown as Parameters<T>;
-      it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
-        expected,
-      )}`, () => {
+      it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(expected)}`, () => {
         expect(
-          (function_ as unknown as AnyFunction<unknown[]>)(
-            ...arguments_.map((i) => _r(i)),
-          ),
+          (function_ as unknown as AnyFunction<unknown[]>)(...arguments_.map((i) => _r(i))),
         ).to.equal(_r(expected));
       });
       it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
@@ -475,9 +419,7 @@ export function runTest<T extends AnyFunction>(
         cwd = process.cwd;
         process.cwd = vi.fn(() => String.raw`C:\Windows\path\only`);
         expect(
-          (function_ as unknown as AnyFunction<unknown[]>)(
-            ...arguments_.map((i) => _r(i)),
-          ),
+          (function_ as unknown as AnyFunction<unknown[]>)(...arguments_.map((i) => _r(i))),
         ).to.equal(_r(expected));
         process.cwd = cwd;
       });

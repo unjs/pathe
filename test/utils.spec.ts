@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  normalizeAliases,
-  filename,
-  resolveAlias,
-  reverseResolveAlias,
-} from "../src/utils";
+import { normalizeAliases, filename, resolveAlias, reverseResolveAlias } from "../src/utils";
 
 describe("alias", () => {
   const _aliases = {
@@ -79,9 +74,10 @@ describe("alias", () => {
         "~": "/root",
         "~assets": "/root/some/assets",
       };
-      expect(
-        reverseResolveAlias("/root/some/assets/smth.jpg", aliases),
-      ).toMatchObject(["~/some/assets/smth.jpg", "~assets/smth.jpg"]);
+      expect(reverseResolveAlias("/root/some/assets/smth.jpg", aliases)).toMatchObject([
+        "~/some/assets/smth.jpg",
+        "~assets/smth.jpg",
+      ]);
     });
 
     it("no match", () => {
@@ -90,12 +86,8 @@ describe("alias", () => {
     });
 
     it("respect ending with /", () => {
-      expect(reverseResolveAlias("/src/foo/bar", aliases)).toMatchObject([
-        "~/foo/bar",
-      ]);
-      expect(reverseResolveAlias("C:/src/foo/bar", aliases)).toMatchObject([
-        "~win/foo/bar",
-      ]);
+      expect(reverseResolveAlias("/src/foo/bar", aliases)).toMatchObject(["~/foo/bar"]);
+      expect(reverseResolveAlias("C:/src/foo/bar", aliases)).toMatchObject(["~win/foo/bar"]);
     });
   });
 });
