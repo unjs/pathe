@@ -32,13 +32,11 @@
     "@typescript/native-preview": "7.0.0-dev.20260703.1",
     "@vitest/coverage-v8": "^4.1.9",
     "changelogen": "^0.6.2",
-    "esbuild": "^0.28.1",
     "obuild": "^0.4.37",
     "oxfmt": "^0.57.0",
     "oxlint": "^1.72.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.9",
-    "zeptomatch": "^2.1.0"
+    "vitest": "^4.1.9"
   },
   "packageManager": "pnpm@11.9.0"
 }
