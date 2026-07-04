@@ -1,6 +1,6 @@
 /*
 Based on Node.js implementation:
- - Forked from: https://github.com/nodejs/node/blob/4b030d057375e58d2e99182f6ef7aa70f6ebcf99/lib/path.js
+ - Last synced with: https://github.com/nodejs/node/blob/c4429c85ecae65750fecb6c4c342fe2e9888317e/lib/path.js (2026-06-30)
  - Latest: https://github.com/nodejs/node/blob/main/lib/path.js
 Check LICENSE file
 
@@ -160,7 +160,7 @@ export function normalizeString(path: string, allowAboveRoot: boolean) {
           res[res.length - 2] !== "."
         ) {
           if (res.length > 2) {
-            const lastSlashIndex = res.lastIndexOf("/");
+            const lastSlashIndex = res.length - lastSegmentLength - 1;
             if (lastSlashIndex === -1) {
               res = "";
               lastSegmentLength = 0;
@@ -211,8 +211,12 @@ export const toNamespacedPath: typeof path.toNamespacedPath = function (p) {
 };
 
 export const extname: typeof path.extname = function (p) {
-  if (p === "..") return "";
-  const match = _EXTNAME_RE.exec(normalizeWindowsPath(p));
+  // Resolve the extension from the last path segment only, so a separator or
+  // trailing slash earlier in the input does not leak into the result. This
+  // keeps `extname()` in agreement with `parse().ext` and `node:path`.
+  const base = basename(p);
+  if (base === "..") return "";
+  const match = _EXTNAME_RE.exec(base);
   return (match && match[1]) || "";
 };
 
@@ -238,7 +242,7 @@ export const relative: typeof path.relative = function (from, to) {
 };
 
 export const dirname: typeof path.dirname = function (p) {
-  const segments = normalizeWindowsPath(p).replace(/\/$/, "").split("/").slice(0, -1);
+  const segments = normalizeWindowsPath(p).replace(/\/+$/, "").split("/").slice(0, -1);
   if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0] as string)) {
     segments[0] += "/";
   }
@@ -274,9 +278,15 @@ export const parse: typeof path.parse = function (p) {
   const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
   const extension = extname(base);
+  // Node returns an empty `dir` (not ".") when the path has no directory segment.
+  // A purely trailing separator (e.g. "b/") does not count as a directory segment.
+  let dir = dirname(p);
+  if (dir === "." && !normalizeWindowsPath(p).replace(/\/+$/, "").includes("/")) {
+    dir = "";
+  }
   return {
     root,
-    dir: dirname(p),
+    dir,
     base,
     ext: extension,
     name: base.slice(0, base.length - extension.length),
