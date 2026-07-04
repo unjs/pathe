@@ -111,6 +111,13 @@ runTest("dirname", dirname, {
   "/temp/myfile.html": "/temp",
   "./myfile.html": ".",
 
+  // Consecutive / trailing slashes (matches node posix)
+  "aa//": ".",
+  "x///": ".",
+  "a/b//": "a",
+  "a//b": "a/",
+  "/foo//bar//": "/foo/",
+
   // Windows
   "C:\\temp\\": "C:/",
   "C:.\\temp\\": "C:.",
@@ -135,6 +142,15 @@ runTest("extname", extname, {
   "./": "",
   "foo.": ".",
   "...": ".",
+
+  // Multi-segment input: extension is resolved from the last segment only,
+  // consistent with node:path and `parse().ext`.
+  "dir/.bashrc": "",
+  "foo/bar.tar.gz": ".gz",
+  "a/..": "",
+  "/foo/..": "",
+  "a/.": "",
+  "trailing.dir/": ".dir",
 
   // Windows
   "C:\\temp\\myfile.html": ".html",
@@ -238,6 +254,50 @@ it("parse", () => {
     base: "file",
     ext: "",
     name: "file",
+  });
+  // No directory segment -> empty `dir` (matches node, not ".")
+  expect(parse("file.txt")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  // A purely trailing separator is not a directory segment
+  expect(parse("file.txt/")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  expect(parse("foo")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "foo",
+    ext: "",
+    name: "foo",
+  });
+  expect(parse(".")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: ".",
+    ext: "",
+    name: ".",
+  });
+  expect(parse("..")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "..",
+    ext: "",
+    name: "..",
+  });
+  expect(parse(".gitignore")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: ".gitignore",
+    ext: "",
+    name: ".gitignore",
   });
 
   // Windows
