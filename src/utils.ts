@@ -32,10 +32,7 @@ export function normalizeAliases(_aliases: Record<string, string>) {
         continue;
       }
 
-      if (
-        aliases[key]?.startsWith(alias) &&
-        pathSeparators.has(aliases[key][alias.length])
-      ) {
+      if (aliases[key]?.startsWith(alias) && pathSeparators.has(aliases[key][alias.length])) {
         aliases[key] = aliases[alias] + aliases[key].slice(alias.length);
       }
     }
@@ -79,10 +76,7 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
  *
  * Returns an array of possible alias resolutions (could be empty), sorted by specificity (longest first).
  */
-export function reverseResolveAlias(
-  path: string,
-  aliases: Record<string, string>,
-): string[] {
+export function reverseResolveAlias(path: string, aliases: Record<string, string>): string[] {
   const _path = normalizeWindowsPath(path);
   aliases = normalizeAliases(aliases);
 

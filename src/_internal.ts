@@ -5,7 +5,5 @@ export function normalizeWindowsPath(input = "") {
   if (!input) {
     return input;
   }
-  return input
-    .replace(/\\/g, "/")
-    .replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase());
+  return input.replace(/\\/g, "/").replace(_DRIVE_LETTER_START_RE, (r) => r.toUpperCase());
 }

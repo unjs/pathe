@@ -102,11 +102,7 @@ export const resolve: typeof path.resolve = function (...arguments_) {
   let resolvedPath = "";
   let resolvedAbsolute = false;
 
-  for (
-    let index = arguments_.length - 1;
-    index >= -1 && !resolvedAbsolute;
-    index--
-  ) {
+  for (let index = arguments_.length - 1; index >= -1 && !resolvedAbsolute; index--) {
     const path = index >= 0 ? arguments_[index] : cwd();
 
     // Skip empty entries
@@ -222,14 +218,8 @@ export const extname: typeof path.extname = function (p) {
 
 export const relative: typeof path.relative = function (from, to) {
   // we cast these because `split` will always be at least one string
-  const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/") as [
-    string,
-    ...string[],
-  ];
-  const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/") as [
-    string,
-    ...string[],
-  ];
+  const _from = resolve(from).replace(_ROOT_FOLDER_RE, "$1").split("/") as [string, ...string[]];
+  const _to = resolve(to).replace(_ROOT_FOLDER_RE, "$1").split("/") as [string, ...string[]];
 
   // Different windows drive letters
   if (_to[0][1] === ":" && _from[0][1] === ":" && _from[0] !== _to[0]) {
@@ -248,10 +238,7 @@ export const relative: typeof path.relative = function (from, to) {
 };
 
 export const dirname: typeof path.dirname = function (p) {
-  const segments = normalizeWindowsPath(p)
-    .replace(/\/$/, "")
-    .split("/")
-    .slice(0, -1);
+  const segments = normalizeWindowsPath(p).replace(/\/$/, "").split("/").slice(0, -1);
   if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0] as string)) {
     segments[0] += "/";
   }
@@ -260,12 +247,8 @@ export const dirname: typeof path.dirname = function (p) {
 
 export const format: typeof path.format = function (p) {
   const ext = p.ext ? (p.ext.startsWith(".") ? p.ext : `.${p.ext}`) : "";
-  const segments = [p.root, p.dir, p.base ?? (p.name ?? "") + ext].filter(
-    Boolean,
-  ) as string[];
-  return normalizeWindowsPath(
-    p.root ? resolve(...segments) : segments.join("/"),
-  );
+  const segments = [p.root, p.dir, p.base ?? (p.name ?? "") + ext].filter(Boolean) as string[];
+  return normalizeWindowsPath(p.root ? resolve(...segments) : segments.join("/"));
 };
 
 export const basename: typeof path.basename = function (p, extension) {
@@ -305,9 +288,6 @@ export const parse: typeof path.parse = function (p) {
  * @param path The path to glob-match against.
  * @param pattern The glob to check the path against.
  */
-export const matchesGlob = (
-  path: string,
-  pattern: string | string[],
-): boolean => {
+export const matchesGlob = (path: string, pattern: string | string[]): boolean => {
   return zeptomatch(pattern, normalize(path));
 };
