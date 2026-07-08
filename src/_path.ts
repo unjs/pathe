@@ -100,6 +100,10 @@ export const resolve: typeof path.resolve = function (...arguments_) {
 
   let resolvedPath = "";
   let resolvedAbsolute = false;
+  // Whether the base (last absolute) segment is a UNC path (e.g. `\\server\share`).
+  // Tracked on the source segment rather than the concatenated `resolvedPath`,
+  // which can start with `//` as an artifact of joining a `/` root.
+  let resolvedUNC = false;
 
   for (let index = arguments_.length - 1; index >= -1 && !resolvedAbsolute; index--) {
     const path = index >= 0 ? arguments_[index] : cwd();
@@ -111,6 +115,7 @@ export const resolve: typeof path.resolve = function (...arguments_) {
 
     resolvedPath = `${path}/${resolvedPath}`;
     resolvedAbsolute = isAbsolute(path);
+    resolvedUNC = _UNC_REGEX.test(path);
   }
 
   // At this point the path should be resolved to a full absolute path, but
@@ -118,6 +123,13 @@ export const resolve: typeof path.resolve = function (...arguments_) {
 
   // Normalize the path
   resolvedPath = normalizeString(resolvedPath, !resolvedAbsolute);
+
+  // Preserve a leading UNC prefix (e.g. `\\server\share`), matching `normalize`
+  // and node's `path.win32.resolve`. `normalizeString` collapses the consecutive
+  // slashes, so it is re-applied here.
+  if (resolvedUNC) {
+    return `//${resolvedPath}`;
+  }
 
   if (resolvedAbsolute && !isAbsolute(resolvedPath)) {
     return `/${resolvedPath}`;

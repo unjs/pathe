@@ -398,6 +398,13 @@ runTest("resolve", resolve, [
     String.raw`..\../reports`,
     "C:/Windows/long/reports",
   ],
+
+  // UNC paths (https://github.com/unjs/pathe/issues/245)
+  [String.raw`\\server\share\file`, "//server/share/file"],
+  [String.raw`\\unc-server-name\unc-path`, "//unc-server-name/unc-path"],
+  [String.raw`\\server\share\file`, String.raw`..\path`, "//server/share/path"],
+  [String.raw`\\server\share\file`, "sub", "//server/share/file/sub"],
+  [String.raw`//server/share/file`, "../path", "//server/share/path"],
 ]);
 
 describe("resolve with catastrophic process.cwd() failure", () => {
