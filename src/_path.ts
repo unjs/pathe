@@ -241,9 +241,11 @@ export const relative: typeof path.relative = function (from, to) {
     return _to.join("/");
   }
 
+  const compareSegment =
+    _to[0][1] === ":" ? (segment = "") => segment.toLowerCase() : (segment = "") => segment;
   const _fromCopy = [..._from];
   for (const segment of _fromCopy) {
-    if (_to[0] !== segment) {
+    if (compareSegment(_to[0]) !== compareSegment(segment)) {
       break;
     }
     _from.shift();

@@ -352,6 +352,9 @@ runTest("relative", relative, [
   // Windows
   [String.raw`C:\orandea\test\aaa`, String.raw`C:\orandea\impl\bbb`, "../../impl/bbb"],
   [String.raw`C:\orandea\test\aaa`, String.raw`c:\orandea\impl\bbb`, "../../impl/bbb"],
+  // Windows paths match shared segments case-insensitively.
+  [String.raw`C:\Foo`, String.raw`c:\foo\bar`, "bar"],
+  [String.raw`C:\foo\bar`, String.raw`c:\FOO\baz`, "../baz"],
   ["C:\\", String.raw`C:\foo\bar`, "foo/bar"],
   [String.raw`C:\foo`, "C:\\", ".."],
   [String.raw`C:\foo`, String.raw`d:\bar`, "D:/bar"],
