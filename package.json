@@ -35,7 +35,7 @@
     "obuild": "^0.4.37",
     "oxfmt": "^0.57.0",
     "oxlint": "^1.72.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.9"
   },
   "packageManager": "pnpm@11.10.0"
