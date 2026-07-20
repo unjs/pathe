@@ -35,4 +35,6 @@ export const posix = /* @__PURE__ */ mix(":") as NodePath["posix"];
 
 export const win32 = /* @__PURE__ */ mix(";") as NodePath["win32"];
 
+export { safeName, safePath } from "./utils";
+
 export default posix as NodePath;

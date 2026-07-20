@@ -7,6 +7,64 @@ const normalizedAliasSymbol = Symbol.for("pathe:normalizedAlias");
 
 const SLASH_RE = /[/\\]/;
 
+// Characters that are illegal in Windows file and directory names, plus
+// C0 control characters and the ASCII separator characters. See issue #47.
+const UNSAFE_NAME_CHARS = /[<>:"/\\|?*\u0000-\u001F]/g;
+
+// Windows reserved device names (with optional extension): CON, PRN, AUX,
+// NUL, COM1-9, LPT1-9. These cannot be used as a file or directory name.
+const RESERVED_NAME_RE = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(\.|$)/i;
+
+/**
+ * Sanitizes a file or directory name so it is valid across platforms (notably
+ * Windows). Removes illegal characters (`< > : " / \ | ? *` and C0 controls),
+ * strips leading/trailing dots and spaces, collapses internal whitespace,
+ * neutralises Windows reserved device names (CON, PRN, …), and clamps the
+ * length to 255 characters (preserving the extension when possible). An empty
+ * or all-illegal name falls back to `"unnamed"`. See issue #47.
+ */
+export function safeName(name: string): string {
+  let cleaned = String(name).replace(UNSAFE_NAME_CHARS, "");
+  cleaned = cleaned.replace(/^(?:\.|\s)+/, "").replace(/(?:\.|\s)+$/, "");
+  cleaned = cleaned.replace(/\s+/g, " ").trim();
+  if (RESERVED_NAME_RE.test(cleaned)) {
+    cleaned = "_" + cleaned;
+  }
+  if (!cleaned) {
+    cleaned = "unnamed";
+  }
+  if (cleaned.length > 255) {
+    const extMatch = cleaned.match(/\.[^.]+$/);
+    const ext = extMatch ? extMatch[0] : "";
+    const baseMax = Math.max(0, 255 - ext.length);
+    cleaned = cleaned.slice(0, baseMax) + ext;
+  }
+  return cleaned;
+}
+
+/**
+ * Sanitizes a full path by applying {@link safeName} to every path segment,
+ * preserving its absolute/relative shape. Consecutive separators are collapsed
+ * to a single `/`, a leading separator is preserved (absolute paths), and a
+ * trailing separator is preserved. See issue #47.
+ */
+export function safePath(path: string): string {
+  const input = String(path);
+  const isAbsolute = input.startsWith("/") || /^[A-Za-z]:[\\/]/.test(input);
+  const hasTrailingSep = input.length > 0 && /[\\/]/.test(input[input.length - 1]);
+  // A Windows drive prefix is `X:` + separator; require the separator so that
+  // a leading `name:` (e.g. `a:b`) is not mistaken for a drive prefix.
+  const stripped = input.replace(/^[A-Za-z]:[\\/]/, "");
+  const segments = stripped
+    .split(/[\\/]+/)
+    .filter(segment => segment.length > 0)
+    .map(segment => safeName(segment));
+  const joined = segments.join("/");
+  const prefix = isAbsolute ? "/" : "";
+  const suffix = hasTrailingSep && joined ? "/" : "";
+  return prefix + joined + suffix;
+}
+
 /**
  * Normalises alias mappings, ensuring that more specific aliases are resolved before less specific ones.
  * This function also ensures that aliases do not resolve to themselves cyclically.
