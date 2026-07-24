@@ -98,6 +98,24 @@ runTest("basename", basename, [
   // Empty string
   ["", ""],
 
+  // A suffix that would consume the whole segment is ignored, matching node.
+  // POSIX
+  ["/foo/bar.txt", "bar.txt", "bar.txt"],
+  ["/a/b/index.js", "index.js", "index.js"],
+  ["/foo/.txt", ".txt", ".txt"],
+  ["a/abc", "abc", "abc"],
+  ["/abc/", "abc", "abc"],
+  ["//abc//", "abc", "abc"],
+  // Windows
+  [String.raw`C:\foo\bar.txt`, "bar.txt", "bar.txt"],
+  [String.raw`C:\foo\.txt`, ".txt", ".txt"],
+  [String.raw`\abc`, "abc", "abc"],
+
+  // ...unless the suffix is the entire input, which node resolves to "".
+  ["abc", "abc", ""],
+  [".txt", ".txt", ""],
+  ["myfile.html", "myfile.html", ""],
+
   // Windows
   [String.raw`C:\temp\myfile.html`, "myfile.html"],
   [String.raw`\temp\myfile.html`, "myfile.html"],

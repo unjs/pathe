@@ -267,7 +267,8 @@ export const format: typeof path.format = function (p) {
 };
 
 export const basename: typeof path.basename = function (p, extension) {
-  const segments = normalizeWindowsPath(p).split("/");
+  const normalizedPath = normalizeWindowsPath(p);
+  const segments = normalizedPath.split("/");
 
   // default to empty string
   let lastSegment = "";
@@ -279,9 +280,19 @@ export const basename: typeof path.basename = function (p, extension) {
     }
   }
 
-  return extension && lastSegment.endsWith(extension)
-    ? lastSegment.slice(0, -extension.length)
-    : lastSegment;
+  if (!extension || !lastSegment.endsWith(extension)) {
+    return lastSegment;
+  }
+
+  // Node only returns an empty string when the suffix is the whole input.
+  // Otherwise a suffix that would consume the entire segment is ignored and
+  // the segment is returned intact, so `basename("/a/index.js", "index.js")`
+  // is `"index.js"` rather than `""`.
+  if (extension === normalizedPath) {
+    return "";
+  }
+
+  return lastSegment.slice(0, -extension.length) || lastSegment;
 };
 
 export const parse: typeof path.parse = function (p) {
