@@ -12,6 +12,7 @@ import { matchGlob } from "./_glob";
 import { normalizeWindowsPath } from "./_internal";
 
 const _UNC_REGEX = /^[/\\]{2}/;
+const _DEVICE_PATH_RE = /^[/\\]{2}\.[/\\]/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
@@ -104,6 +105,7 @@ export const resolve: typeof path.resolve = function (...arguments_) {
   // Tracked on the source segment rather than the concatenated `resolvedPath`,
   // which can start with `//` as an artifact of joining a `/` root.
   let resolvedUNC = false;
+  let resolvedDevice = false;
 
   for (let index = arguments_.length - 1; index >= -1 && !resolvedAbsolute; index--) {
     const path = index >= 0 ? arguments_[index] : cwd();
@@ -114,7 +116,8 @@ export const resolve: typeof path.resolve = function (...arguments_) {
     }
 
     resolvedPath = `${path}/${resolvedPath}`;
-    resolvedAbsolute = isAbsolute(path);
+    resolvedDevice = _DEVICE_PATH_RE.test(path);
+    resolvedAbsolute = isAbsolute(path) || resolvedDevice;
     resolvedUNC = _UNC_REGEX.test(path);
   }
 
@@ -128,7 +131,7 @@ export const resolve: typeof path.resolve = function (...arguments_) {
   // and node's `path.win32.resolve`. `normalizeString` collapses the consecutive
   // slashes, so it is re-applied here.
   if (resolvedUNC) {
-    return `//${resolvedPath}`;
+    return `//${resolvedDevice ? "./" : ""}${resolvedPath}`;
   }
 
   if (resolvedAbsolute && !isAbsolute(resolvedPath)) {

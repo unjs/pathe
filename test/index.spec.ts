@@ -405,6 +405,7 @@ runTest("resolve", resolve, [
   [String.raw`\\server\share\file`, String.raw`..\path`, "//server/share/path"],
   [String.raw`\\server\share\file`, "sub", "//server/share/file/sub"],
   [String.raw`//server/share/file`, "../path", "//server/share/path"],
+  [String.raw`\\.\c:\temp\file`, String.raw`..\path`, "//./c:/temp/path"],
 ]);
 
 describe("resolve with catastrophic process.cwd() failure", () => {
