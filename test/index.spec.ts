@@ -103,6 +103,9 @@ runTest("basename", basename, [
   ["/foo/bar.txt", "bar.txt", "bar.txt"],
   ["/a/b/index.js", "index.js", "index.js"],
   ["/foo/.txt", ".txt", ".txt"],
+  // ...unless the extension is the entire (directory-prefixed) input, which
+  // node resolves to "" even though the segment alone is shorter than it.
+  ["/a/b/index.js", "/a/b/index.js", ""],
   ["a/abc", "abc", "abc"],
   ["/abc/", "abc", "abc"],
   ["//abc//", "abc", "abc"],

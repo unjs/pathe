@@ -280,18 +280,22 @@ export const basename: typeof path.basename = function (p, extension) {
     }
   }
 
-  if (!extension || !lastSegment.endsWith(extension)) {
-    return lastSegment;
-  }
-
-  // Node only returns an empty string when the suffix is the whole input.
-  // Otherwise a suffix that would consume the entire segment is ignored and
-  // the segment is returned intact, so `basename("/a/index.js", "index.js")`
-  // is `"index.js"` rather than `""`.
+  // Node only returns an empty string when the suffix is the whole input,
+  // checked against the full path rather than just the last segment, so a
+  // directory-prefixed input (e.g. "/a/b/index.js") with an identical
+  // extension still resolves to "" even though the segment alone ("index.js")
+  // is shorter than the extension and would otherwise never reach this case.
   if (extension === normalizedPath) {
     return "";
   }
 
+  if (!extension || !lastSegment.endsWith(extension)) {
+    return lastSegment;
+  }
+
+  // Otherwise a suffix that would consume the entire segment is ignored and
+  // the segment is returned intact, so `basename("/a/index.js", "index.js")`
+  // is `"index.js"` rather than `""`.
   return lastSegment.slice(0, -extension.length) || lastSegment;
 };
 
