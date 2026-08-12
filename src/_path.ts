@@ -261,9 +261,19 @@ export const dirname: typeof path.dirname = function (p) {
 };
 
 export const format: typeof path.format = function (p) {
+  // Mirror node's `path.format`: `dir` takes precedence over `root` (`root` is
+  // only a fallback and is ignored when `dir` is set), `base` falls back to
+  // `name` + `ext`, and the pieces are concatenated verbatim. Node does not
+  // resolve `.`/`..` here, so `format(parse(x))` round-trips; the previous
+  // `resolve()` collapsed those segments and dropped a relative `dir` under
+  // `root`. `normalizeWindowsPath` keeps pathe's forward-slash output.
+  const dir = p.dir || p.root;
   const ext = p.ext ? (p.ext.startsWith(".") ? p.ext : `.${p.ext}`) : "";
-  const segments = [p.root, p.dir, p.base ?? (p.name ?? "") + ext].filter(Boolean) as string[];
-  return normalizeWindowsPath(p.root ? resolve(...segments) : segments.join("/"));
+  const base = p.base || `${p.name || ""}${ext}`;
+  if (!dir) {
+    return normalizeWindowsPath(base);
+  }
+  return normalizeWindowsPath(dir === p.root ? dir + base : `${dir}/${base}`);
 };
 
 export const basename: typeof path.basename = function (p, extension) {
