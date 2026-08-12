@@ -171,6 +171,16 @@ runTest("format", format, [
   [{ ext: ".ext" }, ".ext"],
   [{ dir: "/foo", name: "file" }, "/foo/file"],
 
+  // `dir` overrides `root`: a relative `dir` is not appended onto `root`
+  [{ root: "/r", dir: "rel/dir", base: "f" }, "rel/dir/f"],
+  // Parts are concatenated verbatim, without resolving `.`/`..`, so
+  // `format(parse(x))` round-trips for an unnormalized path
+  [{ root: "/", dir: "/a/../b", base: "c" }, "/a/../b/c"],
+  [{ root: "/", dir: "/a/./b", base: "c" }, "/a/./b/c"],
+  // An empty `base` falls back to `name` + `ext` (matching node's `||`)
+  [{ root: "/", dir: "/a", name: "x", ext: ".js", base: "" }, "/a/x.js"],
+  [{ name: "x", ext: ".js", base: "" }, "x.js"],
+
   // Windows
   [{ name: "file", base: "file.txt" }, "file.txt"],
   [{ dir: String.raw`C:\path\dir`, base: "file.txt" }, "C:/path/dir/file.txt"],
