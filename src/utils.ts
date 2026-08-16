@@ -132,3 +132,38 @@ function hasTrailingSlash(path = "/") {
   const lastChar = path[path.length - 1];
   return lastChar === "/" || lastChar === "\\";
 }
+
+const WindowsInvalidNameCharsRe = /[\x00-\x1F<>:"/\\|?*]/g;
+
+/**
+ * Sanitizes a name to be valid on Windows and Unix by replacing invalid characters with their percent-encoded equivalents.
+ *
+ * @param name - The name to sanitize.
+ * @returns the sanitized name.
+ */
+export function safeName(name: string): string {
+  return name.replace(
+    WindowsInvalidNameCharsRe,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase().padStart(2, "0")}`,
+  );
+}
+
+/**
+ * Sanitizes a path to be valid on Windows and Unix by applying `safeName` to each segment.
+ *
+ * @param path - The path to sanitize.
+ * @returns the sanitized path.
+ */
+export function safePath(path: string): string {
+  const _path = normalizeWindowsPath(path);
+  const segments = _path.split("/");
+  return segments
+    .map((seg, index) => {
+      // Preserve Windows drive letter
+      if (index === 0 && /^[a-zA-Z]:$/.test(seg)) {
+        return seg;
+      }
+      return safeName(seg);
+    })
+    .join("/");
+}
