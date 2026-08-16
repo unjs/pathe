@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeAliases, filename, resolveAlias, reverseResolveAlias } from "../src/utils";
+import { normalizeAliases, filename, resolveAlias, reverseResolveAlias, safeName, safePath } from "../src/utils";
 
 describe("alias", () => {
   const _aliases = {
@@ -122,4 +122,28 @@ describe("filename", () => {
       expect(filename(file)).toEqual(files[file as keyof typeof files]);
     });
   }
+});
+
+describe("safeName", () => {
+  it("replaces invalid characters with their percent-encoded equivalents", () => {
+    expect(safeName("foo:bar")).toBe("foo%3Abar");
+    expect(safeName('foo"bar')).toBe("foo%22bar");
+    expect(safeName("foo<bar>")).toBe("foo%3Cbar%3E");
+    expect(safeName("foo/bar")).toBe("foo%2Fbar");
+    expect(safeName("foo\\bar")).toBe("foo%5Cbar");
+    expect(safeName("foo|bar")).toBe("foo%7Cbar");
+    expect(safeName("foo?bar")).toBe("foo%3Fbar");
+    expect(safeName("foo*bar")).toBe("foo%2Abar");
+    expect(safeName("foo\x00bar")).toBe("foo%00bar");
+  });
+});
+
+describe("safePath", () => {
+  it("replaces invalid characters in each segment of the path", () => {
+    expect(safePath("C:/foo:bar/baz")).toBe("C:/foo%3Abar/baz");
+    expect(safePath("C:\\foo<bar>\\baz")).toBe("C:/foo%3Cbar%3E/baz");
+    expect(safePath("/foo/bar:baz/qux*")).toBe("/foo/bar%3Abaz/qux%2A");
+    expect(safePath("file.txt")).toBe("file.txt");
+    expect(safePath("//server/share/file?name")).toBe("//server/share/file%3Fname");
+  });
 });
