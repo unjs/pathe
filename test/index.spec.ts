@@ -40,6 +40,9 @@ runTest("isAbsolute", isAbsolute, {
   "/baz/..": true,
   "quax/": false,
   ".": false,
+  "//.a": true,
+  "//..": true,
+  "//.": true,
 
   // Windows
   "C:": false,
@@ -200,6 +203,10 @@ runTest("join", join, [
   [String.raw`\\.\c:\temp\file`, String.raw`..\path`, "//./c:/temp/path"],
   [String.raw`\\server/share/file`, "../path", "//server/share/path"],
   [String.raw`//server/share/file`, "../path", "//server/share/path"],
+  // A dot after `//` only starts a device path when a separator follows
+  ["//", ".a", "//.a"],
+  ["//", "..", "/"],
+  ["//", ".", "/"],
 ]);
 
 runTest("normalize", normalize, {
@@ -216,6 +223,9 @@ runTest("normalize", normalize, {
   "./../dep/": "../dep/",
   "path//dep\\": "path/dep/",
   "/foo/bar//baz/asdf/quux/..": "/foo/bar/baz/asdf",
+  "//.a": "//.a",
+  "//..": "/",
+  "//.": "/",
 
   // Windows
   "C:\\": "C:/",
