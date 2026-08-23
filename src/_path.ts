@@ -12,7 +12,14 @@ import { matchGlob } from "./_glob";
 import { normalizeWindowsPath } from "./_internal";
 
 const _UNC_REGEX = /^[/\\]{2}/;
-const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
+/**
+ * A path is absolute when it starts with a separator or a drive letter.
+ *
+ * The `//` alternative excludes the Windows device namespace prefix `\\.\`,
+ * which `normalize` reconstructs separately. That prefix requires the dot to be
+ * followed by a separator, so `//.a` and `//..` are ordinary absolute paths.
+ */
+const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.[/\\])|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 const _EXTNAME_RE = /.(\.[^./]+|\.)$/;
