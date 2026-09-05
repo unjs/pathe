@@ -267,7 +267,15 @@ export const format: typeof path.format = function (p) {
 };
 
 export const basename: typeof path.basename = function (p, extension) {
-  const segments = normalizeWindowsPath(p).split("/");
+  const _p = normalizeWindowsPath(p);
+
+  // Node only returns an empty string when the whole path *is* the extension;
+  // otherwise the suffix is never allowed to consume the entire segment.
+  if (extension && _p === extension) {
+    return "";
+  }
+
+  const segments = _p.split("/");
 
   // default to empty string
   let lastSegment = "";
@@ -279,7 +287,7 @@ export const basename: typeof path.basename = function (p, extension) {
     }
   }
 
-  return extension && lastSegment.endsWith(extension)
+  return extension && lastSegment.length > extension.length && lastSegment.endsWith(extension)
     ? lastSegment.slice(0, -extension.length)
     : lastSegment;
 };
