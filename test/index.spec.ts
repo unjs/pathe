@@ -98,6 +98,22 @@ runTest("basename", basename, [
   // Empty string
   ["", ""],
 
+  // The suffix never consumes a whole segment (matches node)
+  // https://nodejs.org/api/path.html#pathbasenamepath-suffix
+  ["a/b", "b", "b"],
+  ["/b", "b", "b"],
+  ["./a", "a", "a"],
+  ["dir/index.js", "index.js", "index.js"],
+  ["abc/", "abc", "abc"],
+  ["a//", "a", "a"],
+  ["a/b/", "b", "b"],
+  // ...unless the path itself is exactly the suffix
+  ["abc", "abc", ""],
+  [".a", ".a", ""],
+  // A longer segment is still stripped
+  ["a/bb", "b", "b"],
+  ["dir/myfile.html", ".html", "myfile"],
+
   // Windows
   [String.raw`C:\temp\myfile.html`, "myfile.html"],
   [String.raw`\temp\myfile.html`, "myfile.html"],
