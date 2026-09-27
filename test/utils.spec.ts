@@ -32,6 +32,49 @@ describe("alias", () => {
     `);
   });
 
+  describe.each([
+    ["app", "appConfig", "config"],
+    ["~", "~assets", "assets"],
+  ])("aliases sharing the prefix %s", (base, name, directory) => {
+    const target = `/project/src/${directory}`;
+
+    for (const reversed of [false, true]) {
+      const entries = [
+        [base, "/project/src"],
+        [name, `${base}/${directory}`],
+      ];
+      const aliases = Object.fromEntries(reversed ? entries.reverse() : entries);
+
+      it(`normalizes distinct names (reversed: ${reversed})`, () => {
+        const normalized = normalizeAliases(aliases);
+        expect(normalized[name]).toBe(target);
+        expect(aliases[name]).toBe(`${base}/${directory}`);
+        expect(normalizeAliases(normalized)).toBe(normalized);
+      });
+
+      it(`resolves the normalized target (reversed: ${reversed})`, () => {
+        expect(resolveAlias(`${name}/file.ts`, aliases)).toBe(`${target}/file.ts`);
+      });
+
+      it(`reverse-resolves the normalized target (reversed: ${reversed})`, () => {
+        expect(reverseResolveAlias(`${target}/file.ts`, aliases)).toContain(`${name}/file.ts`);
+      });
+    }
+  });
+
+  it.each(["/", "\\"])("preserves more specific aliases separated by %s", (separator) => {
+    const specific = `@foo${separator}bar`;
+    const aliases = { "@foo": "/packages/foo", [specific]: `${specific}/dist/index.mjs` };
+    expect(normalizeAliases(aliases)[specific]).toBe(`${specific}/dist/index.mjs`);
+  });
+
+  it.each(["/", "\\"])("preserves more specific aliases below a trailing %s", (separator) => {
+    const parent = `@foo${separator}`;
+    const specific = `${parent}bar`;
+    const aliases = { [specific]: parent, [parent]: "/packages/foo" };
+    expect(normalizeAliases(aliases)[specific]).toBe(parent);
+  });
+
   describe("resolveAlias", () => {
     for (const [from, to] of Object.entries(aliases)) {
       it(from, () => {
