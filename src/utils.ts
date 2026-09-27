@@ -28,7 +28,11 @@ export function normalizeAliases(_aliases: Record<string, string>) {
   for (const key in aliases) {
     for (const alias in aliases) {
       // don't resolve a more specific alias with regard to a less specific one
-      if (alias === key || key.startsWith(alias)) {
+      if (
+        alias === key ||
+        (key.startsWith(alias) &&
+          (hasTrailingSlash(alias) || pathSeparators.has(key[alias.length])))
+      ) {
         continue;
       }
 
