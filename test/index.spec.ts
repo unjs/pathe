@@ -154,6 +154,12 @@ runTest("extname", extname, {
   "a/.": "",
   "trailing.dir/": ".dir",
 
+  // Line terminators
+  "dir/name\n.txt": ".txt",
+  "dir/name\r.txt": ".txt",
+  "dir/name\u2028.txt": ".txt",
+  "dir/name\u2029.txt": ".txt",
+
   // Windows
   "C:\\temp\\myfile.html": ".html",
   "\\temp\\myfile.html": ".html",
@@ -300,6 +306,13 @@ it("parse", () => {
     base: ".gitignore",
     ext: "",
     name: ".gitignore",
+  });
+  expect(parse("dir/name\n.txt")).to.deep.equal({
+    root: "",
+    dir: "dir",
+    base: "name\n.txt",
+    ext: ".txt",
+    name: "name\n",
   });
 
   // Windows

@@ -15,7 +15,7 @@ const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
-const _EXTNAME_RE = /.(\.[^./]+|\.)$/;
+const _EXTNAME_RE = /[\s\S](\.[^./]+|\.)$/;
 const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
 
 /**
