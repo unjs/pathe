@@ -493,3 +493,13 @@ export function runTest<T extends AnyFunction>(
     }
   });
 }
+
+describe("Windows drive roots", () => {
+  it.each(["C:/", "c:/", "C:\\", "C:/folder/.."])("resolves %s to its drive root", (input) => {
+    expect(resolve(input)).toBe("C:/");
+    expect(resolve(input, ".")).toBe("C:/");
+  });
+  it.each(["C:/", "c:/", "C:\\", "C:////"])("keeps %s as its own parent", (input) => {
+    expect(dirname(input)).toBe("C:/");
+  });
+});

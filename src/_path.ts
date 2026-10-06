@@ -14,7 +14,7 @@ import { normalizeWindowsPath } from "./_internal";
 const _UNC_REGEX = /^[/\\]{2}/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
-const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
+const _ROOT_FOLDER_RE = /^(?:\/|([A-Za-z]:)\/)$/;
 const _EXTNAME_RE = /.(\.[^./]+|\.)$/;
 const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
 
@@ -123,6 +123,10 @@ export const resolve: typeof path.resolve = function (...arguments_) {
 
   // Normalize the path
   resolvedPath = normalizeString(resolvedPath, !resolvedAbsolute);
+
+  if (_DRIVE_LETTER_RE.test(resolvedPath)) {
+    resolvedPath += "/";
+  }
 
   // Preserve a leading UNC prefix (e.g. `\\server\share`), matching `normalize`
   // and node's `path.win32.resolve`. `normalizeString` collapses the consecutive
@@ -253,7 +257,11 @@ export const relative: typeof path.relative = function (from, to) {
 };
 
 export const dirname: typeof path.dirname = function (p) {
-  const segments = normalizeWindowsPath(p).replace(/\/+$/, "").split("/").slice(0, -1);
+  const normalized = normalizeWindowsPath(p).replace(/\/+$/, "");
+  if (_DRIVE_LETTER_RE.test(normalized) && isAbsolute(p)) {
+    return `${normalized}/`;
+  }
+  const segments = normalized.split("/").slice(0, -1);
   if (segments.length === 1 && _DRIVE_LETTER_RE.test(segments[0] as string)) {
     segments[0] += "/";
   }
