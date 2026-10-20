@@ -78,3 +78,21 @@ describe("node:path matchesGlob (non-string input)", () => {
     expect(() => matchesGlob("foo/bar/baz", 123)).toThrow();
   });
 });
+
+describe("matchesGlob with line terminators in patterns", () => {
+  it.each([
+    ["LF", "\n"],
+    ["CR", "\r"],
+    ["line separator", "\u2028"],
+    ["paragraph separator", "\u2029"],
+  ])("matches a literal %s", (_name, separator) => {
+    const path = `dir/a${separator}b.txt`;
+    expect(matchesGlob(path, path)).toBe(true);
+    expect(matchesGlob(path, `dir/a${separator}*.txt`)).toBe(true);
+    expect(matchesGlob("dir/ab.txt", `dir/a${separator}*.txt`)).toBe(false);
+    expect(matchesGlob("other.txt", `!${path}`)).toBe(true);
+    expect(matchesGlob(path, `!${path}`)).toBe(false);
+    expect(matchesGlob("other.txt", `!!!${path}`)).toBe(true);
+    expect(matchesGlob(path, `!!${path}`)).toBe(true);
+  });
+});
