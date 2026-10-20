@@ -302,7 +302,7 @@ const NormalizeGrammar = /* @__PURE__ */ star(
     /* @__PURE__ */ match(/\*\*\*+/, "*"),
     /* @__PURE__ */ match(/([^/{[(!])\*\*/, (_: string, $1: string) => `${$1}*`),
     /* @__PURE__ */ match(/(^|.)\*\*(?=[^*/)\]}])/, (_: string, $1: string) => `${$1}*`),
-    /* @__PURE__ */ match(/./, identity),
+    /* @__PURE__ */ match(/./s, identity),
   ]),
 );
 
