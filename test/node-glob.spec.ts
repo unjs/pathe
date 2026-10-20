@@ -90,5 +90,9 @@ describe("matchesGlob with line terminators in patterns", () => {
     expect(matchesGlob(path, path)).toBe(true);
     expect(matchesGlob(path, `dir/a${separator}*.txt`)).toBe(true);
     expect(matchesGlob("dir/ab.txt", `dir/a${separator}*.txt`)).toBe(false);
+    expect(matchesGlob("other.txt", `!${path}`)).toBe(true);
+    expect(matchesGlob(path, `!${path}`)).toBe(false);
+    expect(matchesGlob("other.txt", `!!!${path}`)).toBe(true);
+    expect(matchesGlob(path, `!!${path}`)).toBe(true);
   });
 });

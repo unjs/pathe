@@ -315,7 +315,7 @@ const Escape = /* @__PURE__ */ match(/[$.*+?^(){}[\]|]/, (char: string) => regex
 const Slash = /* @__PURE__ */ match(/[\\/]/, slash);
 const Passthrough = /* @__PURE__ */ match(/[^$.*+?^(){}[\]|\\/]+/, regex);
 
-const NegationOdd = /* @__PURE__ */ match(/^(?:!!)*!(.*)$/, (_: string, glob: string) =>
+const NegationOdd = /* @__PURE__ */ match(/^(?:!!)*!(.*)$/s, (_: string, glob: string) =>
   regex(`(?!^${compileGlob(glob).source}$).*?`),
 );
 const NegationEven = /* @__PURE__ */ match(/^(!!)+/);
