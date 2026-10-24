@@ -32,8 +32,11 @@ export function normalizeAliases(_aliases: Record<string, string>) {
         continue;
       }
 
-      if (aliases[key]?.startsWith(alias) && pathSeparators.has(aliases[key][alias.length])) {
-        aliases[key] = aliases[alias] + aliases[key].slice(alias.length);
+      if (
+        aliases[key]?.startsWith(alias) &&
+        (hasTrailingSlash(alias) || pathSeparators.has(aliases[key][alias.length]))
+      ) {
+        aliases[key] = join(aliases[alias]!, aliases[key].slice(alias.length));
       }
     }
   }
