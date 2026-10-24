@@ -153,6 +153,8 @@ runTest("extname", extname, {
   "/foo/..": "",
   "a/.": "",
   "trailing.dir/": ".dir",
+  "dir/name\n.txt": ".txt",
+  "dir/name\r.txt": ".txt",
 
   // Windows
   "C:\\temp\\myfile.html": ".html",
@@ -264,6 +266,13 @@ it("parse", () => {
     base: "file.txt",
     ext: ".txt",
     name: "file",
+  });
+  expect(parse("dir/name\n.txt")).to.deep.equal({
+    root: "",
+    dir: "dir",
+    base: "name\n.txt",
+    ext: ".txt",
+    name: "name\n",
   });
   // A purely trailing separator is not a directory segment
   expect(parse("file.txt/")).to.deep.equal({
