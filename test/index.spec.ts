@@ -301,6 +301,15 @@ it("parse", () => {
     ext: "",
     name: ".gitignore",
   });
+  for (const input of ["/..", "/../"]) {
+    expect(parse(input)).to.deep.equal({
+      root: "/",
+      dir: "/",
+      base: "..",
+      ext: ".",
+      name: ".",
+    });
+  }
 
   // Windows
   expect(parse(String.raw`C:\path\dir\file.txt`)).to.deep.equal({

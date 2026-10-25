@@ -288,13 +288,15 @@ export const parse: typeof path.parse = function (p) {
   // The root of the path such as '/' or 'c:\'
   const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
-  const extension = extname(base);
   // Node returns an empty `dir` (not ".") when the path has no directory segment.
   // A purely trailing separator (e.g. "b/") does not count as a directory segment.
   let dir = dirname(p);
   if (dir === "." && !normalizeWindowsPath(p).replace(/\/+$/, "").includes("/")) {
     dir = "";
   }
+  // Node's POSIX parser treats a parent segment directly under root as having extension ".".
+  const extension =
+    root === "/" && dir === "/" && base === ".." && !_UNC_REGEX.test(p) ? "." : extname(base);
   return {
     root,
     dir,
