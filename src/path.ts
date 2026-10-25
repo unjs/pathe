@@ -257,7 +257,7 @@ export const basename: typeof path.basename = function (p, extension) {
     : lastSegment;
 };
 
-export const parse: typeof path.parse = function (p) {
+export const parse: typeof path.parse = /* @__NO_SIDE_EFFECTS__ */ function (p) {
   const root = normalizeWindowsPath(p).split("/").shift() || "/";
   const base = basename(p);
   const extension = extname(base);
