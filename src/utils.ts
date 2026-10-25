@@ -1,9 +1,11 @@
-import { join } from "./path";
+import { join } from "./_path";
 import { normalizeWindowsPath } from "./_internal";
 
 const pathSeparators = new Set(["/", "\\", undefined]);
 
 const normalizedAliasSymbol = Symbol.for("pathe:normalizedAlias");
+
+const SLASH_RE = /[/\\]/;
 
 /**
  * Normalises alias mappings, ensuring that more specific aliases are resolved before less specific ones.
@@ -30,10 +32,7 @@ export function normalizeAliases(_aliases: Record<string, string>) {
         continue;
       }
 
-      if (
-        aliases[key].startsWith(alias) &&
-        pathSeparators.has(aliases[key][alias.length])
-      ) {
+      if (aliases[key]?.startsWith(alias) && pathSeparators.has(aliases[key][alias.length])) {
         aliases[key] = aliases[alias] + aliases[key].slice(alias.length);
       }
     }
@@ -72,7 +71,33 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
   return _path;
 }
 
-const FILENAME_RE = /(^|[/\\])([^/\\]+?)(?=(\.[^.]+)?$)/;
+/**
+ * Resolves a path string to its possible alias.
+ *
+ * Returns an array of possible alias resolutions (could be empty), sorted by specificity (longest first).
+ */
+export function reverseResolveAlias(path: string, aliases: Record<string, string>): string[] {
+  const _path = normalizeWindowsPath(path);
+  aliases = normalizeAliases(aliases);
+
+  const matches: string[] = [];
+
+  for (const [to, alias] of Object.entries(aliases)) {
+    if (!_path.startsWith(alias)) {
+      continue;
+    }
+
+    // Strip trailing slash from alias for check
+    const _alias = hasTrailingSlash(alias) ? alias.slice(0, -1) : alias;
+
+    if (hasTrailingSlash(_path[_alias.length])) {
+      matches.push(join(to, _path.slice(alias.length)));
+    }
+  }
+
+  // Sort by length, longest (more specific) first
+  return matches.sort((a, b) => b.length - a.length);
+}
 
 /**
  * Extracts the filename from a given path, excluding any directory paths and the file extension.
@@ -81,7 +106,19 @@ const FILENAME_RE = /(^|[/\\])([^/\\]+?)(?=(\.[^.]+)?$)/;
  * @returns the filename without the extension, or `undefined` if the filename cannot be extracted.
  */
 export function filename(path: string) {
-  return path.match(FILENAME_RE)?.[2];
+  const base = path.split(SLASH_RE).pop();
+
+  if (!base) {
+    return undefined;
+  }
+
+  const separatorIndex = base.lastIndexOf(".");
+
+  if (separatorIndex <= 0) {
+    return base;
+  }
+
+  return base.slice(0, separatorIndex);
 }
 
 // --- internals ---

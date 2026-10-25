@@ -15,6 +15,9 @@ import {
   sep as separator,
   toNamespacedPath,
   normalizeString,
+  matchesGlob,
+  posix,
+  win32,
 } from "../src";
 
 import { normalizeWindowsPath } from "../src/_internal";
@@ -25,6 +28,8 @@ runTest("normalizeWindowsPath", normalizeWindowsPath, {
 
   // Windows
   "c:\\foo\\bar": "C:/foo/bar",
+  "c:/foo/bar": "C:/foo/bar",
+  "C:/foo/bar": "C:/foo/bar",
   "\\foo\\bar": "/foo/bar",
   ".\\foo\\bar": "./foo/bar",
 });
@@ -63,13 +68,10 @@ runTest("normalizeString", normalizeString, {
   // Windows
   [normalizeWindowsPath(String.raw`C:\temp\..`)]: "C:",
   [normalizeWindowsPath(String.raw`C:\temp\..\.\Users`)]: "C:/Users",
-  [normalizeWindowsPath(String.raw`C:\temp\..\.well-known\Users`)]:
-    "C:/.well-known/Users",
-  [normalizeWindowsPath(String.raw`C:\temp\..\..well-known\Users`)]:
-    "C:/..well-known/Users",
+  [normalizeWindowsPath(String.raw`C:\temp\..\.well-known\Users`)]: "C:/.well-known/Users",
+  [normalizeWindowsPath(String.raw`C:\temp\..\..well-known\Users`)]: "C:/..well-known/Users",
   [normalizeWindowsPath("C:\\a\\..\\")]: "C:",
-  [normalizeWindowsPath(String.raw`C:\temp\myfile.html`)]:
-    "C:/temp/myfile.html",
+  [normalizeWindowsPath(String.raw`C:\temp\myfile.html`)]: "C:/temp/myfile.html",
   [normalizeWindowsPath(String.raw`\temp\myfile.html`)]: "temp/myfile.html",
   [normalizeWindowsPath(String.raw`.\myfile.html`)]: "myfile.html",
 });
@@ -80,6 +82,21 @@ runTest("basename", basename, [
   ["./myfile.html", "myfile.html"],
   ["./myfile.html", ".html", "myfile"],
   ["./undefined", undefined, "undefined"],
+
+  // Trailing separators (issue https://github.com/unjs/pathe/issues/179)
+  // POSIX
+  ["/foo/bar/", "bar"],
+  ["/foo/bar///", "bar"],
+  ["./foo/bar/", "bar"],
+  ["./foo/bar///", "bar"],
+  // Windows
+  ["C:\\foo\\bar\\", "bar"],
+  ["C:\\foo\\bar\\\\\\", "bar"],
+  [".\\foo\\bar\\", "bar"],
+  [".\\foo\\bar\\\\\\", "bar"],
+
+  // Empty string
+  ["", ""],
 
   // Windows
   [String.raw`C:\temp\myfile.html`, "myfile.html"],
@@ -96,6 +113,13 @@ runTest("dirname", dirname, {
   "/temp/myfile.html": "/temp",
   "./myfile.html": ".",
 
+  // Consecutive / trailing slashes (matches node posix)
+  "aa//": ".",
+  "x///": ".",
+  "a/b//": "a",
+  "a//b": "a/",
+  "/foo//bar//": "/foo/",
+
   // Windows
   "C:\\temp\\": "C:/",
   "C:.\\temp\\": "C:.",
@@ -109,6 +133,8 @@ runTest("extname", extname, {
   // POSIX
   "/temp/myfile.html": ".html",
   "./myfile.html": ".html",
+  "./myfile.tar.gz": ".gz",
+  "./myfile.tar.gz.br": ".br",
 
   ".foo": "",
   "..foo": ".foo",
@@ -116,7 +142,17 @@ runTest("extname", extname, {
   "..": "",
   ".": "",
   "./": "",
-  // '...': '.', // TODO: Edge case behavior of Node?
+  "foo.": ".",
+  "...": ".",
+
+  // Multi-segment input: extension is resolved from the last segment only,
+  // consistent with node:path and `parse().ext`.
+  "dir/.bashrc": "",
+  "foo/bar.tar.gz": ".gz",
+  "a/..": "",
+  "/foo/..": "",
+  "a/.": "",
+  "trailing.dir/": ".dir",
 
   // Windows
   "C:\\temp\\myfile.html": ".html",
@@ -126,13 +162,14 @@ runTest("extname", extname, {
 
 runTest("format", format, [
   // POSIX
-  [
-    { root: "/ignored", dir: "/home/user/dir", base: "file.txt" },
-    "/home/user/dir/file.txt",
-  ],
+  [{ root: "/ignored", dir: "/home/user/dir", base: "file.txt" }, "/home/user/dir/file.txt"],
   [{ root: "/", base: "file.txt", ext: "ignored" }, "/file.txt"],
   [{ root: "/", name: "file", ext: ".txt" }, "/file.txt"],
   [{ name: "file", ext: ".txt" }, "file.txt"],
+  [{ name: "file" }, "file"],
+  [{ ext: "ext" }, ".ext"],
+  [{ ext: ".ext" }, ".ext"],
+  [{ dir: "/foo", name: "file" }, "/foo/file"],
 
   // Windows
   [{ name: "file", base: "file.txt" }, "file.txt"],
@@ -142,33 +179,27 @@ runTest("format", format, [
 runTest("join", join, [
   ["."],
   [undefined, "."],
+  ["", "."],
+  ["./", "./"],
+  ["", "/foo", "/foo"],
+  ["/foo", "//bar", "/foo/bar"],
   ["/", "/path", "/path"],
   ["/test//", "//path", "/test/path"],
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
   ["./some/local/unix/", "../path", "some/local/path"],
   [String.raw`./some\current\mixed`, String.raw`..\path`, "some/current/path"],
-  [
-    "../some/relative/destination",
-    String.raw`..\path`,
-    "../some/relative/path",
-  ],
+  ["../some/relative/destination", String.raw`..\path`, "../some/relative/path"],
   ["some/nodejs/deep", "../path", "some/nodejs/path"],
   ["/foo", "bar", "baz/asdf", "quux", "..", "/foo/bar/baz/asdf"],
 
-  [
-    String.raw`C:\foo`,
-    "bar",
-    String.raw`baz\asdf`,
-    "quux",
-    "..",
-    "C:/foo/bar/baz/asdf",
-  ],
+  [String.raw`C:\foo`, "bar", String.raw`baz\asdf`, "quux", "..", "C:/foo/bar/baz/asdf"],
   [String.raw`some/nodejs\windows`, "../path", "some/nodejs/path"],
   [String.raw`some\windows\only`, String.raw`..\path`, "some/windows/path"],
   // UNC paths
   [String.raw`\\server\share\file`, String.raw`..\path`, "//server/share/path"],
   [String.raw`\\.\c:\temp\file`, String.raw`..\path`, "//./c:/temp/path"],
   [String.raw`\\server/share/file`, "../path", "//server/share/path"],
+  [String.raw`//server/share/file`, "../path", "//server/share/path"],
 ]);
 
 runTest("normalize", normalize, {
@@ -220,26 +251,93 @@ it("parse", () => {
     name: "file",
   });
   expect(parse("./dir/file")).to.deep.equal({
-    root: ".",
+    root: "",
     dir: "./dir",
     base: "file",
     ext: "",
     name: "file",
   });
+  // No directory segment -> empty `dir` (matches node, not ".")
+  expect(parse("file.txt")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  // A purely trailing separator is not a directory segment
+  expect(parse("file.txt/")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  expect(parse("foo")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "foo",
+    ext: "",
+    name: "foo",
+  });
+  expect(parse(".")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: ".",
+    ext: "",
+    name: ".",
+  });
+  expect(parse("..")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: "..",
+    ext: "",
+    name: "..",
+  });
+  expect(parse(".gitignore")).to.deep.equal({
+    root: "",
+    dir: "",
+    base: ".gitignore",
+    ext: "",
+    name: ".gitignore",
+  });
 
   // Windows
   expect(parse(String.raw`C:\path\dir\file.txt`)).to.deep.equal({
-    root: "C:",
+    root: "C:/",
     dir: "C:/path/dir",
     base: "file.txt",
     ext: ".txt",
     name: "file",
   });
   expect(parse(String.raw`.\dir\file`)).to.deep.equal({
-    root: ".",
+    root: "",
     dir: "./dir",
     base: "file",
     ext: "",
+    name: "file",
+  });
+  // Windows path can have spaces
+  expect(parse(String.raw`C:\pa th\dir\file.txt`)).to.deep.equal({
+    root: "C:/",
+    dir: "C:/pa th/dir",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  // Test with normalized windows path
+  expect(parse("C:/path/dir/file.txt")).to.deep.equal({
+    root: "C:/",
+    dir: "C:/path/dir",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  expect(parse("C:/pa th/dir/file.txt")).to.deep.equal({
+    root: "C:/",
+    dir: "C:/pa th/dir",
+    base: "file.txt",
+    ext: ".txt",
     name: "file",
   });
 });
@@ -249,23 +347,11 @@ runTest("relative", relative, [
   ["/data/orandea/test/aaa", "/data/orandea/impl/bbb", "../../impl/bbb"],
   ["/", "/foo/bar", "foo/bar"],
   ["/foo", "/", ".."],
-  [
-    () => process.cwd(),
-    "./dist/client/b-scroll.d.ts",
-    "dist/client/b-scroll.d.ts",
-  ],
+  [() => process.cwd(), "./dist/client/b-scroll.d.ts", "dist/client/b-scroll.d.ts"],
 
   // Windows
-  [
-    String.raw`C:\orandea\test\aaa`,
-    String.raw`C:\orandea\impl\bbb`,
-    "../../impl/bbb",
-  ],
-  [
-    String.raw`C:\orandea\test\aaa`,
-    String.raw`c:\orandea\impl\bbb`,
-    "../../impl/bbb",
-  ],
+  [String.raw`C:\orandea\test\aaa`, String.raw`C:\orandea\impl\bbb`, "../../impl/bbb"],
+  [String.raw`C:\orandea\test\aaa`, String.raw`c:\orandea\impl\bbb`, "../../impl/bbb"],
   ["C:\\", String.raw`C:\foo\bar`, "foo/bar"],
   [String.raw`C:\foo`, "C:\\", ".."],
   [String.raw`C:\foo`, String.raw`d:\bar`, "D:/bar"],
@@ -274,11 +360,7 @@ runTest("relative", relative, [
     "./dist/client/b-scroll.d.ts",
     "dist/client/b-scroll.d.ts",
   ],
-  [
-    () => process.cwd(),
-    "./dist/client/b-scroll.d.ts",
-    "dist/client/b-scroll.d.ts",
-  ],
+  [() => process.cwd(), "./dist/client/b-scroll.d.ts", "dist/client/b-scroll.d.ts"],
 ]);
 
 runTest("resolve", resolve, [
@@ -293,8 +375,7 @@ runTest("resolve", resolve, [
     "wwwroot",
     "static_files/png/",
     "../gif/image.gif",
-    () =>
-      `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
+    () => `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
   ],
 
   // Windows
@@ -303,23 +384,12 @@ runTest("resolve", resolve, [
   [String.raw`\foo\bar`, "..", ".", String.raw`.\baz`, "/foo/baz"],
   [String.raw`\foo\bar`, "\\tmp\\file\\", "/tmp/file"],
   [String.raw`\foo\bar`, undefined, null, "", "\\tmp\\file\\", "/tmp/file"],
-  [
-    String.raw`\foo\bar`,
-    undefined,
-    null,
-    "",
-    "\\tmp\\file\\",
-    undefined,
-    null,
-    "",
-    "/tmp/file",
-  ],
+  [String.raw`\foo\bar`, undefined, null, "", "\\tmp\\file\\", undefined, null, "", "/tmp/file"],
   [
     "wwwroot",
     "static_files\\png\\",
     String.raw`..\gif\image.gif`,
-    () =>
-      `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
+    () => `${process.cwd().replace(/\\/g, "/")}/wwwroot/static_files/gif/image.gif`,
   ],
   [String.raw`C:\Windows\path\only`, "../../reports", "C:/Windows/reports"],
   [
@@ -328,6 +398,13 @@ runTest("resolve", resolve, [
     String.raw`..\../reports`,
     "C:/Windows/long/reports",
   ],
+
+  // UNC paths (https://github.com/unjs/pathe/issues/245)
+  [String.raw`\\server\share\file`, "//server/share/file"],
+  [String.raw`\\unc-server-name\unc-path`, "//unc-server-name/unc-path"],
+  [String.raw`\\server\share\file`, String.raw`..\path`, "//server/share/path"],
+  [String.raw`\\server\share\file`, "sub", "//server/share/file/sub"],
+  [String.raw`//server/share/file`, "../path", "//server/share/path"],
 ]);
 
 describe("resolve with catastrophic process.cwd() failure", () => {
@@ -350,8 +427,10 @@ runTest("toNamespacedPath", toNamespacedPath, {
 });
 
 describe("constants", () => {
-  it("delimiter should equal :", () => {
-    expect(delimiter).to.equal(":");
+  it("delimiter", () => {
+    expect(posix.delimiter).to.equal(":");
+    expect(win32.delimiter).to.equal(";");
+    expect(delimiter).to.equal(globalThis.process?.platform === "win32" ? ";" : ":");
   });
 
   it("sep should equal /", () => {
@@ -359,38 +438,56 @@ describe("constants", () => {
   });
 });
 
-function _s(item) {
+describe("mixed namespaces", () => {
+  it("nested namespaces work", () => {
+    expect(posix.win32.posix.delimiter).to.equal(":");
+    expect(win32.posix.win32.delimiter).to.equal(";");
+  });
+});
+
+runTest("matchesGlob", matchesGlob, [
+  ["/foo/bar", "/foo/**", true],
+  [String.raw`\foo\bar`, "/foo/**", true],
+  ["/foo/bar", "/{bar,foo}/**", true],
+]);
+
+function _s(item: unknown) {
   return (JSON.stringify(_r(item)) || "undefined").replace(/"/g, "'");
 }
 
-function _r(item) {
+function _r(item: unknown) {
   return typeof item === "function" ? item() : item;
 }
 
-export function runTest(name, function_, items) {
+type AnyFunction<TArgs extends unknown[] = never> = (...args: TArgs) => unknown;
+type TestCaseArray<T extends AnyFunction> = [...unknown[], ReturnType<T> | (() => ReturnType<T>)];
+
+export function runTest<T extends AnyFunction>(
+  name: string,
+  function_: T,
+  items: Record<PropertyKey, ReturnType<T>> | Array<TestCaseArray<T>>,
+) {
   if (!Array.isArray(items)) {
-    items = Object.entries(items).map((e) => e.flat());
+    items = Object.entries(items).map((e) => e.flat()) as Array<TestCaseArray<T>>;
   }
   describe(`${name}`, () => {
     let cwd;
     for (const item of items) {
-      const expected = item.pop();
-      const arguments_ = item;
-      it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
-        expected,
-      )}`, () => {
-        expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
-          _r(expected),
-        );
+      const expected = item.pop() as ReturnType<T>;
+      const arguments_ = item as unknown as Parameters<T>;
+      it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(expected)}`, () => {
+        expect(
+          (function_ as unknown as AnyFunction<unknown[]>)(...arguments_.map((i) => _r(i))),
+        ).to.equal(_r(expected));
       });
       it(`${name}(${arguments_.map((i) => _s(i)).join(",")}) should be ${_s(
         expected,
       )} on Windows`, () => {
         cwd = process.cwd;
         process.cwd = vi.fn(() => String.raw`C:\Windows\path\only`);
-        expect(function_(...arguments_.map((i) => _r(i)))).to.equal(
-          _r(expected),
-        );
+        expect(
+          (function_ as unknown as AnyFunction<unknown[]>)(...arguments_.map((i) => _r(i))),
+        ).to.equal(_r(expected));
         process.cwd = cwd;
       });
     }

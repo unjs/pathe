@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeAliases, filename, resolveAlias } from "../src/utils";
+import { normalizeAliases, filename, resolveAlias, reverseResolveAlias } from "../src/utils";
 
 describe("alias", () => {
   const _aliases = {
@@ -56,6 +56,40 @@ describe("alias", () => {
       expect(resolveAlias("~win/foo/bar", aliases)).toBe("C:/src/foo/bar");
     });
   });
+
+  describe("reverseResolveAlias", () => {
+    const overrides = {
+      "/root/bingpot/index.ts": ["@/bingpot/index.ts", "bingpot"],
+      "/root/index.js": ["@/index.js", "~"],
+    };
+    for (const [to, from] of Object.entries(aliases)) {
+      const expected = overrides[from as keyof typeof overrides] || [to];
+      it(`reverseResolveAlias("${from}")`, () => {
+        expect(reverseResolveAlias(from, aliases)).toMatchObject(expected);
+      });
+    }
+
+    it("respects path separators", () => {
+      const aliases = {
+        "~": "/root",
+        "~assets": "/root/some/assets",
+      };
+      expect(reverseResolveAlias("/root/some/assets/smth.jpg", aliases)).toMatchObject([
+        "~/some/assets/smth.jpg",
+        "~assets/smth.jpg",
+      ]);
+    });
+
+    it("no match", () => {
+      expect(reverseResolveAlias("foo/bar.js", aliases)).toMatchObject([]);
+      expect(reverseResolveAlias("./bar.js", aliases)).toMatchObject([]);
+    });
+
+    it("respect ending with /", () => {
+      expect(reverseResolveAlias("/src/foo/bar", aliases)).toMatchObject(["~/foo/bar"]);
+      expect(reverseResolveAlias("C:/src/foo/bar", aliases)).toMatchObject(["~win/foo/bar"]);
+    });
+  });
 });
 
 describe("filename", () => {
@@ -64,16 +98,28 @@ describe("filename", () => {
     "test.html": "test",
     "/temp/myfile.html": "myfile",
     "./myfile.html": "myfile",
+    "/Users/john.doe/foo/myFile.js": "myFile",
+    "/Users/john.doe/foo/myFile": "myFile",
+    "./.hidden/myFile.ts": "myFile",
+    "./.hidden/myFile": "myFile",
+    "/temp/.gitignore": ".gitignore",
+    "./foo.bar.baz.js": "foo.bar.baz",
 
     // Windows
     "C:\\temp\\": undefined,
     "C:\\temp\\myfile.html": "myfile",
     "\\temp\\myfile.html": "myfile",
     ".\\myfile.html": "myfile",
+    ".\\john.doe\\myfile.js": "myfile",
+    ".\\john.doe\\myfile": "myfile",
+    ".\\.hidden\\myfile.js": "myfile",
+    ".\\.hidden\\myfile": "myfile",
+    "C:\\temp\\.gitignore": ".gitignore",
+    "C:\\temp\\foo.bar.baz.js": "foo.bar.baz",
   };
   for (const file in files) {
     it(file, () => {
-      expect(filename(file)).toEqual(files[file]);
+      expect(filename(file)).toEqual(files[file as keyof typeof files]);
     });
   }
 });
