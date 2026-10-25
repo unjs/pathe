@@ -284,7 +284,7 @@ export const basename: typeof path.basename = function (p, extension) {
     : lastSegment;
 };
 
-export const parse: typeof path.parse = function (p) {
+export const parse: typeof path.parse = /* @__NO_SIDE_EFFECTS__ */ function (p) {
   // The root of the path such as '/' or 'c:\'
   const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
