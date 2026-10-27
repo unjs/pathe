@@ -5,6 +5,11 @@ const pathSeparators = new Set(["/", "\\", undefined]);
 
 const normalizedAliasSymbol = Symbol.for("pathe:normalizedAlias");
 
+const normalizedAliasesCache = new WeakMap<
+  Record<string, string>,
+  { entries: [string, string][]; normalized: Record<string, string> }
+>();
+
 const SLASH_RE = /[/\\]/;
 
 /**
@@ -45,6 +50,20 @@ export function normalizeAliases(_aliases: Record<string, string>) {
   return aliases;
 }
 
+function _normalizeAliases(aliases: Record<string, string>) {
+  if ((aliases as any)[normalizedAliasSymbol]) {
+    return aliases;
+  }
+  const entries = Object.entries(aliases);
+  const cached = normalizedAliasesCache.get(aliases);
+  if (cached && _entriesEqual(cached.entries, entries)) {
+    return cached.normalized;
+  }
+  const normalized = normalizeAliases(aliases);
+  normalizedAliasesCache.set(aliases, { entries, normalized });
+  return normalized;
+}
+
 /**
  * Resolves a path string to its alias if applicable, otherwise returns the original path.
  * This function normalises the path, resolves the alias and then joins it to the alias target if necessary.
@@ -55,7 +74,7 @@ export function normalizeAliases(_aliases: Record<string, string>) {
  */
 export function resolveAlias(path: string, aliases: Record<string, string>) {
   const _path = normalizeWindowsPath(path);
-  aliases = normalizeAliases(aliases);
+  aliases = _normalizeAliases(aliases);
   for (const [alias, to] of Object.entries(aliases)) {
     if (!_path.startsWith(alias)) {
       continue;
@@ -78,7 +97,7 @@ export function resolveAlias(path: string, aliases: Record<string, string>) {
  */
 export function reverseResolveAlias(path: string, aliases: Record<string, string>): string[] {
   const _path = normalizeWindowsPath(path);
-  aliases = normalizeAliases(aliases);
+  aliases = _normalizeAliases(aliases);
 
   const matches: string[] = [];
 
@@ -122,6 +141,18 @@ export function filename(path: string) {
 }
 
 // --- internals ---
+
+function _entriesEqual(a: [string, string][], b: [string, string][]) {
+  if (a.length !== b.length) {
+    return false;
+  }
+  for (let i = 0; i < a.length; i++) {
+    if (a[i]![0] !== b[i]![0] || a[i]![1] !== b[i]![1]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 function _compareAliases(a: string, b: string) {
   return b.split("/").length - a.split("/").length;

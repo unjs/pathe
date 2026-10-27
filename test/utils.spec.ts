@@ -32,6 +32,44 @@ describe("alias", () => {
     `);
   });
 
+  it("does not mutate the alias map", () => {
+    const aliases = {
+      "~": "/src",
+      bingpot: "~/bingpot",
+    };
+    resolveAlias("bingpot/foo", aliases);
+    reverseResolveAlias("/src/bingpot/foo", aliases);
+    expect(aliases).toEqual({
+      "~": "/src",
+      bingpot: "~/bingpot",
+    });
+  });
+
+  it("respects changes to the alias map between calls", () => {
+    const aliases: Record<string, string> = {
+      "~": "/src",
+      bingpot: "~/bingpot",
+    };
+    expect(resolveAlias("bingpot/foo", aliases)).toBe("/src/bingpot/foo");
+    expect(reverseResolveAlias("/src/bingpot/foo", aliases)).toEqual([
+      "~/bingpot/foo",
+      "bingpot/foo",
+    ]);
+
+    aliases["~"] = "/other";
+    expect(resolveAlias("bingpot/foo", aliases)).toBe("/other/bingpot/foo");
+    expect(reverseResolveAlias("/other/bingpot/foo", aliases)).toEqual([
+      "~/bingpot/foo",
+      "bingpot/foo",
+    ]);
+
+    aliases.test = "/test";
+    expect(resolveAlias("test/foo", aliases)).toBe("/test/foo");
+
+    delete aliases.test;
+    expect(resolveAlias("test/foo", aliases)).toBe("test/foo");
+  });
+
   describe("resolveAlias", () => {
     for (const [from, to] of Object.entries(aliases)) {
       it(from, () => {
