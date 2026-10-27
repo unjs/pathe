@@ -51,6 +51,9 @@ export function normalizeAliases(_aliases: Record<string, string>) {
 }
 
 function _normalizeAliases(aliases: Record<string, string>) {
+  if ((aliases as any)[normalizedAliasSymbol]) {
+    return aliases;
+  }
   const entries = Object.entries(aliases);
   const cached = normalizedAliasesCache.get(aliases);
   if (cached && _entriesEqual(cached.entries, entries)) {
