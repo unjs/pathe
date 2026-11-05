@@ -493,3 +493,29 @@ export function runTest<T extends AnyFunction>(
     }
   });
 }
+
+describe("redundant star runs through public exports", () => {
+  for (const [name, match] of [
+    ["named", matchesGlob],
+    ["posix", posix.matchesGlob],
+    ["win32", win32.matchesGlob],
+  ] as const) {
+    it(`preserves path-segment limits through ${name}`, () => {
+      for (const glob of ["a***b", "a****b", "a*******b"]) {
+        expect(match("axxb", glob)).toBe(true);
+        expect(match("a/x/b", glob)).toBe(false);
+        expect(match(String.raw`a\x\b`, glob)).toBe(false);
+      }
+      expect(match("foo/bar", "foo***")).toBe(false);
+      if (name === "named") {
+        expect(matchesGlob("a/x/b", ["a***b", "c"])).toBe(false);
+        expect(matchesGlob("c", ["a***b", "c"])).toBe(true);
+      }
+      expect(match("a/x/b", "!a***b")).toBe(true);
+      expect(match("axxb", "!a***b")).toBe(false);
+      expect(match("a/x/b", "!!a***b")).toBe(false);
+      expect(match("a/x/b", "a/**/b")).toBe(true);
+      expect(match("a/b", "a/**/b")).toBe(true);
+    });
+  }
+});

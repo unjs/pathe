@@ -3149,3 +3149,31 @@ describe("Zeptomatch", (it) => {
     t.true(!isMatch(problem2, problem2));
   });
 });
+
+vDescribe("redundant star runs", () => {
+  for (const glob of ["a***b", "a****b", "a*******b"]) {
+    vIt(`keeps ${glob} within one path segment`, () => {
+      expect(matchGlob(glob, "axxb")).toBe(true);
+      expect(matchGlob(glob, "a/x/b")).toBe(false);
+      expect(matchGlob(glob, "a/long/path/b")).toBe(false);
+      expect(matchGlob(`!${glob}`, "a/x/b")).toBe(true);
+      expect(matchGlob(`!${glob}`, "axxb")).toBe(false);
+      expect(matchGlob(`!!${glob}`, "a/x/b")).toBe(false);
+    });
+  }
+
+  vIt("keeps trailing redundant stars within one path segment", () => {
+    expect(matchGlob("foo***", "foobar")).toBe(true);
+    expect(matchGlob("foo***", "foo/bar")).toBe(false);
+    expect(matchGlob(["a***b", "c"], "a/x/b")).toBe(false);
+    expect(matchGlob(["a***b", "c"], "c")).toBe(true);
+  });
+
+  vIt("preserves whole-segment globstars", () => {
+    expect(matchGlob("**", "a/x/b")).toBe(true);
+    expect(matchGlob("a/**/b", "a/x/b")).toBe(true);
+    expect(matchGlob("a/**/b", "a/b")).toBe(true);
+    expect(matchGlob("***.txt", "file.txt")).toBe(true);
+    expect(matchGlob("***.txt", "dir/file.txt")).toBe(false);
+  });
+});
