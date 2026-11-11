@@ -82,7 +82,8 @@ export function reverseResolveAlias(path: string, aliases: Record<string, string
 
   const matches: string[] = [];
 
-  for (const [to, alias] of Object.entries(aliases)) {
+  for (const [to, target] of Object.entries(aliases)) {
+    const alias = normalizeWindowsPath(target);
     if (!_path.startsWith(alias)) {
       continue;
     }
