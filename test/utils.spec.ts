@@ -58,6 +58,17 @@ describe("alias", () => {
   });
 
   describe("reverseResolveAlias", () => {
+    it("matches Windows alias targets after normalizing separators", () => {
+      const aliases = { "~": "C:\\src", "~assets": "C:\\src\\assets" };
+      expect(resolveAlias("~/file.ts", aliases)).toBe("C:/src/file.ts");
+      expect(reverseResolveAlias("C:\\src\\file.ts", aliases)).toEqual(["~/file.ts"]);
+      expect(reverseResolveAlias("C:/src/assets/logo.svg", aliases)).toEqual([
+        "~/assets/logo.svg",
+        "~assets/logo.svg",
+      ]);
+      expect(reverseResolveAlias("C:/src-other/file.ts", aliases)).toEqual([]);
+    });
+
     const overrides = {
       "/root/bingpot/index.ts": ["@/bingpot/index.ts", "bingpot"],
       "/root/index.js": ["@/index.js", "~"],
