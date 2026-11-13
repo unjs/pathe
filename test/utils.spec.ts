@@ -32,6 +32,27 @@ describe("alias", () => {
     `);
   });
 
+  it.each([
+    ["@/", "/root", "/root/app"],
+    ["@", "/root/", "/root/app"],
+    ["@", "/", "/app"],
+    ["@/", "/", "/app"],
+    ["@/", "C:\\root\\", "C:/root/app"],
+    ["@", "C:\\root\\", "C:/root/app"],
+  ])("normalizes nested aliases through %s -> %s", (alias, target, expected) => {
+    const aliases = { [alias]: target, app: "@/app" };
+
+    expect(normalizeAliases(aliases).app).toBe(expected);
+    expect(resolveAlias("app/main.ts", aliases)).toBe(`${expected}/main.ts`);
+    expect(reverseResolveAlias(`${expected}/main.ts`, aliases)).toContain("app/main.ts");
+    expect(aliases.app).toBe("@/app");
+  });
+
+  it("normalizes nested aliases with windows backslash separator", () => {
+    const aliases = { "@": "/root", app: "@\\app" };
+    expect(normalizeAliases(aliases).app).toBe("/root/app");
+  });
+
   describe("resolveAlias", () => {
     for (const [from, to] of Object.entries(aliases)) {
       it(from, () => {
