@@ -32,6 +32,96 @@ describe("alias", () => {
     `);
   });
 
+  describe("nested alias normalization with trailing separators", () => {
+    it("nested alias expansion when parent alias key ends with a slash (@/)", () => {
+      expect(
+        normalizeAliases({
+          "@/": "/root",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "/root",
+        app: "/root/app",
+      });
+    });
+
+    it("normalization when parent target ends with a slash (/root/)", () => {
+      expect(
+        normalizeAliases({
+          "@": "/root/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "/root/",
+        app: "/root/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@/": "/root/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "/root/",
+        app: "/root/app",
+      });
+    });
+
+    it("avoiding leading double slashes (UNC path) when root is /", () => {
+      expect(
+        normalizeAliases({
+          "@": "/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "/",
+        app: "/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@/": "/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "/",
+        app: "/app",
+      });
+    });
+
+    it("Windows paths in nested aliases (C:/root/)", () => {
+      expect(
+        normalizeAliases({
+          "@": "C:/root/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "C:/root/",
+        app: "C:/root/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@/": "C:/root",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "C:/root",
+        app: "C:/root/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@": "C:/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "C:/",
+        app: "C:/app",
+      });
+    });
+  });
+
   describe("resolveAlias", () => {
     for (const [from, to] of Object.entries(aliases)) {
       it(from, () => {
