@@ -53,6 +53,21 @@ describe("alias", () => {
     expect(normalizeAliases(aliases).app).toBe("/root/app");
   });
 
+  it("normalizes nested aliases containing relative dot segments", () => {
+    const aliases = {
+      entry: "mid/../file",
+      mid: "base",
+      base: "/root/dir",
+    };
+    expect(resolveAlias("entry/main.ts", aliases)).toBe("/root/file/main.ts");
+    expect(resolveAlias("entry", aliases)).toBe("/root/file");
+  });
+
+  it("handles empty alias target during nested alias resolution", () => {
+    const aliases = { "@": "", app: "@/app" };
+    expect(normalizeAliases(aliases).app).toBe("/app");
+  });
+
   describe("resolveAlias", () => {
     for (const [from, to] of Object.entries(aliases)) {
       it(from, () => {

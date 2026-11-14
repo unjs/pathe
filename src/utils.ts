@@ -36,7 +36,7 @@ export function normalizeAliases(_aliases: Record<string, string>) {
         aliases[key]?.startsWith(alias) &&
         (hasTrailingSlash(alias) || pathSeparators.has(aliases[key][alias.length]))
       ) {
-        aliases[key] = join(aliases[alias]!, aliases[key].slice(alias.length));
+        aliases[key] = _joinAliases(aliases[alias]!, aliases[key].slice(alias.length));
       }
     }
   }
@@ -134,4 +134,16 @@ function _compareAliases(a: string, b: string) {
 function hasTrailingSlash(path = "/") {
   const lastChar = path[path.length - 1];
   return lastChar === "/" || lastChar === "\\";
+}
+
+function _joinAliases(target: string, suffix: string): string {
+  const t = normalizeWindowsPath(target);
+  const s = normalizeWindowsPath(suffix);
+  if (!t) return s;
+  if (!s) return t;
+  const targetSlash = t.endsWith("/");
+  const suffixSlash = s.startsWith("/");
+  if (targetSlash && suffixSlash) return t + s.slice(1);
+  if (!targetSlash && !suffixSlash) return t + "/" + s;
+  return t + s;
 }
