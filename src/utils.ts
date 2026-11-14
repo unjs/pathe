@@ -1,4 +1,4 @@
-import { join } from "./_path";
+import { join, normalize } from "./_path";
 import { normalizeWindowsPath } from "./_internal";
 
 const pathSeparators = new Set(["/", "\\", undefined]);
@@ -39,6 +39,10 @@ export function normalizeAliases(_aliases: Record<string, string>) {
         aliases[key] = _joinAliases(aliases[alias]!, aliases[key].slice(alias.length));
       }
     }
+  }
+
+  for (const key in aliases) {
+    aliases[key] = _normalizeTarget(aliases[key]!);
   }
 
   Object.defineProperty(aliases, normalizedAliasSymbol, {
@@ -146,4 +150,13 @@ function _joinAliases(target: string, suffix: string): string {
   if (targetSlash && suffixSlash) return t + s.slice(1);
   if (!targetSlash && !suffixSlash) return t + "/" + s;
   return t + s;
+}
+
+function _normalizeTarget(target: string): string {
+  if (!target) {
+    return target;
+  }
+  const isRelative = target.startsWith("./") || target.startsWith(".\\");
+  const norm = normalize(target);
+  return isRelative && !norm.startsWith("./") && !norm.startsWith("../") ? `./${norm}` : norm;
 }

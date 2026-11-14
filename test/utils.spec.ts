@@ -59,8 +59,21 @@ describe("alias", () => {
       mid: "base",
       base: "/root/dir",
     };
+    expect(normalizeAliases(aliases).entry).toBe("/root/file");
     expect(resolveAlias("entry/main.ts", aliases)).toBe("/root/file/main.ts");
     expect(resolveAlias("entry", aliases)).toBe("/root/file");
+    expect(reverseResolveAlias("/root/file/main.ts", aliases)).toContain("entry/main.ts");
+  });
+
+  it("normalizes relative target with dot segments while preserving relative prefix", () => {
+    const aliases = {
+      pkg: "./src/components/../utils",
+      up: "./../utils",
+    };
+    expect(normalizeAliases(aliases)).toMatchObject({
+      pkg: "./src/utils",
+      up: "../utils",
+    });
   });
 
   it("handles empty alias target during nested alias resolution", () => {
