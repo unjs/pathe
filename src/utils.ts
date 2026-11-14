@@ -1,4 +1,4 @@
-import { join } from "./_path";
+import { join, normalize } from "./_path";
 import { normalizeWindowsPath } from "./_internal";
 
 const pathSeparators = new Set(["/", "\\", undefined]);
@@ -32,10 +32,17 @@ export function normalizeAliases(_aliases: Record<string, string>) {
         continue;
       }
 
-      if (aliases[key]?.startsWith(alias) && pathSeparators.has(aliases[key][alias.length])) {
-        aliases[key] = aliases[alias] + aliases[key].slice(alias.length);
+      if (
+        aliases[key]?.startsWith(alias) &&
+        (hasTrailingSlash(alias) || pathSeparators.has(aliases[key][alias.length]))
+      ) {
+        aliases[key] = _joinAliases(aliases[alias]!, aliases[key].slice(alias.length));
       }
     }
+  }
+
+  for (const key in aliases) {
+    aliases[key] = _normalizeTarget(aliases[key]!);
   }
 
   Object.defineProperty(aliases, normalizedAliasSymbol, {
@@ -131,4 +138,25 @@ function _compareAliases(a: string, b: string) {
 function hasTrailingSlash(path = "/") {
   const lastChar = path[path.length - 1];
   return lastChar === "/" || lastChar === "\\";
+}
+
+function _joinAliases(target: string, suffix: string): string {
+  const t = normalizeWindowsPath(target);
+  const s = normalizeWindowsPath(suffix);
+  if (!t) return s;
+  if (!s) return t;
+  const targetSlash = t.endsWith("/");
+  const suffixSlash = s.startsWith("/");
+  if (targetSlash && suffixSlash) return t + s.slice(1);
+  if (!targetSlash && !suffixSlash) return t + "/" + s;
+  return t + s;
+}
+
+function _normalizeTarget(target: string): string {
+  if (!target) {
+    return target;
+  }
+  const isRelative = target.startsWith("./") || target.startsWith(".\\");
+  const norm = normalize(target);
+  return isRelative && !norm.startsWith("./") && !norm.startsWith("../") ? `./${norm}` : norm;
 }

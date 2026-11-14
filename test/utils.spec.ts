@@ -32,6 +32,55 @@ describe("alias", () => {
     `);
   });
 
+  it.each([
+    ["@/", "/root", "/root/app"],
+    ["@", "/root/", "/root/app"],
+    ["@", "/", "/app"],
+    ["@/", "/", "/app"],
+    ["@/", "C:\\root\\", "C:/root/app"],
+    ["@", "C:\\root\\", "C:/root/app"],
+  ])("normalizes nested aliases through %s -> %s", (alias, target, expected) => {
+    const aliases = { [alias]: target, app: "@/app" };
+
+    expect(normalizeAliases(aliases).app).toBe(expected);
+    expect(resolveAlias("app/main.ts", aliases)).toBe(`${expected}/main.ts`);
+    expect(reverseResolveAlias(`${expected}/main.ts`, aliases)).toContain("app/main.ts");
+    expect(aliases.app).toBe("@/app");
+  });
+
+  it("normalizes nested aliases with windows backslash separator", () => {
+    const aliases = { "@": "/root", app: "@\\app" };
+    expect(normalizeAliases(aliases).app).toBe("/root/app");
+  });
+
+  it("normalizes nested aliases containing relative dot segments", () => {
+    const aliases = {
+      entry: "mid/../file",
+      mid: "base",
+      base: "/root/dir",
+    };
+    expect(normalizeAliases(aliases).entry).toBe("/root/file");
+    expect(resolveAlias("entry/main.ts", aliases)).toBe("/root/file/main.ts");
+    expect(resolveAlias("entry", aliases)).toBe("/root/file");
+    expect(reverseResolveAlias("/root/file/main.ts", aliases)).toContain("entry/main.ts");
+  });
+
+  it("normalizes relative target with dot segments while preserving relative prefix", () => {
+    const aliases = {
+      pkg: "./src/components/../utils",
+      up: "./../utils",
+    };
+    expect(normalizeAliases(aliases)).toMatchObject({
+      pkg: "./src/utils",
+      up: "../utils",
+    });
+  });
+
+  it("handles empty alias target during nested alias resolution", () => {
+    const aliases = { "@": "", app: "@/app" };
+    expect(normalizeAliases(aliases).app).toBe("/app");
+  });
+
   describe("resolveAlias", () => {
     for (const [from, to] of Object.entries(aliases)) {
       it(from, () => {
