@@ -89,6 +89,20 @@ describe("alias", () => {
       expect(reverseResolveAlias("/src/foo/bar", aliases)).toMatchObject(["~/foo/bar"]);
       expect(reverseResolveAlias("C:/src/foo/bar", aliases)).toMatchObject(["~win/foo/bar"]);
     });
+
+    it("matches Windows alias targets with backslashes", () => {
+      const winAliases = {
+        "~": "C:\\src",
+        "~root": "C:\\src\\root",
+      };
+      expect(reverseResolveAlias("C:\\src\\file.ts", winAliases)).toMatchObject(["~/file.ts"]);
+      expect(reverseResolveAlias("C:/src/file.ts", winAliases)).toMatchObject(["~/file.ts"]);
+      expect(reverseResolveAlias("C:\\src\\root\\file.ts", winAliases)).toMatchObject([
+        "~/root/file.ts",
+        "~root/file.ts",
+      ]);
+      expect(reverseResolveAlias("C:\\src2\\file.ts", winAliases)).toMatchObject([]);
+    });
   });
 });
 

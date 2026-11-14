@@ -83,15 +83,16 @@ export function reverseResolveAlias(path: string, aliases: Record<string, string
   const matches: string[] = [];
 
   for (const [to, alias] of Object.entries(aliases)) {
-    if (!_path.startsWith(alias)) {
+    const _target = normalizeWindowsPath(alias);
+    if (!_path.startsWith(_target)) {
       continue;
     }
 
     // Strip trailing slash from alias for check
-    const _alias = hasTrailingSlash(alias) ? alias.slice(0, -1) : alias;
+    const _alias = hasTrailingSlash(_target) ? _target.slice(0, -1) : _target;
 
     if (hasTrailingSlash(_path[_alias.length])) {
-      matches.push(join(to, _path.slice(alias.length)));
+      matches.push(join(to, _path.slice(_target.length)));
     }
   }
 
