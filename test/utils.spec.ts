@@ -89,6 +89,11 @@ describe("alias", () => {
       });
     });
 
+    it("expands nested aliases before normalizing `..` segments", () => {
+      const aliases = { app: "@/../file", "@": "base", base: "/root/dir" };
+      expect(resolveAlias("app", aliases)).toBe("/root/file");
+    });
+
     it("Windows paths in nested aliases (C:/root/)", () => {
       expect(
         normalizeAliases({

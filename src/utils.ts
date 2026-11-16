@@ -36,7 +36,11 @@ export function normalizeAliases(_aliases: Record<string, string>) {
         aliases[key]?.startsWith(alias) &&
         (hasTrailingSlash(alias) || pathSeparators.has(aliases[key]![alias.length]))
       ) {
-        aliases[key] = join(aliases[alias]!, aliases[key]!.slice(alias.length));
+        // Concatenate without normalizing so `..` is kept until nested aliases are expanded
+        const rest = aliases[key]!.slice(alias.length);
+        aliases[key] = rest
+          ? aliases[alias]!.replace(/[/\\]+$/, "") + (SLASH_RE.test(rest[0]!) ? "" : "/") + rest
+          : aliases[alias]!;
       }
     }
   }
