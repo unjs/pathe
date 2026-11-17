@@ -80,6 +80,20 @@ describe("alias", () => {
       ]);
     });
 
+    it("normalizes Windows alias targets", () => {
+      const aliases = {
+        "~": "C:\\src",
+        "~nested-alias": "C:\\src\\nested",
+      };
+      expect(resolveAlias("~/file.ts", aliases)).toBe("C:/src/file.ts");
+      expect(reverseResolveAlias("C:\\src\\file.ts", aliases)).toEqual(["~/file.ts"]);
+      expect(reverseResolveAlias("C:/src/nested/file.ts", aliases)).toEqual([
+        "~nested-alias/file.ts",
+        "~/nested/file.ts",
+      ]);
+      expect(reverseResolveAlias("C:/src-other/file.ts", aliases)).toEqual([]);
+    });
+
     it("no match", () => {
       expect(reverseResolveAlias("foo/bar.js", aliases)).toMatchObject([]);
       expect(reverseResolveAlias("./bar.js", aliases)).toMatchObject([]);
