@@ -27,7 +27,7 @@ export function normalizeAliases(_aliases: Record<string, string>) {
   // Resolve alias values in relation to each other. Each value is matched in its
   // original form and expanded once, so an expansion is never applied twice.
   const original = { ...aliases };
-  const resolved: Record<string, string> = {};
+  const resolved: Record<string, string> = Object.create(null);
   const visiting = new Set<string>();
 
   const resolve = (key: string): string => {

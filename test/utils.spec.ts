@@ -110,6 +110,18 @@ describe("alias", () => {
       expect(() => normalizeAliases({ "@": "@/src" })).not.toThrow();
     });
 
+    it("handles alias keys that shadow Object.prototype names", () => {
+      expect(
+        normalizeAliases({
+          constructor: "/root",
+          app: "constructor/x",
+        }),
+      ).toEqual({
+        constructor: "/root",
+        app: "/root/x",
+      });
+    });
+
     it("Windows paths in nested aliases (C:/root/)", () => {
       expect(
         normalizeAliases({
