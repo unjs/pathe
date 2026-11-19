@@ -24,18 +24,47 @@ export function normalizeAliases(_aliases: Record<string, string>) {
     Object.entries(_aliases).sort(([a], [b]) => _compareAliases(a, b)),
   );
 
-  // Resolve alias values in relation to each other
-  for (const key in aliases) {
-    for (const alias in aliases) {
+  // Resolve alias values in relation to each other. Each value is matched in its
+  // original form and expanded once, so an expansion is never applied twice.
+  const original = { ...aliases };
+  const resolved: Record<string, string> = Object.create(null);
+  const visiting = new Set<string>();
+
+  const resolve = (key: string): string => {
+    if (key in resolved) {
+      return resolved[key]!;
+    }
+    // Cycle: keep the unexpanded value
+    if (visiting.has(key)) {
+      return original[key]!;
+    }
+    visiting.add(key);
+    let value = original[key]!;
+    for (const alias in original) {
       // don't resolve a more specific alias with regard to a less specific one
       if (alias === key || key.startsWith(alias)) {
         continue;
       }
 
-      if (aliases[key]?.startsWith(alias) && pathSeparators.has(aliases[key][alias.length])) {
-        aliases[key] = aliases[alias] + aliases[key].slice(alias.length);
+      if (
+        value.startsWith(alias) &&
+        (hasTrailingSlash(alias) || pathSeparators.has(value[alias.length]))
+      ) {
+        // Concatenate without normalizing so `..` is kept until nested aliases are expanded
+        const target = resolve(alias);
+        const rest = value.slice(alias.length);
+        value = rest
+          ? target.replace(/[/\\]+$/, "") + (SLASH_RE.test(rest[0]!) ? "" : "/") + rest
+          : target;
+        break;
       }
     }
+    visiting.delete(key);
+    return (resolved[key] = value);
+  };
+
+  for (const key in aliases) {
+    aliases[key] = resolve(key);
   }
 
   Object.defineProperty(aliases, normalizedAliasSymbol, {

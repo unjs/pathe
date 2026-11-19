@@ -32,6 +32,129 @@ describe("alias", () => {
     `);
   });
 
+  describe("nested alias normalization with trailing separators", () => {
+    it("nested alias expansion when parent alias key ends with a slash (@/)", () => {
+      expect(
+        normalizeAliases({
+          "@/": "/root",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "/root",
+        app: "/root/app",
+      });
+    });
+
+    it("normalization when parent target ends with a slash (/root/)", () => {
+      expect(
+        normalizeAliases({
+          "@": "/root/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "/root/",
+        app: "/root/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@/": "/root/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "/root/",
+        app: "/root/app",
+      });
+    });
+
+    it("avoiding leading double slashes (UNC path) when root is /", () => {
+      expect(
+        normalizeAliases({
+          "@": "/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "/",
+        app: "/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@/": "/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "/",
+        app: "/app",
+      });
+    });
+
+    it("expands nested aliases before normalizing `..` segments", () => {
+      const aliases = { app: "@/../file", "@": "base", base: "/root/dir" };
+      expect(resolveAlias("app", aliases)).toBe("/root/file");
+    });
+
+    it("expands nested aliases regardless of key order", () => {
+      const aliases = { app: "@/../file", base: "/root/dir", "@": "base" };
+      expect(resolveAlias("app", aliases)).toBe("/root/file");
+    });
+
+    it("does not re-apply an expansion that redirects to its own prefix", () => {
+      const aliases = { "@foo/bar": "@foo/bar/dist/index.mjs", app: "@foo/bar" };
+      expect(normalizeAliases(aliases).app).toBe("@foo/bar/dist/index.mjs");
+      expect(resolveAlias("app/x", aliases)).toBe("@foo/bar/dist/index.mjs/x");
+    });
+
+    it("terminates on cyclic aliases", () => {
+      expect(() => normalizeAliases({ a: "b/x", b: "a/y" })).not.toThrow();
+      expect(() => normalizeAliases({ "@": "@/src" })).not.toThrow();
+    });
+
+    it("handles alias keys that shadow Object.prototype names", () => {
+      expect(
+        normalizeAliases({
+          constructor: "/root",
+          app: "constructor/x",
+        }),
+      ).toEqual({
+        constructor: "/root",
+        app: "/root/x",
+      });
+    });
+
+    it("Windows paths in nested aliases (C:/root/)", () => {
+      expect(
+        normalizeAliases({
+          "@": "C:/root/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "C:/root/",
+        app: "C:/root/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@/": "C:/root",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@/": "C:/root",
+        app: "C:/root/app",
+      });
+
+      expect(
+        normalizeAliases({
+          "@": "C:/",
+          app: "@/app",
+        }),
+      ).toEqual({
+        "@": "C:/",
+        app: "C:/app",
+      });
+    });
+  });
+
   describe("resolveAlias", () => {
     for (const [from, to] of Object.entries(aliases)) {
       it(from, () => {
