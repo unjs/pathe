@@ -99,6 +99,12 @@ describe("alias", () => {
       expect(resolveAlias("app", aliases)).toBe("/root/file");
     });
 
+    it("does not re-apply an expansion that redirects to its own prefix", () => {
+      const aliases = { "@foo/bar": "@foo/bar/dist/index.mjs", app: "@foo/bar" };
+      expect(normalizeAliases(aliases).app).toBe("@foo/bar/dist/index.mjs");
+      expect(resolveAlias("app/x", aliases)).toBe("@foo/bar/dist/index.mjs/x");
+    });
+
     it("terminates on cyclic aliases", () => {
       expect(() => normalizeAliases({ a: "b/x", b: "a/y" })).not.toThrow();
       expect(() => normalizeAliases({ "@": "@/src" })).not.toThrow();
