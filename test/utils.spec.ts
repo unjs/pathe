@@ -94,6 +94,16 @@ describe("alias", () => {
       expect(resolveAlias("app", aliases)).toBe("/root/file");
     });
 
+    it("expands nested aliases regardless of key order", () => {
+      const aliases = { app: "@/../file", base: "/root/dir", "@": "base" };
+      expect(resolveAlias("app", aliases)).toBe("/root/file");
+    });
+
+    it("terminates on cyclic aliases", () => {
+      expect(() => normalizeAliases({ a: "b/x", b: "a/y" })).not.toThrow();
+      expect(() => normalizeAliases({ "@": "@/src" })).not.toThrow();
+    });
+
     it("Windows paths in nested aliases (C:/root/)", () => {
       expect(
         normalizeAliases({

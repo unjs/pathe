@@ -24,23 +24,32 @@ export function normalizeAliases(_aliases: Record<string, string>) {
     Object.entries(_aliases).sort(([a], [b]) => _compareAliases(a, b)),
   );
 
-  // Resolve alias values in relation to each other
-  for (const key in aliases) {
-    for (const alias in aliases) {
-      // don't resolve a more specific alias with regard to a less specific one
-      if (alias === key || key.startsWith(alias)) {
-        continue;
-      }
+  // Resolve alias values in relation to each other, repeating until stable
+  // (capped by alias count so self-referencing aliases cannot loop forever)
+  let changed = true;
+  for (let pass = 0; changed && pass < Object.keys(aliases).length; pass++) {
+    changed = false;
+    for (const key in aliases) {
+      for (const alias in aliases) {
+        // don't resolve a more specific alias with regard to a less specific one
+        if (alias === key || key.startsWith(alias)) {
+          continue;
+        }
 
-      if (
-        aliases[key]?.startsWith(alias) &&
-        (hasTrailingSlash(alias) || pathSeparators.has(aliases[key]![alias.length]))
-      ) {
-        // Concatenate without normalizing so `..` is kept until nested aliases are expanded
-        const rest = aliases[key]!.slice(alias.length);
-        aliases[key] = rest
-          ? aliases[alias]!.replace(/[/\\]+$/, "") + (SLASH_RE.test(rest[0]!) ? "" : "/") + rest
-          : aliases[alias]!;
+        if (
+          aliases[key]?.startsWith(alias) &&
+          (hasTrailingSlash(alias) || pathSeparators.has(aliases[key]![alias.length]))
+        ) {
+          // Concatenate without normalizing so `..` is kept until nested aliases are expanded
+          const rest = aliases[key]!.slice(alias.length);
+          const value = rest
+            ? aliases[alias]!.replace(/[/\\]+$/, "") + (SLASH_RE.test(rest[0]!) ? "" : "/") + rest
+            : aliases[alias]!;
+          if (value !== aliases[key]) {
+            aliases[key] = value;
+            changed = true;
+          }
+        }
       }
     }
   }
