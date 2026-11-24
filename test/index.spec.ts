@@ -340,6 +340,51 @@ it("parse", () => {
     ext: ".txt",
     name: "file",
   });
+
+  // UNC paths keep the server and share in `root` (matches `node:path` win32)
+  expect(parse("//server/share/cache/q.json")).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/cache",
+    base: "q.json",
+    ext: ".json",
+    name: "q",
+  });
+  expect(parse("//server/share/")).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/",
+    base: "",
+    ext: "",
+    name: "",
+  });
+  expect(parse("//server/share")).to.deep.equal({
+    root: "//server/share",
+    dir: "//server/share",
+    base: "",
+    ext: "",
+    name: "",
+  });
+  expect(parse("//server/share/dir")).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/",
+    base: "dir",
+    ext: "",
+    name: "dir",
+  });
+  expect(parse(String.raw`\\server\share\dir\file.txt`)).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/dir",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  // A `//server` without a share is not a UNC root
+  expect(parse("//server")).to.deep.equal({
+    root: "/",
+    dir: "/",
+    base: "server",
+    ext: "",
+    name: "server",
+  });
 });
 
 runTest("relative", relative, [

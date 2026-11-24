@@ -17,6 +17,7 @@ const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
 const _EXTNAME_RE = /.(\.[^./]+|\.)$/;
 const _PATH_ROOT_RE = /^[/\\]|^[a-zA-Z]:[/\\]/;
+const _UNC_ROOT_RE = /^[/\\]{2}(?![/\\.])[^/\\]+[/\\]+[^/\\]+[/\\]?/;
 
 /**
  * Constant for path separator.
@@ -286,12 +287,21 @@ export const basename: typeof path.basename = function (p, extension) {
 
 export const parse: typeof path.parse = function (p) {
   // The root of the path such as '/' or 'c:\'
-  const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
-  const base = basename(p);
+  // A `//server/share` UNC prefix is itself the root (matches `node:path` win32)
+  const uncRoot = _UNC_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/");
+  const root = uncRoot || _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
+  // A path consisting only of its root has no base and its dir is the root
+  const isRootOnly =
+    root.length > 1 && normalizeWindowsPath(p).replace(/\/+$/, "") === root.replace(/\/+$/, "");
+  const base = isRootOnly ? "" : basename(p);
   const extension = extname(base);
   // Node returns an empty `dir` (not ".") when the path has no directory segment.
   // A purely trailing separator (e.g. "b/") does not count as a directory segment.
-  let dir = dirname(p);
+  let dir = isRootOnly ? root : dirname(p);
+  // `dir` equal to a UNC root keeps the root's trailing separator (win32 parity)
+  if (!isRootOnly && root.endsWith("/") && dir === root.slice(0, -1)) {
+    dir = root;
+  }
   if (dir === "." && !normalizeWindowsPath(p).replace(/\/+$/, "").includes("/")) {
     dir = "";
   }
