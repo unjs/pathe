@@ -377,6 +377,13 @@ it("parse", () => {
     ext: ".json",
     name: "q",
   });
+  expect(parse("//server//share/")).toEqual({
+    root: "//server//share/",
+    dir: "//server//share/",
+    base: "",
+    ext: "",
+    name: "",
+  });
 });
 
 runTest("relative", relative, [

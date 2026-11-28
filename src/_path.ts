@@ -12,7 +12,7 @@ import { matchGlob } from "./_glob";
 import { normalizeWindowsPath } from "./_internal";
 
 const _UNC_REGEX = /^[/\\]{2}/;
-const _UNC_ROOT_RE = /^\/\/[^/]+\/[^/]+(?:\/|$)/;
+const _UNC_ROOT_RE = /^\/\/[^/]+\/+[^/]+(?:\/|$)/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
