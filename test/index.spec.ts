@@ -340,6 +340,50 @@ it("parse", () => {
     ext: ".txt",
     name: "file",
   });
+
+  // UNC paths
+  expect(parse("//server/share/cache/q.json")).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/cache",
+    base: "q.json",
+    ext: ".json",
+    name: "q",
+  });
+  expect(parse("//server/share/file.txt")).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/",
+    base: "file.txt",
+    ext: ".txt",
+    name: "file",
+  });
+  expect(parse("//server/share/")).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/",
+    base: "",
+    ext: "",
+    name: "",
+  });
+  expect(parse("//server/share")).to.deep.equal({
+    root: "//server/share",
+    dir: "//server/share",
+    base: "",
+    ext: "",
+    name: "",
+  });
+  expect(parse(String.raw`\\server\share\cache\q.json`)).to.deep.equal({
+    root: "//server/share/",
+    dir: "//server/share/cache",
+    base: "q.json",
+    ext: ".json",
+    name: "q",
+  });
+  expect(parse("//server//share/")).toEqual({
+    root: "//server//share/",
+    dir: "//server//share/",
+    base: "",
+    ext: "",
+    name: "",
+  });
 });
 
 runTest("relative", relative, [

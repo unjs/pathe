@@ -12,6 +12,7 @@ import { matchGlob } from "./_glob";
 import { normalizeWindowsPath } from "./_internal";
 
 const _UNC_REGEX = /^[/\\]{2}/;
+const _UNC_ROOT_RE = /^\/\/[^/]+\/+[^/]+(?:\/|$)/;
 const _IS_ABSOLUTE_RE = /^[/\\](?![/\\])|^[/\\]{2}(?!\.)|^[A-Za-z]:[/\\]/;
 const _DRIVE_LETTER_RE = /^[A-Za-z]:$/;
 const _ROOT_FOLDER_RE = /^\/([A-Za-z]:)?$/;
@@ -285,6 +286,32 @@ export const basename: typeof path.basename = function (p, extension) {
 };
 
 export const parse: typeof path.parse = function (p) {
+  const normalized = normalizeWindowsPath(p);
+  const uncRoot = _UNC_ROOT_RE.exec(normalized)?.[0];
+  if (uncRoot) {
+    const rest = normalized.slice(uncRoot.length).replace(/\/+$/, "");
+    if (!rest) {
+      return {
+        root: uncRoot,
+        dir: uncRoot,
+        base: "",
+        ext: "",
+        name: "",
+      };
+    }
+    const lastSlash = rest.lastIndexOf("/");
+    const base = lastSlash === -1 ? rest : rest.slice(lastSlash + 1);
+    const dir = lastSlash === -1 ? uncRoot : uncRoot + rest.slice(0, lastSlash);
+    const extension = extname(base);
+    return {
+      root: uncRoot,
+      dir,
+      base,
+      ext: extension,
+      name: base.slice(0, base.length - extension.length),
+    };
+  }
+
   // The root of the path such as '/' or 'c:\'
   const root = _PATH_ROOT_RE.exec(p)?.[0]?.replace(/\\/g, "/") || "";
   const base = basename(p);
