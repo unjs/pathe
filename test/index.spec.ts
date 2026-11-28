@@ -154,6 +154,13 @@ runTest("extname", extname, {
   "a/.": "",
   "trailing.dir/": ".dir",
 
+  // Line terminators before the extension dot
+  "dir/name\n.txt": ".txt",
+  "dir/name\r.txt": ".txt",
+  "dir/name\u2028.txt": ".txt",
+  "dir/name\u2029.txt": ".txt",
+  "dir/\n.txt": ".txt",
+
   // Windows
   "C:\\temp\\myfile.html": ".html",
   "\\temp\\myfile.html": ".html",
@@ -339,6 +346,22 @@ it("parse", () => {
     base: "file.txt",
     ext: ".txt",
     name: "file",
+  });
+
+  // Line terminators before the extension dot
+  expect(parse("dir/name\n.txt")).to.deep.equal({
+    root: "",
+    dir: "dir",
+    base: "name\n.txt",
+    ext: ".txt",
+    name: "name\n",
+  });
+  expect(parse("dir/name\r.txt")).to.deep.equal({
+    root: "",
+    dir: "dir",
+    base: "name\r.txt",
+    ext: ".txt",
+    name: "name\r",
   });
 });
 
